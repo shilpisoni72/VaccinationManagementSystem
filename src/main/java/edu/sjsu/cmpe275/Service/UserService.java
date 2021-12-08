@@ -10,7 +10,7 @@ import java.util.Optional;
  * passenger service to create, delete and get passengers
  */
 @Service
-public interface UserService {
+public interface  UserService {
     /**
      *
      * @param fn - first name

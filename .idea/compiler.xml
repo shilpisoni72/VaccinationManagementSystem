@@ -7,14 +7,17 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="lab2" />
+        <module name="VaccinationManagementSystem" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="lab2" target="11" />
+      <module name="VaccinationManagementSystem" target="8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="VaccinationManagementSystem" options="-parameters" />
       <module name="lab2" options="-parameters" />
     </option>
   </component>
