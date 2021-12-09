@@ -29,4 +29,15 @@ public class DiseaseServiceImpl implements DiseaseService {
     public Optional<Disease> getDiseaseByName(String diseaseName){
         return diseaseRepository.findByDiseaseName(diseaseName);
     }
+
+    @Override
+    public boolean deleteDiseaseById(long id){
+        try{
+            diseaseRepository.deleteById(id);
+            return true;
+        }catch (Exception e){
+            System.out.println("exception in deleting disease" + e);
+            return false;
+        }
+    }
 }

@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface DiseaseService {
     public Optional<Disease> createDisease(String diseaseName, String description);
     public Optional<Disease> getDiseaseByName(String diseaseName);
+    public boolean deleteDiseaseById(long id);
 }

@@ -16,8 +16,8 @@ import java.util.Optional;
 @RequestMapping("/disease")
 public class DiseaseController {
 
-//    @Autowired
-//    DiseaseRepository diseaseRepository;
+    @Autowired
+    DiseaseRepository diseaseRepository;
     @Autowired
     DiseaseService diseaseService;
 
@@ -33,6 +33,21 @@ public class DiseaseController {
         if(diseaseData.isPresent()){
             Disease _disease =  diseaseData.get();
             return new ResponseEntity<>(_disease, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<Object>("something went wrong", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping("/deleteDisease/{diseaseId}")
+    public ResponseEntity<Object> deleteDisease(@PathVariable("diseaseId") long diseaseId) {
+        System.out.println("delete disease controller called");
+        Optional<Disease> diseaseData = diseaseRepository.findById(diseaseId);
+        if(diseaseData.isPresent()){
+            return new ResponseEntity<Object>(new Response("400","Disease id "+ diseaseId+" doesn not exists"), HttpStatus.BAD_REQUEST);
+        }
+        boolean isDeleted = diseaseService.deleteDiseaseById(diseaseId);
+        if(isDeleted){
+            return new ResponseEntity<>("disease id: "+ diseaseId + " deleted successfully", HttpStatus.OK);
         }else{
             return new ResponseEntity<Object>("something went wrong", HttpStatus.INTERNAL_SERVER_ERROR);
         }

@@ -13,99 +13,46 @@ import java.util.List;
 
 @XmlRootElement
 @Entity
-@Table(name = "passenger")
+@Table(name = "user")
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+//    @Column(name = "id")
     private long id;
 
-    @Column(name = "firstname")
+    @Column(name = "firstName", nullable = false)
     private String firstName;
 
-    @Column(name = "lastname")
+    @Column(name = "lastName", nullable = false)
     private String lastName;
 
-    @Column(name = "age")
-    private int age;
+    @Column(name = "middleName" )
+    private String middleName;
 
-    @Column(name = "gender")
+    @Column(name = "email", unique = true, nullable = false)
+    private String email;
+
+    @Column(name = "dob", nullable = false)
+    private int dob;
+
+    @Column(name = "gender", nullable = false)
     private String gender;
 
     @Column(name = "phone")
     private String phone;
 
-   
+    @OneToOne(optional = false)
+    @JoinColumn(name = "addressId", referencedColumnName = "id")
+    private Address address;
 
-   
-    public User(long id,
-                     String firstName,
-                     String lastName,
-                     int age,
-                     String gender,
-                     String phone
-                     ) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.age = age;
-        this.gender = gender;
-        this.phone = phone;
+    @Column(name = "isAdmin", nullable = false)
+    private boolean isAdmin;
 
-    }
-
-    public User() {
-    }
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-
-
+    //primary key of user table, referencedColumn
+    //name is the foriegn key name in Appointment
+    @OneToMany(mappedBy = "user")
+    private List<Appointment> appointments =new ArrayList<>();
 
 }

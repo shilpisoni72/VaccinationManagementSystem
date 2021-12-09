@@ -45,5 +45,9 @@ public class Vaccine {
     @Column(name = "duration", columnDefinition = "integer default 0", nullable=false) // here value 0 corresponds to lifetime
     private int duration;
 
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "diseaseId", referencedColumnName = "id")
+    private Disease disease;
+
 
 }
