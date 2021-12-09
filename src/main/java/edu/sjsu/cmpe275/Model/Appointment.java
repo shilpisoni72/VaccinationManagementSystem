@@ -1,32 +1,92 @@
 package edu.sjsu.cmpe275.Model;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.sql.Date;
+import java.sql.Time;
+import java.util.List;
 
+@Table(name = "appointment")
+@Entity
 public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    @Column(name = "id", nullable = false)
+    private Long id;
 
-    @Column(name = "date" )
-    private Date date;
-
-    @Column(name = "checkIn" )
-    private boolean checkIn;
-
-
-    @ManyToOne
-    @JoinColumn(name = "userId", referencedColumnName = "id")
+    @ManyToOne(cascade = CascadeType.ALL, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToMany()
-    @JoinColumn(name = "clinicId", referencedColumnName = "id")
+    @Column(name = "date", nullable = false)
+    private Date date;
+
+    @Column(name = "time", nullable = false)
+    private Time time;
+
+    @Column(name = "check_in", nullable = false)
+    private Boolean checkIn = false;
+
+    @ManyToOne(cascade = CascadeType.ALL, optional = false)
+    @JoinColumn(name = "clinic_id", nullable = false)
     private Clinic clinic;
 
-    @OneToMany()
-    @JoinColumn(name = "vaccineId", referencedColumnName = "id")
-    private Vaccine vaccine;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "appointment_id")
+    private List<Vaccination> vaccinations;
 
+    public List<Vaccination> getVaccinations() {
+        return vaccinations;
+    }
 
+    public void setVaccinations(List<Vaccination> vaccinations) {
+        this.vaccinations = vaccinations;
+    }
 
+    public Clinic getClinic() {
+        return clinic;
+    }
+
+    public void setClinic(Clinic clinic) {
+        this.clinic = clinic;
+    }
+
+    public Boolean getCheckIn() {
+        return checkIn;
+    }
+
+    public void setCheckIn(Boolean checkIn) {
+        this.checkIn = checkIn;
+    }
+
+    public Time getTime() {
+        return time;
+    }
+
+    public void setTime(Time time) {
+        this.time = time;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }

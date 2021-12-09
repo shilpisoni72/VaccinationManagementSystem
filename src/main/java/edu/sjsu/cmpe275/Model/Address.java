@@ -1,34 +1,77 @@
 package edu.sjsu.cmpe275.Model;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement
-@Entity
 @Table(name = "address")
-
-@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+@Entity
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    @Column(name = "id", nullable = false)
+    private Long id;
 
-    @Column(name = "addressLine1", nullable = false)
-    private String addressLine1;
+    @Lob
+    @Column(name = "line_1", nullable = false)
+    private String line1;
 
-    @Column(name = "addressLine2")
-    private String addressLine2;
+    @Lob
+    @Column(name = "line_2")
+    private String line2;
 
-    @Column(name = "city", nullable = false )
+    @Column(name = "city", nullable = false)
     private String city;
 
-    @Column(name = "state", nullable = false )
+    @Column(name = "state", nullable = false)
     private String state;
 
-    @Column(name = "zipcode", nullable = false )
-    private int zipcode;
+    @Column(name = "zip_code", nullable = false)
+    private Integer zipCode;
 
+    public Long getId() {
+        return id;
+    }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Integer getZipCode() {
+        return zipCode;
+    }
+
+    public void setZipCode(Integer zipCode) {
+        this.zipCode = zipCode;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getLine2() {
+        return line2;
+    }
+
+    public void setLine2(String line2) {
+        this.line2 = line2;
+    }
+
+    public String getLine1() {
+        return line1;
+    }
+
+    public void setLine1(String line1) {
+        this.line1 = line1;
+    }
 }

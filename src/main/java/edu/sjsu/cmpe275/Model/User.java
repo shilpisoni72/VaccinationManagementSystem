@@ -1,58 +1,138 @@
 package edu.sjsu.cmpe275.Model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
-import java.util.ArrayList;
+import java.sql.Date;
 import java.util.List;
 
-@XmlRootElement
-@Entity
 @Table(name = "user")
-@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+@Entity
 public class User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-//    @Column(name = "id")
-    private long id;
 
-    @Column(name = "firstName", nullable = false)
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @Column(name = "lastName", nullable = false)
+    @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @Column(name = "middleName" )
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "MRN")
+    @SequenceGenerator(name = "MRN", sequenceName = "MRN", initialValue = 100, allocationSize = 1)
+    @Column(name = "id", nullable = false)
+    private Long id;
+
+    @Column(name = "middle_name")
     private String middleName;
 
-    @Column(name = "email", unique = true, nullable = false)
-    private String email;
-
-    @Column(name = "dob", nullable = false)
-    private int dob;
+    @Column(name = "date_of_birth", nullable = false)
+    private Date dateOfBirth;
 
     @Column(name = "gender", nullable = false)
     private String gender;
 
-    @Column(name = "phone")
-    private String phone;
+    @Column(name = "verified", nullable = false)
+    private Boolean verified = false;
 
-    @OneToOne(optional = false)
-    @JoinColumn(name = "addressId", referencedColumnName = "id")
+    @Column(name = "role", nullable = false)
+    private String role;
+
+    @OneToOne(cascade = CascadeType.ALL, optional = false, orphanRemoval = true)
+    @JoinColumn(name = "address_ID", nullable = false)
     private Address address;
 
-    @Column(name = "isAdmin", nullable = false)
-    private boolean isAdmin;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserVaccination> vaccinationHistory;
 
-    //primary key of user table, referencedColumn
-    //name is the foriegn key name in Appointment
-    @OneToMany(mappedBy = "user")
-    private List<Appointment> appointments =new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Appointment> appointments;
+
+    public List<Appointment> getAppointments() {
+        return appointments;
+    }
+
+    public void setAppointments(List<Appointment> appointments) {
+        this.appointments = appointments;
+    }
+
+    public List<UserVaccination> getVaccinationHistory() {
+        return vaccinationHistory;
+    }
+
+    public void setVaccinationHistory(List<UserVaccination> vaccinationHistory) {
+        this.vaccinationHistory = vaccinationHistory;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public Boolean getVerified() {
+        return verified;
+    }
+
+    public void setVerified(Boolean verified) {
+        this.verified = verified;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public Date getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(Date dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
 
 }

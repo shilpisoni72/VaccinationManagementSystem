@@ -1,49 +1,43 @@
 package edu.sjsu.cmpe275.Model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
-import java.util.ArrayList;
-import java.util.List;
 
-@XmlRootElement
-@Entity
 @Table(name = "disease")
-@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+@Entity
 public class Disease {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    @Column(name = "id", nullable = false)
+    private Long id;
 
-    public String getDiseaseName() {
-        return diseaseName;
+    @Column(name = "name", nullable = false, unique = true)
+    private String name;
+
+    @Lob
+    @Column(name = "description")
+    private String description;
+
+    public String getDescription() {
+        return description;
     }
-
-    public void setDiseaseName(String diseaseName) {
-        this.diseaseName = diseaseName;
-    }
-
 
     public void setDescription(String description) {
         this.description = description;
     }
 
-    @Column(name = "diseaseName", unique = true)
-    private String diseaseName;
-
-    @Column(name = "descritpion")
-    private String description;
-
-    public Disease(String diseaseName, String description) {
-        this.diseaseName = diseaseName;
-        this.description = description;
+    public String getName() {
+        return name;
     }
 
-    public Disease(){}
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }
