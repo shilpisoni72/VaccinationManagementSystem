@@ -1,9 +1,12 @@
 package edu.sjsu.cmpe275.Model;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlRootElement;
 
-@Table(name = "address")
+@XmlRootElement
 @Entity
+@Table(name = "address")
+
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

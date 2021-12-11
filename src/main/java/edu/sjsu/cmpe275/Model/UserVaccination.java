@@ -1,9 +1,11 @@
 package edu.sjsu.cmpe275.Model;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlRootElement;
 
-@Table(name = "user_vaccination")
+@XmlRootElement
 @Entity
+@Table(name = "user_vaccination")
 public class UserVaccination {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

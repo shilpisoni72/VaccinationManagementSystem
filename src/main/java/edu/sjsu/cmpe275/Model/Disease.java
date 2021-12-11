@@ -1,10 +1,17 @@
 package edu.sjsu.cmpe275.Model;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlRootElement;
 
-@Table(name = "disease")
+@XmlRootElement
 @Entity
+@Table(name = "disease")
 public class Disease {
+    public Disease(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
@@ -16,6 +23,10 @@ public class Disease {
     @Lob
     @Column(name = "description")
     private String description;
+
+    public Disease() {
+
+    }
 
     public String getDescription() {
         return description;
