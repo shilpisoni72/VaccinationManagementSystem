@@ -1,5 +1,6 @@
 package edu.sjsu.cmpe275;
 
+import edu.sjsu.cmpe275.Util.NotificationHelper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -11,10 +12,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 @SpringBootApplication
 @EnableTransactionManagement
+@ComponentScan
 public class VaccinationManagementSystem {
 
     public static void main(String[] args) {
         SpringApplication.run(VaccinationManagementSystem.class, args);
+        //sending email
+        //        NotificationHelper notificationHelper = new NotificationHelper();
+        //        notificationHelper.sendEmail("Hi from springboot");
     }
     @Bean
     public WebMvcConfigurer corsConfigurer() {
