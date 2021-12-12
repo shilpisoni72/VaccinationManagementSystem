@@ -1,12 +1,15 @@
 package edu.sjsu.cmpe275.Model;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.List;
 
-@Table(name = "appointment")
+@XmlRootElement
 @Entity
+@Table(name = "appointment")
+
 public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

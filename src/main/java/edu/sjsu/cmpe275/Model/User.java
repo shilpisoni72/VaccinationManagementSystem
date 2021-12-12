@@ -1,9 +1,11 @@
 package edu.sjsu.cmpe275.Model;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.sql.Date;
 import java.util.List;
 
+@XmlRootElement
 @Table(name = "user")
 @Entity
 public class User {
