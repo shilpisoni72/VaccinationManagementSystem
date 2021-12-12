@@ -1,3 +1,11 @@
+.time-section{
+    width:100%;
+}
+
+.due-section{
+    margin-bottom: 30px;
+}
+
 .due-list{
     margin-top:20px;
 }

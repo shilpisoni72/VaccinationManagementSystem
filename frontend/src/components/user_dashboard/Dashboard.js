@@ -33,7 +33,7 @@ class Dashboard extends Component {
                         <Link to="/appointment">
                             <button type="button" className="d-flex align-items-center nav-button">
                                 <span>
-                                    Make an Appointment
+                                    Make/Cancel an Appointment
                                 </span>
                             </button>
                         </Link>
