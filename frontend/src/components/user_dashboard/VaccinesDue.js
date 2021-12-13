@@ -8,41 +8,28 @@ class VaccinesDue extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            currentDate: new Date(),
-            chosenDate: new Date(),
+    
         }
-    }
-
-    handleDateChange = (date) => {
-        this.setState({
-            chosenDate: date
-        });
-    }
-
-    handleRevertTime = (e) => {
-        this.setState({
-            chosenDate: this.state.currentDate
-        });
     }
 
     render() {
         return (
             <div className='d-flex flex-column'>
                 <div className='d-flex justify-content-evenly time-section'>
-                    <h5>Current Date: {this.state.currentDate.toLocaleString()}</h5>
-                    <h5>Chosen Date: {this.state.chosenDate.toLocaleString()}</h5>
+                    <h5>Current Date: {this.props.currentDate.toLocaleString()}</h5>
+                    <h5>Chosen Date: {this.props.chosenDate.toLocaleString()}</h5>
                     <DatePicker 
-                            selected={this.state.chosenDate} 
-                            onChange={this.handleDateChange} 
+                            selected={this.props.chosenDate} 
+                            onChange={(date) => this.props.chosenDateHandler(date)} 
                             showTimeSelect
                             timeFormat="HH:mm"
                             timeIntervals={15}
                             timeCaption="time"
                             dateFormat="MMMM d, yyyy h:mm aa"
-                            minDate={this.state.currentDate}
-                            maxDate={addDays(this.state.chosenDate, 365)}
+                            minDate={this.props.currentDate}
+                            maxDate={addDays(this.props.chosenDate, 365)}
                     />
-                    <Button variant="outlined" onClick={this.handleRevertTime}>
+                    <Button variant="outlined" onClick={() => this.props.chosenDateHandler(this.props.currentDate)}>
                         Revert to Current Date
                     </Button>
                 </div>

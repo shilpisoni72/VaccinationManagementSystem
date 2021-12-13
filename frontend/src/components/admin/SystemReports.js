@@ -5,14 +5,15 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import addDays from 'date-fns/addDays';
 import './SystemReports.css';
 
 class SystemReports extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            startDate: new Date(),
-            endDate: new Date(),
+            startDate: this.props.chosenDate,
+            endDate: this.props.chosenDate,
             clinicSelected:{},
             allClinics: [
                 {name: "Sunnyvale CVS"},
@@ -77,6 +78,8 @@ class SystemReports extends Component {
                         <DatePicker 
                             selected={this.state.startDate} 
                             onChange={this.handleStartChange} 
+                            minDate={addDays(this.props.chosenDate, -365)}
+                            maxDate={this.props.chosenDate}
                         />
                     </label>
                     <label>
@@ -84,6 +87,8 @@ class SystemReports extends Component {
                         <DatePicker 
                             selected={this.state.endDate} 
                             onChange={this.handleEndChange} 
+                            minDate={addDays(this.props.chosenDate, -365)}
+                            maxDate={this.props.chosenDate}
                         />
                     </label>
                     <div>
