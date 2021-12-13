@@ -1,14 +1,14 @@
-.patient-reports{
+.system-reports{
     height:100%;
 }
 
-.no-show-block{
+.sys-no-show-block{
     border-top: 1px solid lightgray;
     border-bottom: 1px solid lightgray;
     height:75px;
 }
 
-.total-block{
+.sys-total-block{
     border-top: 1px solid lightgray;
     border-bottom: 1px solid lightgray;
     height:75px;

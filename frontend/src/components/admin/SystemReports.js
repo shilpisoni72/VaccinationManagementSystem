@@ -1,24 +1,40 @@
 import React, { Component } from 'react';
 import DatePicker from "react-datepicker";
 import Button from '@mui/material/Button';
-import './PatientReports.css';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import './SystemReports.css';
 
-class PatientReports extends Component {
+class SystemReports extends Component {
     constructor(props) {
         super(props);
         this.state = {
             startDate: new Date(),
             endDate: new Date(),
+            clinicSelected:{},
+            allClinics: [
+                {name: "Sunnyvale CVS"},
+                {name: "Evergreen CVS"},
+                {name: "Palo Alto CVS"},
+            ],
             noShowRate: 0,
             noShowAppointments: [
-                {vaccine: "Pfizer", clinic:"Sunnyvale CVS", date:"12/20/21"},
-                {vaccine: "Flu", clinic:"Sunnyvale CVS", date:"12/20/21"},
+                {vaccine: "Pfizer", firstName:"Spencer", lastName:"Siu", date:"12/20/21"},
+                {vaccine: "Flu", firstName:"Joe", lastName:"Biden", date:"12/20/21"},
             ],
             totalAppointments: [
-                {vaccine: "Pfizer", clinic:"Sunnyvale CVS", date:"12/20/21"},
-                {vaccine: "Flu", clinic:"Sunnyvale CVS", date:"12/20/21"},
+                {vaccine: "Pfizer", firstName:"Spencer", lastName:"Siu", date:"12/20/21"},
+                {vaccine: "Flu", firstName:"Joe", lastName:"Biden", date:"12/20/21"},
             ]
         }
+    }
+
+    handleClinicChange = (e) => {
+        this.setState({
+            clinicSelected: e.target.value
+        });
     }
 
     handleStartChange = (date) => {
@@ -35,9 +51,27 @@ class PatientReports extends Component {
 
     render() {
         return (
-            <div className='d-flex flex-column justify-content-around patient-reports'>
-                <h1>Patient Reports</h1>
+            <div className='d-flex flex-column justify-content-around system-reports'>
+                <h1>System Reports</h1>
                 <div className="d-flex flex-column">
+                    <FormControl fullWidth>
+                        <InputLabel id="sys-clinic-label">Clinic</InputLabel>
+                        <Select
+                            labelId="sys-clinic-label"
+                            id="sys-clinic-select"
+                            value={this.state.clinicSelected}
+                            label="Clinic"
+                            onChange={this.handleClinicChange}
+                        >
+                        {
+                            this.state.allClinics.map((clinic, index) => {
+                                return (
+                                    <MenuItem key={index} value={clinic.name}>{clinic.name}</MenuItem>
+                                )
+                            })
+                        }
+                        </Select>
+                    </FormControl>
                     <label>
                         Start Date:
                         <DatePicker 
@@ -67,9 +101,9 @@ class PatientReports extends Component {
                     {
                         this.state.noShowAppointments.map((apt, index) => {
                             return (
-                                <div className="d-flex align-items-center justify-content-evenly no-show-block" key={index}>
+                                <div className="d-flex align-items-center justify-content-evenly sys-no-show-block" key={index}>
                                     <h4>{apt.vaccine}</h4>
-                                    <div>Clinic: {apt.clinic}</div>
+                                    <div>Patient: {apt.firstName} {apt.lastName}</div>
                                     <div>Date: {apt.date}</div>
                                 </div>
                             )
@@ -81,9 +115,9 @@ class PatientReports extends Component {
                     {
                         this.state.totalAppointments.map((apt, index) => {
                             return (
-                                <div className="d-flex align-items-center justify-content-evenly total-block" key={index}>
+                                <div className="d-flex align-items-center justify-content-evenly sys-total-block" key={index}>
                                     <h4>{apt.vaccine}</h4>
-                                    <div>Clinic: {apt.clinic}</div>
+                                    <div>Patient: {apt.firstName} {apt.lastName}</div>
                                     <div>Date: {apt.date}</div>
                                 </div>
                             )
@@ -95,4 +129,4 @@ class PatientReports extends Component {
     }
 }
 
-export default PatientReports; 
+export default SystemReports; 
