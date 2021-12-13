@@ -75,6 +75,10 @@ class VaccinesDue extends Component {
                             <h5>Pfizer</h5>
                             <p>Clinic: Sunnyvale CVS</p>
                             <p>Date: 12/20/21</p>
+                            {/* IF date is within 24hrs of chosen date && user hasn't checked in yet, show check in button ELSE hide button */}
+                            <Button variant="outlined" onClick={this.handleCheckin}>
+                                Check In
+                            </Button>
                         </div>
                         <div className='d-flex due-vaccine align-items-center'>
                             <h5>Flu</h5>
