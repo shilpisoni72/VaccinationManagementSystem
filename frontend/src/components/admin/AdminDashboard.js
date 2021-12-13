@@ -1,51 +1,35 @@
-import React, { Component } from "react";
+import React, { Component } from 'react'
 import { Link, Route } from 'react-router-dom';
-import "./Dashboard.css";
-import VaccinesDue from "./VaccinesDue";
 
-class Dashboard extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
 
-        }
-    }
-
+class AdminDashboard extends Component {
     render() {
         return (
             <div>
                 <div className="d-flex justify-content-center dashboard">
                     <div className="d-flex flex-column navbar-section">
-                        <Link to="/dashboard">
+                        <Link to="/admin">
                             <button type="button" className="d-flex align-items-center nav-button">
                                 <span>
-                                    Home
+                                    Admin Home
                                 </span>
                             </button>
                         </Link>
-                        <Link to="/history">
+                        <Link to="/systemreports">
                             <button type="button" className="d-flex align-items-center nav-button">
                                 <span>
-                                   Vaccine History
+                                   System Reports
                                 </span>
                             </button>
                         </Link>
-                        <Link to="/appointment">
-                            <button type="button" className="d-flex align-items-center nav-button">
-                                <span>
-                                    Make/Cancel an Appointment
-                                </span>
-                            </button>
-                        </Link>
-                        {/* if user is an admin, add two more links for admin dash and system reports */}
                     </div>
                     <div className="d-flex flex-column current-page">
                         {this.props.currentPage}
                     </div>
                 </div>
             </div>
-        );
+        )
     }
 }
 
-export default Dashboard;
+export default AdminDashboard
