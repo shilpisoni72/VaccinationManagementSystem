@@ -37,6 +37,13 @@ class Dashboard extends Component {
                                 </span>
                             </button>
                         </Link>
+                        <Link to="/patientReport">
+                            <button type="button" className="d-flex align-items-center nav-button">
+                                <span>
+                                    My Report
+                                </span>
+                            </button>
+                        </Link>
                         {/* if user is an admin, add two more links for admin dash and system reports */}
                     </div>
                     <div className="d-flex flex-column current-page">

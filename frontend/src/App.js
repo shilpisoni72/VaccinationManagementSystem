@@ -17,6 +17,7 @@ import Appointment from './components/user_dashboard/Appointment';
 import VaccineHistory from './components/user_dashboard/VaccineHistory';
 import AdminDashboard from './components/admin/AdminDashboard';
 import AdminManagement from './components/admin/AdminManagement';
+import PatientReport from "./components/user_dashboard/PatientReport";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
                 <Route path="/appointment" element={<Dashboard currentPage={<Appointment/>}/>} />
                 <Route path="/history" element={<Dashboard currentPage={<VaccineHistory/>}/>} />
                 <Route path="/admin" element={<AdminDashboard currentPage={<AdminManagement/>}/>} />
+                <Route path="/patientReport" element={<Dashboard currentPage={<PatientReport/>}/>} />
               </Routes>
             </div>
         </BrowserRouter>
