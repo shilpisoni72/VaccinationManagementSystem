@@ -1,9 +1,13 @@
-import { appendOwnerState, Button } from '@mui/material';
+import { Button } from '@mui/material';
 import React, { Component } from 'react';
 import DatePicker from "react-datepicker";
-import addDays from 'date-fns/addDays'
+import addDays from 'date-fns/addDays';
+import Cookies from 'universal-cookie';
+import axios from 'axios';
 import './VaccinesDue.css';
 
+
+const { API_URL } = require('../utils/Constants').default;
 class VaccinesDue extends Component {
     constructor(props) {
         super(props)
@@ -17,6 +21,21 @@ class VaccinesDue extends Component {
                 {vaccine: "Pfizer", clinic:"Sunnyvale CVS", date:"2021-12-20T12:15:00", checkedIn: false},
                 {vaccine: "Flu", clinic:"Sunnyvale CVS", date:"2021-12-20T12:15:00", checkedIn: false},
             ]
+        }
+    }
+
+    async componentDidMount() {
+        const cookies = new Cookies();
+        let userId = cookies.get('userId');
+        
+        try {
+            const response = await axios.get(`${API_URL}/dashboard&userId=${userId}`);
+            this.setState({
+                vaccinesDue: response.vaccines,
+                appointments: response.appointments,
+            });
+        } catch (error) {
+            console.log(error);
         }
     }
 
@@ -68,7 +87,6 @@ class VaccinesDue extends Component {
                                         <p>Clinic: {appointment.clinic}</p>
                                         <p>Date: {appointment.date}</p>
                                         {/* IF date is within 24hrs of chosen date && user hasn't checked in yet, show check in button ELSE hide button */}
-                                        {console.log(Math.abs(new Date(appointment.date) - this.props.chosenDate) / 36e5)}
                                         {
                                             !appointment.checkedIn && this.props.chosenDate < new Date(appointment.date) && (new Date(appointment.date) - this.props.chosenDate) / 36e5 <= 24  ? 
                                             <Button variant="outlined" onClick={this.handleCheckin}>
