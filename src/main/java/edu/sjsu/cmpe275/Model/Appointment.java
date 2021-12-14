@@ -4,6 +4,7 @@ import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.sql.Date;
 import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.List;
 
 @XmlRootElement
@@ -36,6 +37,17 @@ public class Appointment {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "appointment_id")
     private List<Vaccination> vaccinations;
+
+    @Column(name = "booked_on", nullable = false)
+    private Timestamp bookedOn;
+
+    public Timestamp getBookedOn() {
+        return bookedOn;
+    }
+
+    public void setBookedOn(Timestamp bookedOn) {
+        this.bookedOn = bookedOn;
+    }
 
     public List<Vaccination> getVaccinations() {
         return vaccinations;

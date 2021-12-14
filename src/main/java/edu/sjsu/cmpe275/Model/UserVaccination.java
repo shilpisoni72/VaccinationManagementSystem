@@ -2,6 +2,7 @@ package edu.sjsu.cmpe275.Model;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.List;
 
 @XmlRootElement
 @Entity
@@ -19,6 +20,18 @@ public class UserVaccination {
     @ManyToOne(cascade = CascadeType.ALL, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "user_vaccination_id")
+    private List<VaccinationShot> vaccinationShots;
+
+    public List<VaccinationShot> getVaccinationShots() {
+        return vaccinationShots;
+    }
+
+    public void setVaccinationShots(List<VaccinationShot> vaccinationShots) {
+        this.vaccinationShots = vaccinationShots;
+    }
 
     public User getUser() {
         return user;
