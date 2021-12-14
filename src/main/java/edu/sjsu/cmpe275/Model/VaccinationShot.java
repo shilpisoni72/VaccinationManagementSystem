@@ -24,6 +24,17 @@ public class VaccinationShot {
     @JoinColumn(name = "appointment_id", nullable = false)
     private Appointment appointment;
 
+    @Column(name = "shot_taken")
+    private Boolean shotTaken;
+
+    public Boolean getShotTaken() {
+        return shotTaken;
+    }
+
+    public void setShotTaken(Boolean shotTaken) {
+        this.shotTaken = shotTaken;
+    }
+
     public Appointment getAppointment() {
         return appointment;
     }

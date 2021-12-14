@@ -2,6 +2,7 @@ package edu.sjsu.cmpe275.Model;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.sql.Timestamp;
 import java.util.List;
 
 @XmlRootElement
@@ -24,6 +25,39 @@ public class UserVaccination {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "user_vaccination_id")
     private List<VaccinationShot> vaccinationShots;
+
+    @Column(name = "last_shot_date")
+    private Timestamp lastShotDate;
+
+    @Column(name = "last_shot_number")
+    private Integer lastShotNumber;
+
+    @Column(name = "last_shot_taken")
+    private Boolean lastShotTaken;
+
+    public Boolean getLastShotTaken() {
+        return lastShotTaken;
+    }
+
+    public void setLastShotTaken(Boolean lastShotTaken) {
+        this.lastShotTaken = lastShotTaken;
+    }
+
+    public Integer getLastShotNumber() {
+        return lastShotNumber;
+    }
+
+    public void setLastShotNumber(Integer lastShotNumber) {
+        this.lastShotNumber = lastShotNumber;
+    }
+
+    public Timestamp getLastShotDate() {
+        return lastShotDate;
+    }
+
+    public void setLastShotDate(Timestamp lastShotDate) {
+        this.lastShotDate = lastShotDate;
+    }
 
     public List<VaccinationShot> getVaccinationShots() {
         return vaccinationShots;
