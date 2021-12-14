@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
 
-    List<Appointment> findAllByDateBeforea(Date date);
+    List<Appointment> findAllByDateBefore(Date date);
     List<Appointment> findAllByDateAfter(Date date);
     List<Appointment> findAllByDateBetween(Date dateStart, Date dateEnd);
 //    List<Appointment> findAllByUserAndDateBetween(Date dateStart, Date dateEnd)

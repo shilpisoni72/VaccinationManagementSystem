@@ -30,7 +30,7 @@ public class AppointmentController {
     @Transactional
     public ResponseEntity<Object> getVaccinationsDue(@RequestBody String dateStart, String dateEnd) {
         try {
-
+            return null;
         } catch (Exception exception) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return new ResponseEntity<Object>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
