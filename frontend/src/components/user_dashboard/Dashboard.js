@@ -37,6 +37,7 @@ class Dashboard extends Component {
                                 </span>
                             </button>
                         </Link>
+
                         <Link to="/patientreports">
                             <button type="button" className="d-flex align-items-center nav-button">
                                 <span>
