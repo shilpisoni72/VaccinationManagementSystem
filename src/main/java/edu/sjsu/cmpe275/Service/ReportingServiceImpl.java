@@ -12,7 +12,6 @@ import java.util.List;
 public class ReportingServiceImpl {
 //    @Autowired
 //    AppointmentRepository appointmentRepository;
-
     public List<Appointment> getPatientReport(){
 //        Date a  = new Date();
 //        Date b = new Date();

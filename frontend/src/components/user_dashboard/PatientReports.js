@@ -3,6 +3,8 @@ import DatePicker from "react-datepicker";
 import Button from '@mui/material/Button';
 import addDays from 'date-fns/addDays';
 import './PatientReports.css';
+import backendServer from "../../webConfig";
+import Axios from "axios";
 
 class PatientReports extends Component {
     constructor(props) {
@@ -20,6 +22,23 @@ class PatientReports extends Component {
                 {vaccine: "Flu", clinic:"Sunnyvale CVS", date:"12/20/21"},
             ]
         }
+    }
+
+    getStatistics = (e) => {
+        e.preventDefault();
+        Axios.get(`${backendServer}/report/patientReport`, {
+            params: {
+                startDate: this.state.startDate,
+                endDate: this.state.endDate,
+                // departure_date: moment(new Date()).format("YYYY-MM-DD[T00:00:00.000Z]"),
+            },
+        })
+            .then((response) => {
+                console.log(response.data);
+            })
+            .catch((err) => {
+                console.log("error  = ", err);
+            });
     }
 
     handleStartChange = (date) => {
@@ -58,7 +77,7 @@ class PatientReports extends Component {
                         />
                     </label>
                     <div>
-                        <Button variant="contained">
+                        <Button variant="contained" onClick={this.getStatistics}>
                             Get Statistics
                         </Button>
                     </div>
