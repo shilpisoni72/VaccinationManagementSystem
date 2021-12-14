@@ -62,7 +62,7 @@ class Dashboard extends Component {
                             </button>
                         </Link>
 
-                        <Link to="/landing">
+                        <Link to="/">
                             <button type="button" className="d-flex align-items-center nav-button">
                                 <span>
                                     Logout

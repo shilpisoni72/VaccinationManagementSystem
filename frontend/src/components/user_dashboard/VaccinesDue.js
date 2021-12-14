@@ -1,4 +1,4 @@
-import { Button } from '@mui/material';
+import { appendOwnerState, Button } from '@mui/material';
 import React, { Component } from 'react';
 import DatePicker from "react-datepicker";
 import addDays from 'date-fns/addDays'
@@ -8,7 +8,15 @@ class VaccinesDue extends Component {
     constructor(props) {
         super(props)
         this.state = {
-    
+            vaccinesDue: [
+                {name:'Pfizer', numShots:2, dueDate:'2021-12-24'},
+                {name:'Flu', numShots:1, dueDate:'2021-12-24'},
+                {name:'Moderna', numShots:2, dueDate:'2021-12-24'},
+            ],
+            appointments: [
+                {vaccine: "Pfizer", clinic:"Sunnyvale CVS", date:"2021-12-20T12:15:00", checkedIn: false},
+                {vaccine: "Flu", clinic:"Sunnyvale CVS", date:"2021-12-20T12:15:00", checkedIn: false},
+            ]
         }
     }
 
@@ -36,42 +44,43 @@ class VaccinesDue extends Component {
                 <div className="d-flex flex-fill flex-column due-section">
                     <h1>Vaccines Due</h1>
                     <div className="d-flex flex-column due-list">
-                        {/* MAP LIST OF VACCINES? */}
-                        <div className='d-flex due-vaccine align-items-center'>
-                            <h5>Pfizer</h5>
-                            <p>Shots due: 1</p>
-                            <p>Due Date: 12/24/21</p>
-                        </div>
-                        <div className='d-flex due-vaccine align-items-center'>
-                            <h5>Flu</h5>
-                            <p>Shots due: 1</p>
-                            <p>Due Date: 12/24/21</p>
-                        </div>
-                        <div className='d-flex due-vaccine align-items-center'>
-                            <h5>Moderna</h5>
-                            <p>Shots due: 2</p>
-                            <p>Due Date: 12/24/21</p>
-                        </div>
+                        {
+                                this.state.vaccinesDue.map((vaccine, index) => {
+                                    return (
+                                        <div className='d-flex due-vaccine align-items-center'>
+                                            <h5>{vaccine.name}</h5>
+                                            <p>Shots Due: {vaccine.numShots}</p>
+                                            <p>Due Date: {vaccine.dueDate}</p>
+                                        </div>
+                                    )
+                                })
+                            }
                     </div>
                 </div>
                 <div className="d-flex flex-fill flex-column">
                     <h1>Upcoming Appointments</h1>
                     <div className="d-flex flex-column due-list">
-                        {/* MAP LIST OF VACCINES? */}
-                        <div className='d-flex due-vaccine align-items-center'>
-                            <h5>Pfizer</h5>
-                            <p>Clinic: Sunnyvale CVS</p>
-                            <p>Date: 12/20/21</p>
-                            {/* IF date is within 24hrs of chosen date && user hasn't checked in yet, show check in button ELSE hide button */}
-                            <Button variant="outlined" onClick={this.handleCheckin}>
-                                Check In
-                            </Button>
-                        </div>
-                        <div className='d-flex due-vaccine align-items-center'>
-                            <h5>Flu</h5>
-                            <p>Clinic: Sunnyvale CVS</p>
-                            <p>Date: 12/20/21</p>
-                        </div>
+                        {
+                            this.state.appointments.map((appointment, index) => {
+                                return (
+                                    <div className='d-flex due-vaccine align-items-center'>
+                                        <h5>{appointment.vaccine}</h5>
+                                        <p>Clinic: {appointment.clinic}</p>
+                                        <p>Date: {appointment.date}</p>
+                                        {/* IF date is within 24hrs of chosen date && user hasn't checked in yet, show check in button ELSE hide button */}
+                                        {console.log(Math.abs(new Date(appointment.date) - this.props.chosenDate) / 36e5)}
+                                        {
+                                            !appointment.checkedIn && this.props.chosenDate < new Date(appointment.date) && (new Date(appointment.date) - this.props.chosenDate) / 36e5 <= 24  ? 
+                                            <Button variant="outlined" onClick={this.handleCheckin}>
+                                                Check In
+                                            </Button>
+                                            : null 
+                                            
+                                        }
+                                    </div>
+                                )
+                            })
+                        }
                     </div>
                 </div>
             </div>
