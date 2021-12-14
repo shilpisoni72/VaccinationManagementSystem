@@ -2,8 +2,11 @@ import React, { Component } from 'react';
 import DatePicker from "react-datepicker";
 import Button from '@mui/material/Button';
 import addDays from 'date-fns/addDays';
+import Cookies from 'universal-cookie';
+import axios from 'axios';
 import './PatientReports.css';
 
+const { API_URL } = require('../utils/Constants').default;
 class PatientReports extends Component {
     constructor(props) {
         super(props);
@@ -34,6 +37,23 @@ class PatientReports extends Component {
         });
     }
 
+    handleGetStats = async () => {
+        const cookies = new Cookies();
+        let userId = cookies.get('userId');
+    
+        try {
+            const response = await axios.get(`${API_URL}/history&userId=${userId}&start=${this.state.startDate}&end=${this.state.endDate}`);
+            this.setState({
+                totalAppointments: response.totalAppointments,
+                noShowAppointments: response.noShowAppointments,
+                noShowRate : response.noShowAppointments.length / response.totalAppointments.length,
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+
     render() {
         return (
             <div className='d-flex flex-column justify-content-around patient-reports'>
@@ -58,7 +78,7 @@ class PatientReports extends Component {
                         />
                     </label>
                     <div>
-                        <Button variant="contained">
+                        <Button variant="contained" onClick={this.handleGetStats}>
                             Get Statistics
                         </Button>
                     </div>

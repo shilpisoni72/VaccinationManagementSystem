@@ -1,6 +1,9 @@
 import React, { Component } from "react";
+import Cookies from 'universal-cookie';
+import axios from 'axios';
 import './VaccineHistory.css';
 
+const { API_URL } = require('../utils/Constants').default;
 class VaccineHistory extends Component {
     constructor(props) {
         super(props);
@@ -10,6 +13,20 @@ class VaccineHistory extends Component {
                 {name:"Pfizer", numberShots:2, clinic:"Castro Valley Rite Aid", date:"12/8/21"},
                 {name:"Moderna", numberShots:2, clinic:"Castro Valley Rite Aid", date:"12/8/21"}
             ]
+        }
+    }
+
+    async componentDidMount() {
+        const cookies = new Cookies();
+        let userId = cookies.get('userId');
+        
+        try {
+            const response = await axios.get(`${API_URL}/history&userId=${userId}`);
+            this.setState({
+                vaccinations: response.vaccines
+            });
+        } catch (error) {
+            console.log(error);
         }
     }
 
