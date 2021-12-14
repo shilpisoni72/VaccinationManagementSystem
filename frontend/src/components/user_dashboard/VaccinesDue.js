@@ -1,4 +1,4 @@
-import { Button } from '@mui/material';
+import { appendOwnerState, Button } from '@mui/material';
 import React, { Component } from 'react';
 import DatePicker from "react-datepicker";
 import addDays from 'date-fns/addDays'
@@ -8,79 +8,79 @@ class VaccinesDue extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            currentDate: new Date(),
-            chosenDate: new Date(),
+            vaccinesDue: [
+                {name:'Pfizer', numShots:2, dueDate:'2021-12-24'},
+                {name:'Flu', numShots:1, dueDate:'2021-12-24'},
+                {name:'Moderna', numShots:2, dueDate:'2021-12-24'},
+            ],
+            appointments: [
+                {vaccine: "Pfizer", clinic:"Sunnyvale CVS", date:"2021-12-20T12:15:00", checkedIn: false},
+                {vaccine: "Flu", clinic:"Sunnyvale CVS", date:"2021-12-20T12:15:00", checkedIn: false},
+            ]
         }
-    }
-
-    handleDateChange = (date) => {
-        this.setState({
-            chosenDate: date
-        });
-    }
-
-    handleRevertTime = (e) => {
-        this.setState({
-            chosenDate: this.state.currentDate
-        });
     }
 
     render() {
         return (
             <div className='d-flex flex-column'>
                 <div className='d-flex justify-content-evenly time-section'>
-                    <h5>Current Date: {this.state.currentDate.toLocaleString()}</h5>
-                    <h5>Chosen Date: {this.state.chosenDate.toLocaleString()}</h5>
+                    <h5>Current Date: {this.props.currentDate.toLocaleString()}</h5>
+                    <h5>Chosen Date: {this.props.chosenDate.toLocaleString()}</h5>
                     <DatePicker 
-                            selected={this.state.chosenDate} 
-                            onChange={this.handleDateChange} 
+                            selected={this.props.chosenDate} 
+                            onChange={(date) => this.props.chosenDateHandler(date)} 
                             showTimeSelect
                             timeFormat="HH:mm"
                             timeIntervals={15}
                             timeCaption="time"
                             dateFormat="MMMM d, yyyy h:mm aa"
-                            minDate={this.state.currentDate}
-                            maxDate={addDays(this.state.chosenDate, 365)}
+                            minDate={this.props.currentDate}
+                            maxDate={addDays(this.props.chosenDate, 365)}
                     />
-                    <Button variant="outlined" onClick={this.handleRevertTime}>
+                    <Button variant="outlined" onClick={() => this.props.chosenDateHandler(this.props.currentDate)}>
                         Revert to Current Date
                     </Button>
                 </div>
                 <div className="d-flex flex-fill flex-column due-section">
                     <h1>Vaccines Due</h1>
                     <div className="d-flex flex-column due-list">
-                        {/* MAP LIST OF VACCINES? */}
-                        <div className='d-flex due-vaccine align-items-center'>
-                            <h5>Pfizer</h5>
-                            <p>Shots due: 1</p>
-                            <p>Due Date: 12/24/21</p>
-                        </div>
-                        <div className='d-flex due-vaccine align-items-center'>
-                            <h5>Flu</h5>
-                            <p>Shots due: 1</p>
-                            <p>Due Date: 12/24/21</p>
-                        </div>
-                        <div className='d-flex due-vaccine align-items-center'>
-                            <h5>Moderna</h5>
-                            <p>Shots due: 2</p>
-                            <p>Due Date: 12/24/21</p>
-                        </div>
+                        {
+                                this.state.vaccinesDue.map((vaccine, index) => {
+                                    return (
+                                        <div className='d-flex due-vaccine align-items-center'>
+                                            <h5>{vaccine.name}</h5>
+                                            <p>Shots Due: {vaccine.numShots}</p>
+                                            <p>Due Date: {vaccine.dueDate}</p>
+                                        </div>
+                                    )
+                                })
+                            }
                     </div>
                 </div>
                 <div className="d-flex flex-fill flex-column">
                     <h1>Upcoming Appointments</h1>
                     <div className="d-flex flex-column due-list">
-                        {/* MAP LIST OF VACCINES? */}
-                        <div className='d-flex due-vaccine align-items-center'>
-                            <h5>Pfizer</h5>
-                            <p>Clinic: Sunnyvale CVS</p>
-                            <p>Date: 12/20/21</p>
-                        </div>
-                        <div className='d-flex due-vaccine align-items-center'>
-                            <h5>Flu</h5>
-                            <p>Clinic: Sunnyvale CVS</p>
-                            <p>Date: 12/20/21</p>
-                        </div>
+                        {
+                            this.state.appointments.map((appointment, index) => {
+                                return (
+                                    <div className='d-flex due-vaccine align-items-center'>
+                                        <h5>{appointment.vaccine}</h5>
+                                        <p>Clinic: {appointment.clinic}</p>
+                                        <p>Date: {appointment.date}</p>
+                                        {/* IF date is within 24hrs of chosen date && user hasn't checked in yet, show check in button ELSE hide button */}
+                                        {console.log(Math.abs(new Date(appointment.date) - this.props.chosenDate) / 36e5)}
+                                        {
+                                            !appointment.checkedIn && this.props.chosenDate < new Date(appointment.date) && (new Date(appointment.date) - this.props.chosenDate) / 36e5 <= 24  ? 
+                                            <Button variant="outlined" onClick={this.handleCheckin}>
+                                                Check In
+                                            </Button>
+                                            : null 
+                                            
+                                        }
+                                    </div>
+                                )
+                            })
+                        }
                     </div>
                 </div>
             </div>

@@ -12,7 +12,7 @@ class Appointment extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            appointmentDate: new Date(),
+            appointmentDate: this.props.chosenDate,
             clinicSelected:"",
             availableClinics: [
                 {name: "Sunnyvale CVS"},
@@ -35,7 +35,7 @@ class Appointment extends Component {
                 {vaccine: "Flu", clinic:"Sunnyvale CVS", date:"12/20/21"},
             ],
             appointmentSelected: {},
-            rescheduleDate: new Date(),
+            rescheduleDate: this.props.chosenDate,
             rescheduleClinicSelected:"",
             rescheduleAvailableClinics: [
                 {name: "Sunnyvale CVS"},
@@ -98,6 +98,7 @@ class Appointment extends Component {
                         <DatePicker 
                             selected={this.state.appointmentDate} 
                             onChange={this.handleDateChange} 
+                            minDate={this.props.chosenDate}
                             showTimeSelect
                             timeFormat="HH:mm"
                             timeIntervals={15}
@@ -178,6 +179,7 @@ class Appointment extends Component {
                         <DatePicker 
                             selected={this.state.rescheduleDate} 
                             onChange={this.handleRescheduleDateChange} 
+                            minDate={this.props.chosenDate}
                             showTimeSelect
                             timeFormat="HH:mm"
                             timeIntervals={15}
