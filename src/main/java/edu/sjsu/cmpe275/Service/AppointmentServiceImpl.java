@@ -31,4 +31,9 @@ public class AppointmentServiceImpl implements AppointmentService{
         }
         return null;
     }
+
+    @Override
+    public Appointment bookAppointment(Long userId, Date appointmentDate, Long clinicId, List<Long> vaccinationIds) {
+        return null;
+    }
 }

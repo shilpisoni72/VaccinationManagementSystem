@@ -41,6 +41,17 @@ public class Appointment {
     @Column(name = "booked_on", nullable = false)
     private Timestamp bookedOn;
 
+    @Column(name = "appointment_date_time")
+    private Timestamp appointmentDateTime;
+
+    public Timestamp getAppointmentDateTime() {
+        return appointmentDateTime;
+    }
+
+    public void setAppointmentDateTime(Timestamp appointmentDateTime) {
+        this.appointmentDateTime = appointmentDateTime;
+    }
+
     public Timestamp getBookedOn() {
         return bookedOn;
     }
