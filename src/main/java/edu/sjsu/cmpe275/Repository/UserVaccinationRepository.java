@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface UserVaccinationRepository extends JpaRepository<UserVaccination, Long> {
     public List<UserVaccination> findAllByUserId(Long userId);
+    public UserVaccination findUserVaccinationByVaccinationId(Long vaccinationId);
+
 }
