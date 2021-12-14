@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface VaccinationRepository extends JpaRepository<Vaccination, Long> {
-    List<Vaccination> findAllById(List<Long> vaccinationIds);
+//    List<Vaccination> findAllById(List<Long> vaccinationIds);
 }

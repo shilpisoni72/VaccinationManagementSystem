@@ -79,8 +79,6 @@ public class AppointmentServiceImpl implements AppointmentService{
             newAppointment.setCheckIn(false);
 
 
-            if (!appointments.isEmpty())
-                return appointments;
         }
         catch (Exception exception){
             System.out.println(exception.getStackTrace());
