@@ -6,8 +6,11 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import addDays from 'date-fns/addDays';
+import Cookies from 'universal-cookie';
+import axios from 'axios';
 import './SystemReports.css';
 
+const { API_URL } = require('../utils/Constants').default;
 class SystemReports extends Component {
     constructor(props) {
         super(props);
@@ -16,9 +19,9 @@ class SystemReports extends Component {
             endDate: this.props.chosenDate,
             clinicSelected:{},
             allClinics: [
-                {name: "Sunnyvale CVS"},
-                {name: "Evergreen CVS"},
-                {name: "Palo Alto CVS"},
+                {id:'12391203', name: "Sunnyvale CVS"},
+                {id:'12391204',name: "Evergreen CVS"},
+                {id:'12391205',name: "Palo Alto CVS"},
             ],
             noShowRate: 0,
             noShowAppointments: [
@@ -48,6 +51,19 @@ class SystemReports extends Component {
         this.setState({
             endDate: date
         });
+    }
+
+    handleGetStats = async () => {    
+        try {
+            const response = await axios.get(`${API_URL}/systemreports&clinic=${this.state.clinicSelected.id}&start=${this.state.startDate}&end=${this.state.endDate}`);
+            this.setState({
+                totalAppointments: response.totalAppointments,
+                noShowAppointments: response.noShowAppointments,
+                noShowRate : response.noShowAppointments.length / response.totalAppointments.length,
+            });
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     render() {
@@ -92,7 +108,7 @@ class SystemReports extends Component {
                         />
                     </label>
                     <div>
-                        <Button variant="contained">
+                        <Button variant="contained" onClick={this.handleGetStats}>
                             Get Statistics
                         </Button>
                     </div>

@@ -42,7 +42,7 @@ class PatientReports extends Component {
         let userId = cookies.get('userId');
     
         try {
-            const response = await axios.get(`${API_URL}/history&userId=${userId}&start=${this.state.startDate}&end=${this.state.endDate}`);
+            const response = await axios.get(`${API_URL}/patientreports&userId=${userId}&start=${this.state.startDate}&end=${this.state.endDate}`);
             this.setState({
                 totalAppointments: response.totalAppointments,
                 noShowAppointments: response.noShowAppointments,
