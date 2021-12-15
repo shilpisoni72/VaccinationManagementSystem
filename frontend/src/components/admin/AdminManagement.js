@@ -39,6 +39,21 @@ class AdminManagement extends Component {
         };
     }
 
+    async componentDidMount() {
+        try {
+            const response = await axios.get(`${API_URL}/disease/`);
+            if(response.data !== null) {
+                this.setState({
+                    currentDiseases: response.data
+                });
+            } else {
+                alert("no diseases exist");
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     // CLINIC FORM
     handleClinicChange = (e) => {
         this.setState({
@@ -98,16 +113,23 @@ class AdminManagement extends Component {
         });
     }
 
-    createDisease = async () => {    
+    createDisease = async () => {   
+        console.log(typeof this.state.disease); 
         const payload = {
-            name: this.state.disease,
-            description: this.state.description
+            diseaseName: this.state.disease,
+            diseaseDescription: this.state.description
         }
+        console.log(payload)
+
         try {
-            const response = await axios.post(`${API_URL}/disease`, payload);
-            this.setState({
-                currentDiseases: response.diseases,
-            });
+            const response = await axios.post(`${API_URL}/disease/createDisease`, payload);
+            if(response.data === null){
+                alert("disease not created")
+            } else {
+                this.setState({
+                    currentDiseases: [...this.state.currentDiseases, response.data._disease],
+                });
+            }
         } catch (error) {
             console.log(error);
         }
@@ -154,13 +176,15 @@ class AdminManagement extends Component {
         const payload = {
             name: this.state.vaccine,
             manufacturer: this.state.manufacturer,
-            disease: this.state.diseasesSelected,
+            diseases: this.state.diseasesSelected,
             numShots: this.state.numberShots,
             shotInterval: this.state.shotInterval,
             duration: this.state.duration
         }
+        console.log(payload);
         try {
-            const response = await axios.post(`${API_URL}/vaccine`, payload);
+            const response = await axios.post(`${API_URL}/vaccination/create`, payload);
+            console.log(response)
         } catch (error) {
             console.log(error);
         }
@@ -185,7 +209,7 @@ class AdminManagement extends Component {
                         <TextField id="closing" label="Closing Time" variant="outlined" required onChange={this.handleClosingChange}/>
                     </div>
                     <div>
-                        <Button variant="contained">
+                        <Button variant="contained" onClick={this.createClinic}>
                             Create Clinic
                         </Button>
                     </div>
@@ -199,7 +223,7 @@ class AdminManagement extends Component {
                         <TextField id="diseasedescription" label="Description" multiline rows={3} variant="outlined" onChange={this.handleDescriptionChange}/>
                     </div>
                     <div>
-                        <Button variant="contained">
+                        <Button variant="contained" onClick={this.createDisease}>
                             Create Disease
                         </Button>
                     </div>
@@ -225,7 +249,7 @@ class AdminManagement extends Component {
                                 {
                                     this.state.currentDiseases.map((disease, index) => {
                                         return (
-                                            <MenuItem key={index} value={disease.name}>{disease.name}</MenuItem>
+                                            <MenuItem key={index} value={disease.id}>{disease.name}</MenuItem>
                                         )
                                     })
                                 }
@@ -239,7 +263,7 @@ class AdminManagement extends Component {
                         </div>
                     </div>
                     <div>
-                        <Button variant="contained">
+                        <Button variant="contained" onClick={this.createVaccine}>
                             Create Vaccine
                         </Button>
                     </div>

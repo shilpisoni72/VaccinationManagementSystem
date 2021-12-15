@@ -13,13 +13,13 @@ class VaccinesDue extends Component {
         super(props)
         this.state = {
             vaccinesDue: [
-                {name:'Pfizer', numShots:2, dueDate:'2021-12-24'},
-                {name:'Flu', numShots:1, dueDate:'2021-12-24'},
-                {name:'Moderna', numShots:2, dueDate:'2021-12-24'},
+                {vaccinatioName:'Pfizer', numberOfShotDue:2, dueDate:'2021-12-24'},
+                {vaccinatioName:'Flu', numberOfShotDue:1, dueDate:'2021-12-24'},
+                {vaccinatioName:'Moderna', numberOfShotDue:2, dueDate:'2021-12-24'},
             ],
             appointments: [
-                {vaccine: "Pfizer", clinic:"Sunnyvale CVS", date:"2021-12-20T12:15:00", checkedIn: false},
-                {vaccine: "Flu", clinic:"Sunnyvale CVS", date:"2021-12-20T12:15:00", checkedIn: false},
+                {vaccinatioName: "Pfizer", clinicName:"Sunnyvale CVS", appointmentDateTime:"2021-12-20T12:15:00", checkIn: false},
+                {vaccinatioName: "Flu", clinicName:"Sunnyvale CVS", appointmentDateTime:"2021-12-20T12:15:00", checkIn: false},
             ]
         }
     }
@@ -28,11 +28,26 @@ class VaccinesDue extends Component {
         const cookies = new Cookies();
         let userId = cookies.get('userId');
         
+        const payload = {
+            userId: userId,
+            date: this.props.chosenDate 
+        }
+
         try {
-            const response = await axios.get(`${API_URL}/dashboard&userId=${userId}`);
+            const response = await axios.post(`${API_URL}/uservaccination/due`, payload);
+
+            let tempAppointments = [];
+            for(let vaccinationsDue of response.vaccinationsDue){
+                if(vaccinationsDue.appointment){
+                    vaccinationsDue.appointment["clinicName"] = vaccinationsDue.clinicName;
+                    vaccinationsDue.appointment["vaccinationName"] = vaccinationsDue.vaccinatioName;
+                    tempAppointments.push(vaccinationsDue.appointment);
+                }
+            }
+
             this.setState({
-                vaccinesDue: response.vaccines,
-                appointments: response.appointments,
+                vaccinesDue: response.vaccinationsDue,
+                appointments: tempAppointments,
             });
         } catch (error) {
             console.log(error);
@@ -54,7 +69,7 @@ class VaccinesDue extends Component {
                             timeCaption="time"
                             dateFormat="MMMM d, yyyy h:mm aa"
                             minDate={this.props.currentDate}
-                            maxDate={addDays(this.props.chosenDate, 365)}
+                            maxDate={addDays(this.props.currentDate, 365)}
                     />
                     <Button variant="outlined" onClick={() => this.props.chosenDateHandler(this.props.currentDate)}>
                         Revert to Current Date
@@ -67,9 +82,10 @@ class VaccinesDue extends Component {
                                 this.state.vaccinesDue.map((vaccine, index) => {
                                     return (
                                         <div className='d-flex due-vaccine align-items-center'>
-                                            <h5>{vaccine.name}</h5>
-                                            <p>Shots Due: {vaccine.numShots}</p>
-                                            <p>Due Date: {vaccine.dueDate}</p>
+                                            <h5>{vaccine.vaccinatioName}</h5>
+                                            <p>Shots Due: {vaccine.numberOfShotDue}</p>
+                                            <p>Due Date: {vaccine.dueDate.toString()}</p>
+                                            <p>Status: {vaccine.status}</p>
                                         </div>
                                     )
                                 })
@@ -83,12 +99,12 @@ class VaccinesDue extends Component {
                             this.state.appointments.map((appointment, index) => {
                                 return (
                                     <div className='d-flex due-vaccine align-items-center'>
-                                        <h5>{appointment.vaccine}</h5>
-                                        <p>Clinic: {appointment.clinic}</p>
-                                        <p>Date: {appointment.date}</p>
+                                        <h5>{appointment.vaccinatioName}</h5>
+                                        <p>Clinic: {appointment.clinicName}</p>
+                                        <p>Date: {appointment.appointmentDateTime.toString()}</p>
                                         {/* IF date is within 24hrs of chosen date && user hasn't checked in yet, show check in button ELSE hide button */}
                                         {
-                                            !appointment.checkedIn && this.props.chosenDate < new Date(appointment.date) && (new Date(appointment.date) - this.props.chosenDate) / 36e5 <= 24  ? 
+                                            !appointment.checkIn && this.props.chosenDate < new Date(appointment.appointmentDateTime) && (new Date(appointment.appointmentDateTime) - this.props.chosenDate) / 36e5 <= 24  ? 
                                             <Button variant="outlined" onClick={this.handleCheckin}>
                                                 Check In
                                             </Button>
