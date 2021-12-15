@@ -69,7 +69,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public Appointment bookAppointment(Long userId, String appointmentDate, String appointmentBookedDate, Long clinicId, List<Long> vaccinationIds, int shotNumber) {
+    public Appointment bookAppointment(Long userId, String appointmentDate, String appointmentBookedDate, Long clinicId, List<Long> vaccinationIds, List<Integer> shotNumber) {
         try {
 
             Appointment appointment = new Appointment();
@@ -95,17 +95,17 @@ public class AppointmentServiceImpl implements AppointmentService {
                     vaccinations.add(vaccinationData.get());
                 }
             }
+            appointment.setVaccinations(vaccinations);
             Appointment savedAppointment = appointmentRepository.save(appointment);
 
-            for (Long vaccinationId :
-                    vaccinationIds) {
-                Optional<Vaccination> vaccinationData = vaccinationRepository.findById(vaccinationId);
+            for(int i =0;i<vaccinationIds.size();i++){
+                Optional<Vaccination> vaccinationData = vaccinationRepository.findById(vaccinationIds.get(i));
                 if (vaccinationData.isPresent()) {
                     VaccinationRecord vaccinationRecord = new VaccinationRecord();
                     vaccinationRecord.setVaccination(vaccinationData.get());
                     vaccinationRecord.setTaken(false);
                     vaccinationRecord.setShotDate(null);
-                    vaccinationRecord.setShotNumber(shotNumber);
+                    vaccinationRecord.setShotNumber(shotNumber.get(i));
                     vaccinationRecord.setAppointment(savedAppointment);
                     if (userData.isPresent())
                         vaccinationRecord.setUser(userData.get());
@@ -114,7 +114,6 @@ public class AppointmentServiceImpl implements AppointmentService {
                     vaccinationRecordRepository.save(vaccinationRecord);
                 }
             }
-
             return appointment;
         } catch (Exception exception) {
             System.out.println(exception.getStackTrace());
