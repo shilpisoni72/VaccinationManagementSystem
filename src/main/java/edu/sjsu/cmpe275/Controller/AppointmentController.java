@@ -46,7 +46,7 @@ public class AppointmentController {
 
     @PostMapping("/book")
     @Transactional
-    public ResponseEntity<Object> bookAppointment(@RequestBody Long userId, String appointmentDate, String appointmentBookedDate, Long clinicId, List<Long> vaccinationIds, int shotNumber) {
+    public ResponseEntity<Object> bookAppointment(@RequestBody Long userId, String appointmentDate, String appointmentBookedDate, Long clinicId, List<Long> vaccinationIds, List<Integer> shotNumber) {
         try {
             Appointment bookedAppointment = appointmentService.bookAppointment(userId, appointmentDate, appointmentBookedDate, clinicId, vaccinationIds, shotNumber);
             if (bookedAppointment != null)
