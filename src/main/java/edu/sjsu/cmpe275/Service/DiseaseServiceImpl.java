@@ -5,6 +5,8 @@ import edu.sjsu.cmpe275.Repository.DiseaseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -44,5 +46,17 @@ public class DiseaseServiceImpl implements DiseaseService {
             System.out.println("exception in deleting disease" + e);
             return false;
         }
+    }
+
+    @Override
+    public List<Disease> getAllDiseases() {
+        try{
+            List<Disease> diseases = new ArrayList<>();
+            diseaseRepository.findAll().forEach(diseases::add);
+            return diseases;
+        }catch (Exception e){
+            System.out.println("exception in getAllDiseases" + e);
+        }
+        return null;
     }
 }
