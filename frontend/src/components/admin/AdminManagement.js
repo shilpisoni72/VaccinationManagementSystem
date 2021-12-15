@@ -175,9 +175,9 @@ class AdminManagement extends Component {
     createVaccine = async () => {    
         const payload = {
             name: this.state.vaccine,
+            diseaseIds: this.state.diseasesSelected,
             manufacturer: this.state.manufacturer,
-            diseases: this.state.diseasesSelected,
-            numShots: this.state.numberShots,
+            numberOfShots: this.state.numberShots,
             shotInterval: this.state.shotInterval,
             duration: this.state.duration
         }
