@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router';
+import axios from 'axios';
+import Cookies from 'universal-cookie';
+import { Navigate } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import TextField from '@mui/material/TextField';
 import InputLabel from '@mui/material/InputLabel';
@@ -9,6 +11,7 @@ import Select from '@mui/material/Select';
 import './Signup.css';
 import { Button } from '@mui/material';
 
+const { API_URL } = require('../utils/Constants').default;
 class Signup extends Component {
   constructor(props) {
     super(props);
@@ -82,24 +85,42 @@ class Signup extends Component {
         })
     }
 
-  handleSignupSubmit = (e) => {
-    e.preventDefault();
-
-    const { email, password } = this.state;
-    const user = {
-      email,
-      password,
-    };
-
-    const { loginWrapper } = this.props;
-    loginWrapper(user);
-  }
+    handleSignupSubmit = async (e) => {
+      const { email, password, firstName, lastName, middleName, address, gender, mrn, dateOfBirth } = this.state;
+      const payload = {
+        email,
+        password,
+        firstName,
+        lastName,
+        middleName,
+        address,
+        gender,
+        mrn,
+        dateOfBirth
+      };
+  
+      try {
+        let response = null;
+        if(email.includes("@sjsu")){
+          response = await axios.post(`${API_URL}/adminsignup`, payload);
+        } else {
+          response = await axios.post(`${API_URL}/signup`, payload);
+        }
+  
+        if(response.userId != null) {
+          this.setState({
+            redirect: true,
+          })
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
 
   render() {
     const {
       email, password, firstName, lastName, middleName, address, dateOfBirth, mrn, gender,
     } = this.state;
-    const { user } = this.props;
 
     const signupDiv = (
         <div className='d-flex justify-content-center signup'>
@@ -135,7 +156,7 @@ class Signup extends Component {
                     onChange={this.handleDobChange} 
                   />  
                 </label>
-                <Button variant="contained">
+                <Button variant="contained" onClick={this.handleSignupSubmit}>
                   Sign up
                 </Button>
             </div>
@@ -145,7 +166,7 @@ class Signup extends Component {
 
     return (
       <div>
-        {signupDiv}
+        {this.state.redirect===false ? signupDiv : <Navigate to="/"/>}
       </div>
     );
   }

@@ -5,18 +5,20 @@ import edu.sjsu.cmpe275.Model.Clinic;
 import edu.sjsu.cmpe275.Model.Disease;
 import edu.sjsu.cmpe275.Repository.ClinicRepository;
 import edu.sjsu.cmpe275.Service.ClinicService;
+import edu.sjsu.cmpe275.Service.ClinicServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/clinic")
 public class ClinicController {
     @Autowired
-    ClinicService clinicService;
+    ClinicServiceImpl clinicService;
     @Autowired
     ClinicRepository clinicRepository;
 
@@ -61,4 +63,12 @@ public class ClinicController {
         }
         return new ResponseEntity<>(clinicData, HttpStatus.OK);
     }
+
+    @GetMapping("/getAvailableClinics")
+    public ResponseEntity<List<Clinic>> getAvailableClinics(@RequestParam String appointmentTime) {
+        System.out.println("get available clinic controller called");
+        List<Clinic> clinics = clinicService.getAvailableClinics(appointmentTime);
+        return new ResponseEntity<>(clinics, HttpStatus.OK);
+    }
+
 }

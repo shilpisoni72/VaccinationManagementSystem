@@ -12,4 +12,5 @@ public interface ClinicService {
     public Optional<Clinic> getClinicByName(String clinicName);
     public boolean deleteClinicById(long id);
     public List<Clinic> getAllAvailableClinics(Object object);
+    public List<Clinic> getAvailableClinics(String appointmentTime);
 }
