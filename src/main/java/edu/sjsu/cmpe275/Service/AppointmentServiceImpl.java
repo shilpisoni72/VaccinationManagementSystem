@@ -222,4 +222,25 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
         return null;
     }
+
+    @Override
+    public boolean checkInAppointment(Long appointmentId){
+        try {
+            List<VaccinationRecord> vaccinationRecordData = vaccinationRecordRepository.findAllByAppointmentId(appointmentId);
+            if(vaccinationRecordData.size() == 0){
+                return false;
+            }
+            for(VaccinationRecord v : vaccinationRecordData){
+                if(v.getTaken() == true){
+                    return false;
+                }
+                v.setTaken(true);
+                vaccinationRecordRepository.save(v);
+            }
+            return true;
+        } catch (Exception exception) {
+            System.out.println(exception.getStackTrace());
+            return false;
+        }
+    }
 }

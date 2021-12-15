@@ -62,29 +62,29 @@ public class ClinicServiceImpl implements ClinicService {
         }
     }
 
-    @Override
-    public List<Clinic> getAllAvailableClinics(Object object) {
-        Date searchDate = new Date();
-        String searchTime = "";
-        List<Clinic> availableClinics = new ArrayList<>();
-        List<Clinic> clinics =  clinicRepository.findAll();
-        for(Clinic c : clinics) {
-            List<Appointment> appointments = c.getAppointments();
-            int phys_num = c.getNumPhysicians();
-            int count = 0;
-            for (Appointment a : appointments) {
-                Date d = a.getDate();
-                Time t = a.getTime();
-                if (d.equals(searchDate) && t.equals(searchTime)) {
-                    count++;
-                }
-            }
-            if (count < phys_num) {
-                availableClinics.add(c);
-            }
-        }
-        return availableClinics;
-    }
+//    @Override
+//    public List<Clinic> getAllAvailableClinics(Object object) {
+//        Date searchDate = new Date();
+//        String searchTime = "";
+//        List<Clinic> availableClinics = new ArrayList<>();
+//        List<Clinic> clinics =  clinicRepository.findAll();
+//        for(Clinic c : clinics) {
+//            List<Appointment> appointments = c.getAppointments();
+//            int phys_num = c.getNumPhysicians();
+//            int count = 0;
+//            for (Appointment a : appointments) {
+//                Date d = a.getDate();
+//                Time t = a.getTime();
+//                if (d.equals(searchDate) && t.equals(searchTime)) {
+//                    count++;
+//                }
+//            }
+//            if (count < phys_num) {
+//                availableClinics.add(c);
+//            }
+//        }
+//        return availableClinics;
+//    }
 
     @Override
     public List<Clinic> getAvailableClinics(String appointmentTime) {
