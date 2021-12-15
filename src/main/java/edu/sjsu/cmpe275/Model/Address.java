@@ -10,24 +10,24 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     private Long id;
 
     @Lob
-    @Column(name = "line_1", nullable = false)
+    @Column(name = "line_1")
     private String line1;
 
     @Lob
     @Column(name = "line_2")
     private String line2;
 
-    @Column(name = "city", nullable = false)
+    @Column(name = "city")
     private String city;
 
-    @Column(name = "state", nullable = false)
+    @Column(name = "state")
     private String state;
 
-    @Column(name = "zip_code", nullable = false)
+    @Column(name = "zip_code")
     private Integer zipCode;
 
     public Long getId() {

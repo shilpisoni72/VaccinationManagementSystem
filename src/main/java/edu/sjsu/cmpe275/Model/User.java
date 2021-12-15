@@ -2,20 +2,80 @@ package edu.sjsu.cmpe275.Model;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.sql.Date;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
+@Getter
+@Setter
+@EqualsAndHashCode
+@NoArgsConstructor
 @XmlRootElement
 @Table(name = "user")
 @Entity
-public class User {
+public class User implements UserDetails {
 
 
-    @Column(name = "first_name", nullable = false)
+    public User() {
+		super();
+	}
+
+
+
+	public User(String firstName, String lastName, AppUserRole appUserRole, String password,
+			String email) {
+		super();
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.appUserRole = appUserRole;
+		this.password = password;
+		this.email = email;
+	}
+
+
+
+
+
+
+
+
+
+
+
+	/*
+	 * public User(String firstName, String lastName, AppUserRole appUserRole, Long
+	 * id, Address address, List<UserVaccination> vaccinationHistory,
+	 * List<Appointment> appointments, Boolean locked, Boolean enabled, String
+	 * password, String email) { super(); this.firstName = firstName; this.lastName
+	 * = lastName; this.appUserRole = appUserRole; this.id = id; this.address =
+	 * address; this.vaccinationHistory = vaccinationHistory; this.appointments =
+	 * appointments; this.locked = locked; this.enabled = enabled; this.password =
+	 * password; this.email = email; }
+	 */
+
+
+
+
+	@Column(name = "first_name")
     private String firstName;
 
-    @Column(name = "last_name", nullable = false)
+    @Column(name = "last_name")
     private String lastName;
+    
+	@Enumerated(EnumType.STRING)
+	private AppUserRole appUserRole;
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "MRN")
@@ -23,30 +83,72 @@ public class User {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "middle_name")
-    private String middleName;
+	/*
+	 * @Column(name = "middle_name") private String middleName;
+	 * 
+	 * @Column(name = "date_of_birth", nullable = false) private Date dateOfBirth;
+	 * 
+	 * @Column(name = "gender", nullable = false) private String gender;
+	 * 
+	 * @Column(name = "verified", nullable = false) private Boolean verified =
+	 * false;
+	 */
 
-    @Column(name = "date_of_birth", nullable = false)
-    private Date dateOfBirth;
+	/*
+	 * @Column(name = "role", nullable = false) private String role;
+	 */
 
-    @Column(name = "gender", nullable = false)
-    private String gender;
-
-    @Column(name = "verified", nullable = false)
-    private Boolean verified = false;
-
-    @Column(name = "role", nullable = false)
-    private String role;
-
-    @OneToOne(cascade = CascadeType.ALL, optional = false, orphanRemoval = true)
-    @JoinColumn(name = "address_ID", nullable = false)
-    private Address address;
+	/*
+	 * @OneToOne(cascade = CascadeType.ALL, optional = false, orphanRemoval = true)
+	 * 
+	 * @JoinColumn(name = "address_ID") private Address address;
+	 */
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserVaccination> vaccinationHistory;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Appointment> appointments;
+    
+	private Boolean locked=false;
+	
+	private Boolean enabled=false;
+	
+	private String password;
+	
+	private String email;
+
+	
+
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public Boolean getLocked() {
+		return locked;
+	}
+
+	public void setLocked(Boolean locked) {
+		this.locked = locked;
+	}
+
+	public Boolean getEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(Boolean enabled) {
+		this.enabled = enabled;
+	}
+
 
     public List<Appointment> getAppointments() {
         return appointments;
@@ -64,53 +166,11 @@ public class User {
         this.vaccinationHistory = vaccinationHistory;
     }
 
-    public Address getAddress() {
-        return address;
-    }
-
-    public void setAddress(Address address) {
-        this.address = address;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public Boolean getVerified() {
-        return verified;
-    }
-
-    public void setVerified(Boolean verified) {
-        this.verified = verified;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public Date getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public void setDateOfBirth(Date dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-
-    public String getMiddleName() {
-        return middleName;
-    }
-
-    public void setMiddleName(String middleName) {
-        this.middleName = middleName;
-    }
+	/*
+	 * public Address getAddress() { return address; }
+	 * 
+	 * public void setAddress(Address address) { this.address = address; }
+	 */
 
     public Long getId() {
         return id;
@@ -135,6 +195,57 @@ public class User {
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
+    
+
+	public AppUserRole getAppUserRole() {
+		return appUserRole;
+	}
+
+	public void setAppUserRole(AppUserRole appUserRole) {
+		this.appUserRole = appUserRole;
+	}
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		SimpleGrantedAuthority authority = new SimpleGrantedAuthority(appUserRole.name());
+		return Collections.singletonList(authority);
+	}
+
+	@Override
+	public String getPassword() {
+		// TODO Auto-generated method stub
+		return password;
+	}
+
+	@Override
+	public String getUsername() {
+		// TODO Auto-generated method stub
+		return email;
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		// TODO Auto-generated method stub
+		return !locked;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		// TODO Auto-generated method stub
+		return enabled;
+	}
 
 
 }
