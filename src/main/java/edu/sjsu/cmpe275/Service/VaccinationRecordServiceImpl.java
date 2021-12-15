@@ -41,6 +41,7 @@ public class VaccinationRecordServiceImpl implements VaccinationRecordService {
                     int duration = vaccinationRecords.getValue().get(0).getVaccination().getDuration();
 
                     vaccinationDue.setVaccinatioName(vaccinationRecords.getValue().get(0).getVaccination().getName());
+                    vaccinationDue.setClinicName(vaccinationRecords.getValue().get(0).getClinic().getClinicName());
                     int latestShotIndex = 0;
                     int latestShotNumber = 0;
                     Date latestShotDate = null;

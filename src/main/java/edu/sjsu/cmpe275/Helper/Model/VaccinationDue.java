@@ -12,14 +12,16 @@ public class VaccinationDue {
     private Appointment appointment;
     private String status;
     private VaccinationRecord vaccinationRecord;
+    private String clinicName;
 
-    public VaccinationDue(String vaccinatioName, int numberOfShotsDue, Date dueDate, Appointment appointment, String status, VaccinationRecord vaccinationRecord) {
+    public VaccinationDue(String vaccinatioName, int numberOfShotsDue, Date dueDate, Appointment appointment, String status, VaccinationRecord vaccinationRecord, String clinicName) {
         this.vaccinatioName = vaccinatioName;
         this.numberOfShotDue = numberOfShotsDue;
         this.dueDate = dueDate;
         this.appointment = appointment;
         this.status = status;
         this.vaccinationRecord=vaccinationRecord;
+        this.clinicName = clinicName;
     }
 
     public VaccinationDue() {
@@ -71,5 +73,13 @@ public class VaccinationDue {
 
     public void setVaccinationRecord(VaccinationRecord vaccinationRecord) {
         this.vaccinationRecord = vaccinationRecord;
+    }
+
+    public String getClinicName() {
+        return clinicName;
+    }
+
+    public void setClinicName(String clinicName) {
+        this.clinicName = clinicName;
     }
 }
