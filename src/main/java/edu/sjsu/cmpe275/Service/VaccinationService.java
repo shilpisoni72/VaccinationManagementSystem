@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface VaccinationService {
     public List<Vaccination> getAllVaccinations();
-    public Vaccination createVaccination(String name, List<Disease> diseases, String manufacturer, Integer numberOfShots, Integer shotInterval, Integer duration);
+    public Vaccination createVaccination(String name, List<Long> diseaseIds, String manufacturer, Integer numberOfShots, Integer shotInterval, Integer duration);
 }

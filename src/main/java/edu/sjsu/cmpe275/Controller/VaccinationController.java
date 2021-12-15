@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/appointment")
+@RequestMapping("/vaccination")
 public class VaccinationController {
 
     @Autowired
@@ -32,9 +32,9 @@ public class VaccinationController {
 
     @PostMapping("/create")
     @Transactional
-    public ResponseEntity<Object> createVaccination(String name, List<Disease> diseases, String manufacturer, Integer numberOfShots, Integer shotInterval, Integer duration) {
+    public ResponseEntity<Object> createVaccination(String name, List<Long> diseaseIds, String manufacturer, Integer numberOfShots, Integer shotInterval, Integer duration) {
         try {
-            return new ResponseEntity<Object>(vaccinationService.createVaccination(name, diseases, manufacturer, numberOfShots, shotInterval, duration), HttpStatus.OK);
+            return new ResponseEntity<Object>(vaccinationService.createVaccination(name, diseaseIds, manufacturer, numberOfShots, shotInterval, duration), HttpStatus.OK);
         } catch (Exception exception) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return new ResponseEntity<Object>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
