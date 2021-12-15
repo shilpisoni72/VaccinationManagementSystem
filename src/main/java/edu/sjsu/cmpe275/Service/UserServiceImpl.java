@@ -89,6 +89,28 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		return userRepository.findByEmail(email)
 				.orElseThrow(() -> new UsernameNotFoundException(String.format(USER_NOT_FOUND_MESSAGE, email)));	}
 
+	@Override
+	public User loginUser(String email, String encodedpassword) {
+		
+		User user=	userRepository.findByEmail(email).orElseThrow(()->new IllegalStateException("User not found !"));
+		Boolean isEnabled= user.getEnabled();
+		
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+		String password = user.getPassword();
+		String encodedPassword = passwordEncoder.encode(password);
+		boolean isPasswordMatch = passwordEncoder.matches(password, encodedPassword);
+		
+		if(isEnabled && isPasswordMatch)
+		{
+			return user;
+		}
+		else
+		{
+			return null;
+		}
+
+	}
+
 
 
 }
