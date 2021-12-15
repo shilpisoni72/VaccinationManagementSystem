@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 import TextField from '@mui/material/TextField';
 import { Button } from '@mui/material';
 import InputLabel from '@mui/material/InputLabel';
@@ -7,6 +8,7 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import './AdminManagement.css';
 
+const { API_URL } = require('../utils/Constants').default;
 class AdminManagement extends Component {
     constructor(props) {
         super(props);
@@ -14,6 +16,7 @@ class AdminManagement extends Component {
             clinicName: '',
             clinicAddress: '',
             opening: 8,
+            closing: 17,
             physicians: 0,
 
             disease: '',
@@ -36,6 +39,7 @@ class AdminManagement extends Component {
         };
     }
 
+    // CLINIC FORM
     handleClinicChange = (e) => {
         this.setState({
             clinicName: e.target.value
@@ -66,6 +70,22 @@ class AdminManagement extends Component {
         });
     }
 
+    createClinic = async () => {    
+        const payload = {
+            name: this.state.clinicName,
+            address: this.state.clinicAddress,
+            opening: this.state.opening,
+            closing: this.state.closing,
+            physicians: this.state.physicians,
+        }
+        try {
+            const response = await axios.post(`${API_URL}/clinic`, payload);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    // DISEASE FORM
     handleDiseaseChange = (e) => {
         this.setState({
             disease: e.target.value
@@ -78,6 +98,22 @@ class AdminManagement extends Component {
         });
     }
 
+    createDisease = async () => {    
+        const payload = {
+            name: this.state.disease,
+            description: this.state.description
+        }
+        try {
+            const response = await axios.post(`${API_URL}/disease`, payload);
+            this.setState({
+                currentDiseases: response.diseases,
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    // VACCINE FORM
     handleVaccineChange = (e) => {
         this.setState({
             vaccine: e.target.value
@@ -113,6 +149,23 @@ class AdminManagement extends Component {
             diseasesSelected: e.target.value
         });
     }
+
+    createVaccine = async () => {    
+        const payload = {
+            name: this.state.vaccine,
+            manufacturer: this.state.manufacturer,
+            disease: this.state.diseasesSelected,
+            numShots: this.state.numberShots,
+            shotInterval: this.state.shotInterval,
+            duration: this.state.duration
+        }
+        try {
+            const response = await axios.post(`${API_URL}/vaccine`, payload);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
 
     render() {
         return (
