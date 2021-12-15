@@ -79,7 +79,7 @@ public class VaccinationRecordServiceImpl implements VaccinationRecordService {
                         }
                     } else {
                         if (latestShot.getTaken()) {
-                            if (getNextShotDate(vaccinationRecords.getValue().get(latestShotIndex).getAppointment().getDate(), duration).before(endDate)){
+                            if (getNextShotDate(vaccinationRecords.getValue().get(latestShotIndex).getAppointment().getDate(), duration).before(endDate) && duration!=0){
                                 vaccinationDue.setStatus("DUE");
                                 vaccinationDue.setDueDate(getNextShotDate(vaccinationRecords.getValue().get(latestShotIndex).getAppointment().getDate(), duration));
                                 vaccinationDue.setNumberOfShotDue(vaccinationRecords.getValue().get(latestShotIndex).getShotNumber() + 1);
@@ -90,7 +90,7 @@ public class VaccinationRecordServiceImpl implements VaccinationRecordService {
                                 }
                                 vaccinationsDue.add(vaccinationDue);
                             }
-                        } else {
+                        } else if(duration!=0) {
                             vaccinationDue.setStatus("OVERDUE");
                             vaccinationDue.setNumberOfShotDue(vaccinationRecords.getValue().get(latestShotIndex).getShotNumber());
                             vaccinationDue.setVaccinationRecord(vaccinationRecords.getValue().get(latestShotIndex));
@@ -106,6 +106,46 @@ public class VaccinationRecordServiceImpl implements VaccinationRecordService {
             }
             return vaccinationsDue;
         } catch (Exception exception) {
+            System.out.println(exception.getStackTrace());
+        }
+        return null;
+    }
+
+    @Override
+    public List<VaccinationRecord> getVaccinationRecords(Long userId) {
+        try {
+            List<VaccinationRecord> userVaccinationHistory = new ArrayList<VaccinationRecord>();
+            vaccinationRecordRepository.findAllByUserId(userId).forEach(userVaccinationHistory::add);
+            return userVaccinationHistory;
+        } catch (Exception exception) {
+            System.out.println(exception.getStackTrace());
+        }
+        return null;
+    }
+
+    @Override
+    public List<VaccinationRecord> getVaccinationRecordsByVaccine(Long vaccinationId, Long userId) {
+        try{
+            List<VaccinationRecord> vaccinationHistory = new ArrayList<>();
+            vaccinationRecordRepository.findAllByVaccinationIdAndUserId(vaccinationId, userId).forEach(vaccinationHistory::add);
+            if (!vaccinationHistory.isEmpty())
+                return vaccinationHistory;
+        }
+        catch (Exception exception){
+            System.out.println(exception.getStackTrace());
+        }
+        return null;
+    }
+
+    @Override
+    public List<VaccinationRecord> getVaccinationRecordsByAppointment(Long appointmentId, Long userId) {
+        try{
+            List<VaccinationRecord> vaccinationHistory = new ArrayList<>();
+            vaccinationRecordRepository.findAllByAppointmentIdAndUserId(appointmentId, userId).forEach(vaccinationHistory::add);
+            if (!vaccinationHistory.isEmpty())
+                return vaccinationHistory;
+        }
+        catch (Exception exception){
             System.out.println(exception.getStackTrace());
         }
         return null;
