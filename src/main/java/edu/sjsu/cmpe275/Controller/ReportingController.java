@@ -20,7 +20,7 @@ public class ReportingController {
     ReportingServiceImpl reportingService;
 
     @GetMapping("/patientReport")
-    public ResponseEntity<List<Appointment>> getPatientReport(@PathVariable ("startDate") Date startDate, @PathVariable ("endDate") Date endDate) {
+    public ResponseEntity<List<Appointment>> getPatientReport(@PathVariable ("startDate") String startDate, @PathVariable ("endDate") String endDate) {
         System.out.println("request object: start date = " + startDate + " end date = " + endDate);
         try {
             List<Appointment> appointments = new ArrayList<>();

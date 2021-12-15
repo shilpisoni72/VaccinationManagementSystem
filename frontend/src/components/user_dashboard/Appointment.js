@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 import DatePicker from "react-datepicker";
+import Cookies from 'universal-cookie';
+import axios from 'axios';
 import './Appointment.css';
 import "react-datepicker/dist/react-datepicker.css";
 import InputLabel from '@mui/material/InputLabel';
@@ -8,6 +10,7 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Button from '@mui/material/Button';
 
+const { API_URL } = require('../utils/Constants').default;
 class Appointment extends Component {
     constructor(props) {
         super(props);
@@ -69,6 +72,28 @@ class Appointment extends Component {
         });
     }
 
+    bookAppointment = async (e) => {
+        const cookies = new Cookies();
+        let userId = cookies.get('userId');
+
+        const payload = {
+            user: userId,
+            date: this.state.appointmentDate,
+            vaccines: this.state.vaccinesSelected,
+            clinic: this.state.clinicSelected,
+        }
+
+        try {
+            const response = await axios.post(`${API_URL}/bookappointment`, payload);
+            this.setState({
+                scheduledAppointments: response.appointments
+            });
+        } catch (error) {
+            console.log(error);
+        }
+
+    }
+
     handleAppointmentChange = (e) => {
         this.setState({
             appointmentSelected: e.target.value
@@ -88,6 +113,48 @@ class Appointment extends Component {
             rescheduleClinicSelected: e.target.value
         });
     }
+
+    rescheduleAppointment = async (e) => {
+        const cookies = new Cookies();
+        let userId = cookies.get('userId');
+
+        const payload = {
+            user: userId,
+            date: this.state.rescheduleDate,
+            clinic: this.state.rescheduleClinicSelected,
+        }
+
+        try {
+            const response = await axios.post(`${API_URL}/rescheduleappointment`, payload);
+            this.setState({
+                scheduledAppointments: response.appointments
+            });
+        } catch (error) {
+            console.log(error);
+        }
+
+    }
+
+    cancelAppointment = async (e) => {
+        const cookies = new Cookies();
+        let userId = cookies.get('userId');
+
+        const payload = {
+            user: userId,
+            appointment: e.target.value.appointmentId,
+        }
+
+        try {
+            const response = await axios.post(`${API_URL}/cancelappointment`, payload);
+            this.setState({
+                scheduledAppointments: response.appointments
+            });
+        } catch (error) {
+            console.log(error);
+        }
+
+    }
+
 
     render() {
         return (
@@ -145,7 +212,7 @@ class Appointment extends Component {
                             }
                             </Select>
                         </FormControl>
-                        <Button variant="contained">
+                        <Button variant="contained" onClick={this.bookAppointment}>
                             Schedule Appointment
                         </Button>
                     </div>
