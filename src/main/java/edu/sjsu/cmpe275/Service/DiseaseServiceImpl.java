@@ -16,9 +16,14 @@ public class DiseaseServiceImpl implements DiseaseService {
     public Optional<Disease> createDisease(String diseaseName, String description){
         System.out.println("inside disease service impl, create disease = " + diseaseName );
         try{
-            Optional<Disease> disease =  Optional.of(diseaseRepository.save(new Disease(diseaseName, description))) ;
-            System.out.println("disease name and id = "+  disease.get().getName() + " " + disease.get().getId());
-            return disease;
+
+            Disease disease = new Disease();
+            disease.setName(diseaseName);
+            disease.setDescription(description);
+
+            Optional<Disease> savedDisease =  Optional.of(diseaseRepository.save(disease)) ;
+            System.out.println("disease name and id = "+  savedDisease.get().getName() + " " + savedDisease.get().getId());
+            return savedDisease;
         }catch (Exception e){
             System.out.println("exception thrown create disease error  = " +e);
             return null;

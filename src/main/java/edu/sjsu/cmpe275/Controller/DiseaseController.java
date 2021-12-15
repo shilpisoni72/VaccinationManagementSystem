@@ -22,7 +22,7 @@ public class DiseaseController {
     DiseaseService diseaseService;
 
     @PostMapping("/createDisease")
-    public ResponseEntity<Object> createDisease(@RequestParam("diseaseName") String diseaseName, @RequestParam("diseaseDescription") String diseaseDescription) {
+    public ResponseEntity<Object> createDisease(@RequestBody String diseaseName, String diseaseDescription) {
         System.out.println("create disease controller called");
         Optional<Disease> diseaseData = diseaseService.getDiseaseByName(diseaseName);
         if(diseaseData.isPresent()){
