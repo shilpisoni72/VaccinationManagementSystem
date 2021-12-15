@@ -1,5 +1,6 @@
 package edu.sjsu.cmpe275.Service;
 
+import java.sql.Date;
 import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,9 @@ public class RegistrationService {
 	
 	public String register(RegistrationRequest request) {
 
-		String token = userService.singUpUser(new User(request.getFirstName(), request.getLastName(), AppUserRole.USER,request.getPassword(), request.getEmail()));
+	
+		
+		String token = userService.singUpUser(new User(request.getFirstName(), request.getLastName(), AppUserRole.USER,request.getDateOfBirth(),request.getGender(),request.getVerified(),request.getRole(),request.getPassword(), request.getEmail(), request.getAddress(), request.getCity(), request.getState(), request.getZipcode()));
 		//emailSender.send(request.getEmail(), token);
 		
 		String link = "http://localhost:8080/api/v1/registration/confirm?token=" + token;
