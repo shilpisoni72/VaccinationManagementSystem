@@ -4,11 +4,13 @@ import edu.sjsu.cmpe275.Model.Address;
 import edu.sjsu.cmpe275.Model.Appointment;
 import edu.sjsu.cmpe275.Model.Clinic;
 import edu.sjsu.cmpe275.Model.Disease;
+import edu.sjsu.cmpe275.Repository.AppointmentRepository;
 import edu.sjsu.cmpe275.Repository.ClinicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,6 +20,8 @@ import java.util.Optional;
 public class ClinicServiceImpl implements ClinicService {
     @Autowired
     ClinicRepository clinicRepository;
+    @Autowired
+    AppointmentRepository appointmentRepository;
 
     @Override
     public Optional<Clinic> createClinic(){
@@ -82,5 +86,16 @@ public class ClinicServiceImpl implements ClinicService {
         return availableClinics;
     }
 
+    @Override
+    public List<Clinic> getAvailableClinics(String appointmentTime) {
+        String searchTime = "";
+        Date d = new Date(appointmentTime);
+        Timestamp t =  new Timestamp(d.getTime());
+        List<Clinic> availableClinics = new ArrayList<>();
+        List<Appointment> appointments = new ArrayList<>();
+        appointments =  appointmentRepository.findAllAppointmentByDateTime(t);
+
+        return availableClinics;
+    }
 
 }

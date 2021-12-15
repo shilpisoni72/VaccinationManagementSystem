@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import DatePicker from "react-datepicker";
 import Button from '@mui/material/Button';
 import addDays from 'date-fns/addDays';
+import Cookies from 'universal-cookie';
 import './PatientReports.css';
 import Axios from "axios";
 
@@ -42,7 +43,13 @@ class PatientReports extends Component {
 
         try {
 
-            const response = await axios.get(`${API_URL}/patientReport&userId=${userId}&startDate=${this.state.startDate}&endDate=${this.state.endDate}`);
+            const response = await Axios.get(`${API_URL}/report/patientreports`,  {
+                    params: {
+                        userId: "saketh",
+                        startDate: this.state.startDate,
+                        endDate: this.state.endDate,
+                    },
+            });
             this.setState({
                 totalAppointments: response.totalAppointments,
                 noShowAppointments: response.noShowAppointments,
