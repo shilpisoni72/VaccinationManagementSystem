@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class AppointmentServiceImpl implements AppointmentService{
+public class AppointmentServiceImpl implements AppointmentService {
 
     @Autowired
     AppointmentRepository appointmentRepository;
@@ -35,52 +36,188 @@ public class AppointmentServiceImpl implements AppointmentService{
     @Autowired
     VaccinationShotRepository vaccinationShotRepository;
 
+    @Autowired
+    VaccinationRecordRepository vaccinationRecordRepository;
+
+    @Autowired
+    VaccinationRecordServiceImpl vaccinationRecordService;
+
     @Override
-    public List<Appointment> getAllAppointmentsBetween(String dateStart, String dateEnd) {
-        try{
+    public List<Appointment> getAllAppointmentsForUser(Long userId) {
+        try {
             List<Appointment> appointments = new ArrayList<>();
-            appointmentRepository.findAllByDateBetween(new Date(dateStart), new Date(dateEnd)).forEach(appointments::add);
+            appointmentRepository.findAllByUserId(userId).forEach(appointments::add);
             if (!appointments.isEmpty())
                 return appointments;
-        }
-        catch (Exception exception){
+        } catch (Exception exception) {
             System.out.println(exception.getStackTrace());
         }
         return null;
     }
 
     @Override
-    public Appointment bookAppointment(Long userId, Date appointmentDate, Long clinicId, List<Long> vaccinationIds) {
-        try{
-            Appointment newAppointment = new Appointment();
-            List<Vaccination> vaccinations = new ArrayList<>();
-
-            Optional<User> userData = userRepository.findById(userId);
-            Optional<Clinic> clinicData = clinicRepository.findById(clinicId);
-            vaccinations = vaccinationRepository.findAllById(vaccinationIds);
-            for (Vaccination vaccination :
-                    vaccinations) {
-                UserVaccination userVaccinationRecord = userVaccinationRepository.findUserVaccinationByVaccinationId(vaccination.getId());
-
-            }
-
-            if (!userData.isPresent()) {
-                System.out.println("User not found!");
-                return null;
-            }
-            if (!clinicData.isPresent()) {
-                System.out.println("Clinic not found!");
-                return null;
-            }
-            newAppointment.setUser(userData.get());
-            newAppointment.setClinic(clinicData.get());
-            newAppointment.setAppointmentDateTime(new Timestamp(appointmentDate.getTime()));
-            //see how to set time
-            newAppointment.setCheckIn(false);
-
-
+    public List<Appointment> getAllAppointmentsBetween(String dateStart, String dateEnd) {
+        try {
+            List<Appointment> appointments = new ArrayList<>();
+            appointmentRepository.findAllByDateBetween(new Date(dateStart), new Date(dateEnd)).forEach(appointments::add);
+            if (!appointments.isEmpty())
+                return appointments;
+        } catch (Exception exception) {
+            System.out.println(exception.getStackTrace());
         }
-        catch (Exception exception){
+        return null;
+    }
+
+    @Override
+    public Appointment bookAppointment(Long userId, String appointmentDate, String appointmentBookedDate, Long clinicId, List<Long> vaccinationIds, int shotNumber) {
+        try {
+
+            Appointment appointment = new Appointment();
+            appointment.setBookedOn(new Timestamp(new Date(appointmentBookedDate).getTime()));
+            appointment.setDate(new java.sql.Date(new Date(appointmentDate).getTime()));
+            appointment.setCheckIn(false);
+            appointment.setAppointmentDateTime(new Timestamp(new Date(appointmentBookedDate).getTime()));
+            appointment.setTime(new Time(new Date(appointmentDate).getTime()));
+            Optional<User> userData = userRepository.findById(userId);
+            if (userData.isPresent())
+                appointment.setUser(userData.get());
+
+            Optional<Clinic> clinicData = clinicRepository.findById(clinicId);
+            if (clinicData.isPresent())
+                appointment.setClinic(clinicData.get());
+
+            List<Vaccination> vaccinations = new ArrayList<Vaccination>();
+
+            for (Long vaccinationId :
+                    vaccinationIds) {
+                Optional<Vaccination> vaccinationData = vaccinationRepository.findById(vaccinationId);
+                if (vaccinationData.isPresent()) {
+                    vaccinations.add(vaccinationData.get());
+                }
+            }
+            Appointment savedAppointment = appointmentRepository.save(appointment);
+
+            for (Long vaccinationId :
+                    vaccinationIds) {
+                Optional<Vaccination> vaccinationData = vaccinationRepository.findById(vaccinationId);
+                if (vaccinationData.isPresent()) {
+                    VaccinationRecord vaccinationRecord = new VaccinationRecord();
+                    vaccinationRecord.setVaccination(vaccinationData.get());
+                    vaccinationRecord.setTaken(false);
+                    vaccinationRecord.setShotDate(null);
+                    vaccinationRecord.setShotNumber(shotNumber);
+                    vaccinationRecord.setAppointment(savedAppointment);
+                    if (userData.isPresent())
+                        vaccinationRecord.setUser(userData.get());
+                    if (clinicData.isPresent())
+                        vaccinationRecord.setClinic(clinicData.get());
+                    vaccinationRecordRepository.save(vaccinationRecord);
+                }
+            }
+
+            return appointment;
+        } catch (Exception exception) {
+            System.out.println(exception.getStackTrace());
+        }
+        return null;
+    }
+
+    @Override
+    public Integer getShotNumber(Long vaccinationId, Long userId, String date) {
+        try {
+            Date appointmentDate = new Date(date);
+            List<VaccinationRecord> vaccinationRecords = vaccinationRecordService.getVaccinationRecordsByVaccine(vaccinationId, userId);
+            if (!vaccinationRecords.isEmpty()) {
+                int vaccinationNumberOfShots = vaccinationRecords.get(0).getVaccination().getNumberOfShots();
+                int vaccinationInterval = vaccinationRecords.get(0).getVaccination().getShotInterval();
+                int duration = vaccinationRecords.get(0).getVaccination().getDuration();
+                VaccinationRecord latestVaccinationRecord = null;
+                int latestShotNumber = 0;
+                for (VaccinationRecord vaccinationRecord :
+                        vaccinationRecords) {
+                    if (vaccinationRecord.getShotNumber() > latestShotNumber) {
+                        latestShotNumber = vaccinationRecord.getShotNumber();
+                        latestVaccinationRecord = vaccinationRecord;
+                    }
+                }
+                if (vaccinationRecords.size() % vaccinationNumberOfShots != 0) {
+                    if (latestVaccinationRecord.getTaken()) {
+                        if (appointmentDate.before(vaccinationRecordService.getNextShotDate(appointmentDate, vaccinationInterval))) {
+                            return -1;
+                        } else {
+                            return latestVaccinationRecord.getShotNumber() + 1;
+                        }
+                    } else {
+                        return -1;
+                    }
+                } else {
+                    //duration
+                    if (latestVaccinationRecord.getTaken() && duration != 0) {
+                        if (appointmentDate.before(vaccinationRecordService.getNextShotDate(appointmentDate, duration))) {
+                            return -1;
+                        } else {
+                            return latestVaccinationRecord.getShotNumber() + 1;
+                        }
+                    } else if (duration != 0) {
+                        return -1;
+                    }
+                }
+            } else {
+                return 1;
+            }
+        } catch (Exception exception) {
+            System.out.println(exception.getStackTrace());
+        }
+        return -1;// check once
+    }
+
+    @Override
+    public Appointment changeAppointment(Long appointmentId, String appointmentDate, String appointmentBookedDate, List<Long> vaccinationIds, int shotNumber) {
+        try {
+            Optional<Appointment> appointmentData = appointmentRepository.findById(appointmentId);
+            if (appointmentData.isPresent()) {
+                List<VaccinationRecord> vaccinationRecords = new ArrayList<>();
+                vaccinationRecordRepository.findAllByAppointmentId(appointmentId).forEach(vaccinationRecords::add);
+                for (VaccinationRecord vaccinationRecord :
+                        vaccinationRecords) {
+                    vaccinationRecordRepository.deleteById(vaccinationRecord.getId());
+                }
+                appointmentRepository.deleteById(appointmentId);
+                return appointmentData.get();
+            }
+        } catch (Exception exception) {
+            System.out.println(exception.getStackTrace());
+        }
+        return null;
+    }
+
+    @Override
+    public Appointment cancelAppointment(Long appointmentId) {
+        try {
+            Optional<Appointment> appointmentData = appointmentRepository.findById(appointmentId);
+            if (appointmentData.isPresent()) {
+                List<VaccinationRecord> vaccinationRecords = new ArrayList<>();
+                vaccinationRecordRepository.findAllByAppointmentId(appointmentId).forEach(vaccinationRecords::add);
+                for (VaccinationRecord vaccinationRecord :
+                        vaccinationRecords) {
+                    vaccinationRecordRepository.deleteById(vaccinationRecord.getId());
+                }
+                appointmentRepository.deleteById(appointmentId);
+                return appointmentData.get();
+            }
+        } catch (Exception exception) {
+            System.out.println(exception.getStackTrace());
+        }
+        return null;
+    }
+
+    @Override
+    public Appointment getAppointment(Long appointmentId) {
+        try {
+            Optional<Appointment> appointmentData = appointmentRepository.findById(appointmentId);
+            if (appointmentData.isPresent())
+                return appointmentData.get();
+        } catch (Exception exception) {
             System.out.println(exception.getStackTrace());
         }
         return null;

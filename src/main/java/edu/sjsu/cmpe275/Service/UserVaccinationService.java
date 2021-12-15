@@ -12,4 +12,5 @@ public interface UserVaccinationService {
     public List<VaccinationDue> getVaccinationsDue(Long userId, String date);
     public List<UserVaccination> getUserVaccinationHistory(Long userId);
 
+
 }
