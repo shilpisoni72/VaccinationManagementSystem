@@ -82,8 +82,8 @@ public class AppointmentController {
     public ResponseEntity<Object> getShotNumber(@RequestBody Map<String, Object> requestBody) {
         try {
 
-            Long vaccinationId = (Long) requestBody.get("vaccinationId");
-            Long userId = (Long) requestBody.get("userId");
+            Long vaccinationId = ((Number) requestBody.get("vaccinationId")).longValue();
+            Long userId = ((Number) requestBody.get("userId")).longValue();
             String date = (String) requestBody.get("date");
 
 
