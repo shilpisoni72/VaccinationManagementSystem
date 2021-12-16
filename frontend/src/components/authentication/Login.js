@@ -1,18 +1,18 @@
-import React, { Component } from 'react';
-import TextField from '@mui/material/TextField';
-import { Button } from '@mui/material';
-import axios from 'axios';
-import Cookies from 'universal-cookie';
+import React, { Component } from "react";
+import TextField from "@mui/material/TextField";
+import { Button } from "@mui/material";
+import axios from "axios";
+import Cookies from "universal-cookie";
 import { Navigate } from "react-router-dom";
-import './Login.css';
+import "./Login.css";
 
-const { API_URL } = require('../utils/Constants').default;
+const { API_URL } = require("../utils/Constants").default;
 class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
       redirect: false,
       verified: true,
     };
@@ -25,15 +25,16 @@ class Login extends Component {
     this.setState({
       email: e.target.value,
     });
-  }
+  };
 
   handlePasswordChange = (e) => {
     this.setState({
       password: e.target.value,
     });
-  }
+  };
 
   handleLoginSubmit = async (e) => {
+    e.preventDefault();
     const { email, password } = this.state;
     const payload = {
       email,
@@ -42,19 +43,19 @@ class Login extends Component {
 
     try {
       let response = null;
-      if(email.includes("@sjsu")){
+      if (email.includes("@sjsu")) {
         response = await axios.post(`${API_URL}/adminlogin`, payload);
       } else {
-        response = await axios.post(`${API_URL}/login`, payload);
+        response = await axios.post(`${API_URL}/user/login`, payload);
       }
 
-      if(response.userId != null) {
+      if (response.userId != null) {
         const cookies = new Cookies();
-        cookies.set('userId', response.userId);
+        cookies.set("userId", response.userId);
         this.setState({
           redirect: true,
           verified: true,
-        })
+        });
       } else {
         // USER isn't verified???
         this.setState({
@@ -64,29 +65,46 @@ class Login extends Component {
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   render() {
-    const {
-      email, password,
-    } = this.state;
+    const { email, password } = this.state;
     const { user } = this.props;
 
     const loginDiv = (
-        <div className="d-flex flex-column justify-content-center align-items-center login">
-            <h1>Log in</h1>
-            {this.state.verified===false ? <h4>You must verify your account first</h4> : null}
-            <TextField id="loginemail" label="Email" variant="outlined" required onChange={this.handleEmailChange}/>
-            <TextField id="loginpassword" label="Password" variant="outlined" type="password" required onChange={this.handlePasswordChange}/>
-            <Button variant="contained" onClick={this.handleLoginSubmit}>
-              Log in
-            </Button>
-        </div>
+      <div className="d-flex flex-column justify-content-center align-items-center login">
+        <h1>Log in</h1>
+        {this.state.verified === false ? (
+          <h4>You must verify your account first</h4>
+        ) : null}
+        <TextField
+          id="loginemail"
+          label="Email"
+          variant="outlined"
+          required
+          onChange={this.handleEmailChange}
+        />
+        <TextField
+          id="loginpassword"
+          label="Password"
+          variant="outlined"
+          type="password"
+          required
+          onChange={this.handlePasswordChange}
+        />
+        <Button variant="contained" onClick={this.handleLoginSubmit}>
+          Log in
+        </Button>
+      </div>
     );
 
     return (
       <div>
-        {this.state.redirect===false ? loginDiv : <Navigate to="/dashboard"/>}
+        {this.state.redirect === false ? (
+          loginDiv
+        ) : (
+          <Navigate to="/dashboard" />
+        )}
       </div>
     );
   }
