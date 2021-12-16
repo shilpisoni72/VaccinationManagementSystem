@@ -148,4 +148,38 @@ public class AppointmentController {
         }
     }
 
+    @PostMapping("/past")
+    @Transactional
+    public ResponseEntity<Object> getSortedPastAppointmentsForUSer(@RequestBody Map<String, Object> requestBody) {
+        try {
+
+            Long userId = ((Number) requestBody.get("userId")).longValue();
+            String currentDate = (String) requestBody.get("date");
+
+            return new ResponseEntity<Object>(appointmentService.getSortedPastAppointmentsForUSer(userId,currentDate), HttpStatus.OK);
+
+        } catch (Exception exception) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return new ResponseEntity<Object>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/future")
+    @Transactional
+    public ResponseEntity<Object> getSortedFutureAppointmentsForUSer(@RequestBody Map<String, Object> requestBody) {
+        try {
+
+            Long userId = ((Number) requestBody.get("userId")).longValue();
+            String currentDate = (String) requestBody.get("date");
+
+            return new ResponseEntity<Object>(appointmentService.getSortedFutureAppointmentsForUSer(userId,currentDate), HttpStatus.OK);
+
+        } catch (Exception exception) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return new ResponseEntity<Object>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+
 }
