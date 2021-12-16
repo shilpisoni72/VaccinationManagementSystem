@@ -89,12 +89,15 @@ class AdminManagement extends Component {
         const payload = {
             name: this.state.clinicName,
             address: this.state.clinicAddress,
-            opening: this.state.opening,
-            closing: this.state.closing,
-            physicians: this.state.physicians,
+            opening: parseInt(this.state.opening),
+            closing: parseInt(this.state.closing),
+            businessHours: parseInt(this.state.closing) - parseInt(this.state.opening),
+            physicians: parseInt(this.state.physicians),
         }
+        console.log(payload);
         try {
-            const response = await axios.post(`${API_URL}/clinic`, payload);
+            const response = await axios.post(`${API_URL}/clinic/createClinic`, payload);
+            console.log(response.data);
         } catch (error) {
             console.log(error);
         }
@@ -172,18 +175,18 @@ class AdminManagement extends Component {
         });
     }
 
-    createVaccine = async () => {    
-        const payload = {
+    createVaccine = async () => {   
+        const requestBody = {
             name: this.state.vaccine,
             diseaseIds: this.state.diseasesSelected,
             manufacturer: this.state.manufacturer,
-            numberOfShots: this.state.numberShots,
-            shotInterval: this.state.shotInterval,
-            duration: this.state.duration
+            numberOfShots: parseInt(this.state.numberShots),
+            shotInterval: parseInt(this.state.shotInterval),
+            duration: parseInt(this.state.duration)
         }
-        console.log(payload);
+        console.log(requestBody);
         try {
-            const response = await axios.post(`${API_URL}/vaccination/create`, payload);
+            const response = await axios.post(`${API_URL}/vaccination/create`, requestBody);
             console.log(response)
         } catch (error) {
             console.log(error);
