@@ -15,16 +15,22 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("/report")
 public class ReportingController {
     @Autowired
     ReportingServiceImpl reportingService;
 
-    @GetMapping("/patientreports")
-    public ResponseEntity<PatientRecord> getPatientReport(@RequestParam String userId, @RequestParam String startDate, @RequestParam String endDate, @RequestParam String currDate) {
-        System.out.println("request object: start date = " + startDate + " end date = " + endDate);
+    @PostMapping("/patientreports")
+    public ResponseEntity<PatientRecord> getPatientReport(@RequestBody Map<String, Object> requestBody) {
+        String startDate = (String) requestBody.get("startDate");
+        String endDate = (String) requestBody.get("endDate");
+        String currDate = (String) requestBody.get("currDate");
+        Long userId = Long.parseLong((String)requestBody.get("userId")) ;
+        System.out.println("request object: start date = " + startDate + " end date = " + endDate + " currDate = "+ currDate);
         try {
             List<Appointment> appointments = new ArrayList<>();
             PatientRecord patientRecord =  reportingService.getPatientReport(userId, startDate, endDate, currDate);
@@ -34,12 +40,16 @@ public class ReportingController {
         }
     }
 
-    @GetMapping("/systemreports")
-    public ResponseEntity<SystemRecord> getSystemReport(@RequestParam String clinicId, @RequestParam String startDate, @RequestParam String endDate) {
+    @PostMapping("/systemreports")
+    public ResponseEntity<SystemRecord> getSystemReport(@RequestBody Map<String, Object> requestBody) {
         System.out.println("inside system report controller");
+        String startDate = (String) requestBody.get("startDate");
+        String endDate = (String) requestBody.get("endDate");
+        String currDate = (String) requestBody.get("currDate");
+        Long clinicId = Long.parseLong((String)requestBody.get("clinicId")) ;
         try {
             List<Appointment> appointments = new ArrayList<>();
-            SystemRecord systemRecord = reportingService.getSystemReport(clinicId, startDate, endDate);
+            SystemRecord systemRecord = reportingService.getSystemReport(clinicId, startDate, endDate, currDate);
             return new ResponseEntity<>(systemRecord , HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);

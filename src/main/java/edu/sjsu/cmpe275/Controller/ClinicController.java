@@ -32,15 +32,15 @@ public class ClinicController {
     @PostMapping("/createClinic")
     public ResponseEntity<Object> createClinic(@RequestBody Map<String, Object> requestBody) {
 
-
+//        System.out.println("create clinic controller called = " + clinicName +clinicAddress+city+state+zipCode+numPhys);
         String clinicName = (String) requestBody.get("name");
         String clinicAddress = (String) requestBody.get("address");
-        int numPhys = Integer.parseInt((String)requestBody.get("physicians")) ;
-        int opening = Integer.parseInt((String) requestBody.get("opening")) ;
-        int closing = Integer.parseInt((String) requestBody.get("closing")) ;
+        int numPhys = Integer.parseInt(String.valueOf(requestBody.get("physicians")) ) ;
+        int opening = Integer.parseInt(String.valueOf(requestBody.get("opening")) ) ;
+        int closing = Integer.parseInt(String.valueOf(requestBody.get("closing")) ) ;
         String city = (String) requestBody.get("city");
         String state =  (String) requestBody.get("state");
-        int zipCode = Integer.parseInt((String) requestBody.get("zipCode"));
+        int zipCode = Integer.parseInt(String.valueOf(requestBody.get("zipCode")) );
         System.out.println("create clinic controller called = " + clinicName +clinicAddress+city+state+zipCode+numPhys);
 
         Optional<Clinic> clinicData = clinicService.getClinicByName(clinicName);
