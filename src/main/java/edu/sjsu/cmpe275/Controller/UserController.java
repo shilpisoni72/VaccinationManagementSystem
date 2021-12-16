@@ -68,6 +68,7 @@ public class UserController {
             String addressLine1 = (String) requestBody.get("addressLine1");
             String addressLine2 = (String) requestBody.get("addressLine2");
             String city = (String) requestBody.get("city");
+            String gender = (String) requestBody.get("gender");
             String state = (String) requestBody.get("state");
             Integer zipcode = (Integer) requestBody.get("zipcode");
 
@@ -93,6 +94,9 @@ public class UserController {
             }
             if(!password.isEmpty() && password!=null){
                 user.setPassword(password);
+            }
+            if(!gender.isEmpty() && gender!=null){
+                user.setGender(gender);
             }
             user.setEnabled(false);
             user.setVerified(false);
