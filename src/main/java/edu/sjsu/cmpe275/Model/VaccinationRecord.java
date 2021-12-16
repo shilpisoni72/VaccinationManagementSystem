@@ -1,10 +1,14 @@
 package edu.sjsu.cmpe275.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Table(name = "vaccination_record")
 @Entity
+@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 public class VaccinationRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -14,7 +18,7 @@ public class VaccinationRecord {
     @Column(name = "shot_number", nullable = false)
     private Integer shotNumber;
 
-    @Column(name = "shot_date", nullable = false)
+    @Column(name = "shot_date")
     private Timestamp shotDate;
 
     @ManyToOne(cascade = CascadeType.ALL)
@@ -23,10 +27,12 @@ public class VaccinationRecord {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "clinic_id")
+    @JsonIgnoreProperties({"appointments"})
     private Clinic clinic;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
+        @JsonIgnoreProperties({"appointments","vaccinationHistory","address"})
     private User user;
 
     @Column(name = "taken", unique = true)
@@ -34,6 +40,7 @@ public class VaccinationRecord {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "appointment_id")
+    @JsonIgnoreProperties({"user","clinic","vaccinations"})
     private Appointment appointment;
 
     public Appointment getAppointment() {

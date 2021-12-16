@@ -1,5 +1,7 @@
 package edu.sjsu.cmpe275.Model;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
@@ -7,7 +9,7 @@ import java.util.List;
 @XmlRootElement
 @Entity
 @Table(name = "vaccination")
-
+@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 public class Vaccination {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

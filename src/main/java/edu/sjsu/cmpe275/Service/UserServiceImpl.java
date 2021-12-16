@@ -36,6 +36,17 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
-
-
+    @Override
+    public User getUser(Long id) {
+        try{
+            Optional<User> user = userRepository.findById(116L);
+            if (user.isPresent()) {
+                return user.get();
+            }
+        }
+        catch (Exception exception){
+            System.out.println(exception.getStackTrace());
+        }
+        return null;
+    }
 }

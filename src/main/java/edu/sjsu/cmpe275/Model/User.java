@@ -1,5 +1,8 @@
 package edu.sjsu.cmpe275.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.sql.Date;
@@ -8,6 +11,7 @@ import java.util.List;
 @XmlRootElement
 @Table(name = "user")
 @Entity
+@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 public class User {
 
 
@@ -26,26 +30,28 @@ public class User {
     @Column(name = "middle_name")
     private String middleName;
 
-    @Column(name = "date_of_birth", nullable = false)
+    @Column(name = "date_of_birth")
     private Date dateOfBirth;
 
-    @Column(name = "gender", nullable = false)
+    @Column(name = "gender")
     private String gender;
 
-    @Column(name = "verified", nullable = false)
+    @Column(name = "verified")
     private Boolean verified = false;
 
-    @Column(name = "role", nullable = false)
+    @Column(name = "role")
     private String role;
 
     @OneToOne(cascade = CascadeType.ALL, optional = false, orphanRemoval = true)
-    @JoinColumn(name = "address_ID", nullable = false)
+    @JoinColumn(name = "address_ID")
     private Address address;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+//    @JsonIgnoreProperties({"user","clinic","vaccinations"})
     private List<UserVaccination> vaccinationHistory;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties({"user","clinic","vaccinations"})
     private List<Appointment> appointments;
 
     public List<Appointment> getAppointments() {

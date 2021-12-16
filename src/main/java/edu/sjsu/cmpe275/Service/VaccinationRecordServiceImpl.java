@@ -129,8 +129,7 @@ public class VaccinationRecordServiceImpl implements VaccinationRecordService {
         try{
             List<VaccinationRecord> vaccinationHistory = new ArrayList<>();
             vaccinationRecordRepository.findAllByVaccinationIdAndUserId(vaccinationId, userId).forEach(vaccinationHistory::add);
-            if (!vaccinationHistory.isEmpty())
-                return vaccinationHistory;
+            return vaccinationHistory;
         }
         catch (Exception exception){
             System.out.println(exception.getStackTrace());
