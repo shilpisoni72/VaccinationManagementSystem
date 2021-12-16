@@ -1,5 +1,8 @@
 package edu.sjsu.cmpe275.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.sql.Date;
@@ -10,7 +13,7 @@ import java.util.List;
 @XmlRootElement
 @Entity
 @Table(name = "appointment")
-
+@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -19,6 +22,7 @@ public class Appointment {
 
     @ManyToOne(cascade = CascadeType.ALL, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnoreProperties({"vaccinationHistory","appointments"})
     private User user;
 
     @Column(name = "date", nullable = false)
@@ -32,6 +36,7 @@ public class Appointment {
 
     @ManyToOne(cascade = CascadeType.ALL, optional = false)
     @JoinColumn(name = "clinic_id", nullable = false)
+    @JsonIgnoreProperties({"appointments"})
     private Clinic clinic;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)

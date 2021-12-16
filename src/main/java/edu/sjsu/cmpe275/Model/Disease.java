@@ -1,11 +1,14 @@
 package edu.sjsu.cmpe275.Model;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 @Entity
 @Table(name = "disease")
+@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 public class Disease {
     public Disease(String name, String description) {
         this.name = name;

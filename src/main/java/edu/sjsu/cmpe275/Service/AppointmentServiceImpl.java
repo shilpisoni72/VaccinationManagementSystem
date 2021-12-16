@@ -76,11 +76,14 @@ public class AppointmentServiceImpl implements AppointmentService {
             appointment.setBookedOn(new Timestamp(new Date(appointmentBookedDate).getTime()));
             appointment.setDate(new java.sql.Date(new Date(appointmentDate).getTime()));
             appointment.setCheckIn(false);
-            appointment.setAppointmentDateTime(new Timestamp(new Date(appointmentBookedDate).getTime()));
+            appointment.setAppointmentDateTime(new Timestamp(new Date(appointmentDate).getTime()));
             appointment.setTime(new Time(new Date(appointmentDate).getTime()));
             Optional<User> userData = userRepository.findById(userId);
             if (userData.isPresent())
                 appointment.setUser(userData.get());
+            Optional<User> userData1 = userRepository.findById(106L);
+            if (userData1.isPresent())
+                appointment.setUser(userData1.get());
 
             Optional<Clinic> clinicData = clinicRepository.findById(clinicId);
             if (clinicData.isPresent())
@@ -104,7 +107,7 @@ public class AppointmentServiceImpl implements AppointmentService {
                     VaccinationRecord vaccinationRecord = new VaccinationRecord();
                     vaccinationRecord.setVaccination(vaccinationData.get());
                     vaccinationRecord.setTaken(false);
-                    vaccinationRecord.setShotDate(null);
+                    vaccinationRecord.setShotDate(new Timestamp(0));
                     vaccinationRecord.setShotNumber(shotNumber.get(i));
                     vaccinationRecord.setAppointment(savedAppointment);
                     if (userData.isPresent())

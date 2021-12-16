@@ -51,10 +51,11 @@ public class AppointmentController {
     public ResponseEntity<Object> bookAppointment(@RequestBody Map<String, Object> requestBody) {
         try {
 
-            Long userId = (Long) requestBody.get("userId");
+            Long userId = ((Number) requestBody.get("userId")).longValue();
+            Long clinicId = ((Number) requestBody.get("clinicId")).longValue();
+
             String appointmentDate = (String) requestBody.get("appointmentDate");
             String appointmentBookedDate = (String) requestBody.get("appointmentBookedDate");
-            Long clinicId = (Long) requestBody.get("clinicId");
             List<Integer> oldVaccinationIds = (List<Integer>) requestBody.get("vaccinationIds");
             List<Integer> shotNumber = ( List<Integer>) requestBody.get("shotNumber");
 
