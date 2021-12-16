@@ -40,12 +40,16 @@ public class ReportingController {
         }
     }
 
-    @GetMapping("/systemreports")
-    public ResponseEntity<SystemRecord> getSystemReport(@RequestParam String clinicId, @RequestParam String startDate, @RequestParam String endDate) {
+    @PostMapping("/systemreports")
+    public ResponseEntity<SystemRecord> getSystemReport(@RequestBody Map<String, Object> requestBody) {
         System.out.println("inside system report controller");
+        String startDate = (String) requestBody.get("startDate");
+        String endDate = (String) requestBody.get("endDate");
+        String currDate = (String) requestBody.get("currDate");
+        Long clinicId = Long.parseLong((String)requestBody.get("clinicId")) ;
         try {
             List<Appointment> appointments = new ArrayList<>();
-            SystemRecord systemRecord = reportingService.getSystemReport(clinicId, startDate, endDate);
+            SystemRecord systemRecord = reportingService.getSystemReport(clinicId, startDate, endDate, currDate);
             return new ResponseEntity<>(systemRecord , HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);

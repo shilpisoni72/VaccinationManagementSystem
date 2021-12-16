@@ -58,16 +58,45 @@ public class ReportingServiceImpl {
         return patientRecord;
     }
 
-    public SystemRecord getSystemReport(String clinicId, String startDate, String endDate){
+    public SystemRecord getSystemReport(Long clinicId, String startDate, String endDate, String currDate){
 
         System.out.println("inside get system report ");
-        Long id = Long.parseLong(clinicId);
-        Date sDate = new Date(startDate);
-        Date eDate = new Date(endDate);
+        Long id = clinicId;
+        Date sDate = new java.sql.Date(new Date(startDate).getTime());
+        Date eDate = new java.sql.Date(new Date(endDate).getTime());
+        Timestamp t = new Timestamp( new Date(currDate).getTime());
+        Date cDate = new java.sql.Date(new Date(currDate).getTime());
+
         System.out.println("in patient report serviveImpls = id = " + id + " sDate = " + sDate + " eDate = " + eDate);
-        List<Appointment> allAppointments = appointmentRepository.findAllByUserIdAndDateBetween(id, sDate, eDate);
+        List<Appointment> allAppointments = appointmentRepository.findAllByClinicIdAndDateBetween(id, sDate, eDate);
+
+
         System.out.println("all appointments  = " + allAppointments);
         SystemRecord systemRecord = new SystemRecord();
+        List<Appointment> totalAppointments =new ArrayList<>();
+        List<Appointment> noShowAppointments = new ArrayList<>();
+        if(allAppointments.size() == 0){
+            systemRecord.noShowAppointments = new ArrayList<>();
+            systemRecord.totalAppointments = new ArrayList<>();
+            systemRecord.noShowRate = 0;
+            return systemRecord;
+        }
+        int noShow =0;
+        for(int i = 0; i < allAppointments.size(); i++){
+            Appointment a = allAppointments.get(i);
+            if(a.getCheckIn() == true && a.getDate().before(cDate)){
+                totalAppointments.add(a);
+            }else{
+                noShowAppointments.add(a);
+                noShow++;
+            }
+        }
+        double noShowRate = noShow/allAppointments.size();
+        System.out.println("all appointments  = " + allAppointments);
+        systemRecord.totalAppointments = totalAppointments;
+        systemRecord.noShowAppointments = noShowAppointments;
+        systemRecord.noShowRate = noShowRate;
         return systemRecord;
+
     }
 }
