@@ -7,6 +7,7 @@ import edu.sjsu.cmpe275.Repository.AppointmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -17,12 +18,18 @@ public class ReportingServiceImpl {
     AppointmentRepository appointmentRepository;
     public PatientRecord getPatientReport(Long userId, String startDate, String endDate, String currDate){
 
-        System.out.println("inside get patient report ");
+        System.out.println("inside get patient report " + userId);
         Long id = userId;
-        Date sDate = new Date(startDate);
-        Date eDate = new Date(endDate);
-        Date cDate = new Date(currDate);
-        System.out.println("in patient report serviveImpls = id = " + id + " sDate = " + sDate + " eDate = " + eDate);
+//        Date sDate = new Date(startDate);
+//        Date eDate = new Date(endDate);
+        Date sDate = new java.sql.Date(new Date(startDate).getTime());
+        Date eDate = new java.sql.Date(new Date(endDate).getTime());
+        System.out.println("inside get patient report 2");
+        Timestamp t = new Timestamp( new Date(currDate).getTime());
+        Date cDate = new java.sql.Date(new Date(currDate).getTime());
+
+//        Date cDate = new Date(currDate);
+        System.out.println("in patient report serviveImpls = id = " + id + " sDate = " + sDate + " eDate = " + eDate + " c date  = " + cDate);
         List<Appointment> allAppointments = appointmentRepository.findAllByUserIdAndDateBetween(id, sDate, eDate);
         List<Appointment> totalAppointments =new ArrayList<>();
         List<Appointment> noShowAppointments = new ArrayList<>();

@@ -29,7 +29,7 @@ public class ReportingController {
         String startDate = (String) requestBody.get("startDate");
         String endDate = (String) requestBody.get("endDate");
         String currDate = (String) requestBody.get("currDate");
-        Long userId = (Long) requestBody.get("userId");
+        Long userId = Long.parseLong((String)requestBody.get("userId")) ;
         System.out.println("request object: start date = " + startDate + " end date = " + endDate + " currDate = "+ currDate);
         try {
             List<Appointment> appointments = new ArrayList<>();
