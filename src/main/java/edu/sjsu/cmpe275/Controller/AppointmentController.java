@@ -13,6 +13,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/appointment")
@@ -46,8 +47,10 @@ public class AppointmentController {
 
     @PostMapping("/book")
     @Transactional
-    public ResponseEntity<Object> bookAppointment(@RequestBody Long userId, String appointmentDate, String appointmentBookedDate, Long clinicId, List<Long> vaccinationIds, List<Integer> shotNumber) {
+    public ResponseEntity<Object> bookAppointment(@RequestBody Map<String, Object>  Long userId, String appointmentDate, String appointmentBookedDate, Long clinicId, List<Long> vaccinationIds, List<Integer> shotNumber) {
         try {
+
+
             Appointment bookedAppointment = appointmentService.bookAppointment(userId, appointmentDate, appointmentBookedDate, clinicId, vaccinationIds, shotNumber);
             if (bookedAppointment != null)
                 return new ResponseEntity<Object>(bookedAppointment, HttpStatus.OK);
