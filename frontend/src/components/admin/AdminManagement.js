@@ -15,6 +15,9 @@ class AdminManagement extends Component {
         this.state = {
             clinicName: '',
             clinicAddress: '',
+            clinicCity: '',
+            clinicState: '',
+            clinicZipCode: '',
             opening: 8,
             closing: 17,
             physicians: 0,
@@ -66,6 +69,21 @@ class AdminManagement extends Component {
             clinicAddress: e.target.value
         });
     }
+    handleAddressCityChange = (e) => {
+        this.setState({
+            clinicCity: e.target.value
+        });
+    }
+    handleAddressStateChange = (e) => {
+        this.setState({
+            clinicState: e.target.value
+        });
+    }
+    handleAddressZipCodeChange = (e) => {
+        this.setState({
+            clinicZipCode: e.target.value
+        });
+    }
 
     handleOpeningChange = (e) => {
         this.setState({
@@ -85,21 +103,33 @@ class AdminManagement extends Component {
         });
     }
 
-    createClinic = async () => {    
-        const payload = {
-            name: this.state.clinicName,
-            address: this.state.clinicAddress,
-            opening: parseInt(this.state.opening),
-            closing: parseInt(this.state.closing),
-            businessHours: parseInt(this.state.closing) - parseInt(this.state.opening),
-            physicians: parseInt(this.state.physicians),
-        }
-        console.log(payload);
-        try {
-            const response = await axios.post(`${API_URL}/clinic/createClinic`, payload);
-            console.log(response.data);
-        } catch (error) {
-            console.log(error);
+    createClinic = async () => {
+        if(parseInt(this.state.closing) - parseInt(this.state.opening) < 8) {
+            alert("business hours must be at least 8 hours")
+        } else {
+            const payload = {
+                name: this.state.clinicName,
+                address: this.state.clinicAddress,
+                city: this.state.clinicCity,
+                state: this.state.clinicState,
+                zipCode : this.state.clinicZipCode,
+                opening: parseInt(this.state.opening),
+                closing: parseInt(this.state.closing),
+                businessHours: parseInt(this.state.closing) - parseInt(this.state.opening),
+                physicians: parseInt(this.state.physicians),
+            }
+    
+            console.log("clinic payload  = ", payload);
+            try {
+                const response = await axios.post(`${API_URL}/clinic/createClinic`, payload);
+            } catch (error) {
+                console.log(error);
+                if(error.response.status === 400){
+                    alert("Clinic name already exists")   
+                } else {
+                    alert("internal error when creating clinic")
+                }
+            }
         }
     }
 
@@ -129,12 +159,18 @@ class AdminManagement extends Component {
             if(response.data === null){
                 alert("disease not created")
             } else {
+                console.log("create disease responce = " , response.data)
                 this.setState({
-                    currentDiseases: [...this.state.currentDiseases, response.data._disease],
+                    currentDiseases: [...this.state.currentDiseases, response.data],
                 });
             }
         } catch (error) {
             console.log(error);
+            if(error.response.status === 400){
+                alert("Disease name already exists")   
+            } else {
+                alert("internal error when creating disease")
+            }
         }
     }
 
@@ -190,6 +226,11 @@ class AdminManagement extends Component {
             console.log(response)
         } catch (error) {
             console.log(error);
+            if(error.response.status === 400){
+                alert("Vaccine name already exists")   
+            } else {
+                alert("internal error when creating vaccine")
+            }
         }
     }
 
@@ -204,8 +245,13 @@ class AdminManagement extends Component {
                     <h3>Create Clinic</h3>
                     <div className='d-flex'>
                         <TextField id="clinicname" label="Clinic Name" variant="outlined" required onChange={this.handleClinicChange}/>
-                        <TextField id="clinicaddress" label="Address" variant="outlined" required onChange={this.handleAddressChange}/>
                         <TextField id="physicians" label="Number of Physicians" variant="outlined" required onChange={this.handlePhysiciansChange}/>
+                    </div>
+                    <div className='d-flex'>
+                        <TextField id="clinicaddress" label="Address" variant="outlined" onChange={this.handleAddressChange}/>
+                        <TextField id="clinicAddressZipCode" label="Zip Code" variant="outlined" required onChange={this.handleAddressZipCodeChange}/>
+                        <TextField id="clinicAddressCity" label="City" variant="outlined" required onChange={this.handleAddressCityChange}/>
+                        <TextField id="clinicAddressState" label="State" variant="outlined" required onChange={this.handleAddressStateChange}/>
                     </div>
                     <div className='d-flex'>
                         <TextField id="opening" label="Opening Time" variant="outlined" required onChange={this.handleOpeningChange}/>

@@ -92,11 +92,13 @@ class Appointment extends Component {
         });
 
         const payload = {
-            appointmentTime: this.state.appointmentDate,
+            appointmentTime: this.state.appointmentDate.toString(),
         }
-
+        console.log("appointment time  - " , payload);
         try {
             const response = await axios.post(`${API_URL}/clinic/getAvailableClinics`, payload);
+            console.log("response = " ,  response.data);
+            if(response.data.length == 0) alert("no clinic available on that date time");
             this.setState({
                 availableClinics: response.clinics,
             });
@@ -184,7 +186,7 @@ class Appointment extends Component {
 
     handleRescheduleDateChange = async(date) => {
         const payload = {
-            appointmentTime: date,
+            appointmentTime: date.toString(),
         }
 
         try {
@@ -292,7 +294,7 @@ class Appointment extends Component {
                                 onChange={this.handleClinicChange}
                             >
                             {
-                                this.state.availableClinics.map((clinic, index) => {
+                                this.state.availableClinics?.map((clinic, index) => {
                                     return (
                                         <MenuItem key={index} value={clinic}>{clinic.clinicName}</MenuItem>
                                     )
