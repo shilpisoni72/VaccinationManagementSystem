@@ -9,10 +9,7 @@ class VaccineHistory extends Component {
         super(props);
 
         this.state = {
-            vaccinations: [
-                {name:"Pfizer", numberShots:2, clinic:"Castro Valley Rite Aid", date:"12/8/21"},
-                {name:"Moderna", numberShots:2, clinic:"Castro Valley Rite Aid", date:"12/8/21"}
-            ]
+            vaccinations: []
         }
     }
 
@@ -21,9 +18,14 @@ class VaccineHistory extends Component {
         let userId = cookies.get('userId');
         
         try {
-            const response = await axios.get(`${API_URL}/history&userId=${userId}`);
+            const payload = {
+                userId: parseInt(userId)
+            }
+            console.log(payload);
+            const response = await axios.post(`${API_URL}/uservaccination/vaccinationHistory`, payload);
+            console.log(response.data);
             this.setState({
-                vaccinations: response.vaccines
+                vaccinations: response.data
             });
         } catch (error) {
             console.log(error);
@@ -37,18 +39,18 @@ class VaccineHistory extends Component {
                     <h1>Vaccine History</h1>
 
                     {
-                        this.state.vaccinations.map((v, index) => {
+                        this.state.vaccinations.map((v, ind) => {
                             return (
-                                <div className="d-flex align-items-center justify-content-evenly history-block" key={index}>
-                                    <h4>{v.name}</h4>
-                                    <div>Number of Shots: {v.numberShots}</div>
-                                    <div>Clinic: {v.clinic}</div>
-                                    <div>Date: {v.date}</div>
+                                <div className="d-flex align-items-center justify-content-evenly history-block" key={ind}>
+                                    <h4>{v.vaccination.name}</h4>
+                                    <div>Shot Number: {v.shotNumber}</div>
+                                    <div>Total Shots Needed: {v.vaccination.numberOfShots}</div>
+                                    <div>Clinic: {v.clinic.clinicName}</div>
+                                    <div>Appointment Date: {new Date(v.appointment.appointmentDateTime).toLocaleString()}</div>
                                 </div>
                             )
                         })
-                    }
-                    
+                    }    
                 </div>
             </div>
         )
