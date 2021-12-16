@@ -2,6 +2,8 @@ package edu.sjsu.cmpe275.Controller;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import edu.sjsu.cmpe275.Config.EmailConfig;
+import edu.sjsu.cmpe275.Helper.Constant.Url;
 import edu.sjsu.cmpe275.Helper.Error.Response;
 import edu.sjsu.cmpe275.Model.Address;
 import edu.sjsu.cmpe275.Model.AppUserRole;
@@ -10,6 +12,7 @@ import edu.sjsu.cmpe275.Model.User;
 import edu.sjsu.cmpe275.Repository.AddressRepository;
 import edu.sjsu.cmpe275.Repository.UserRepository;
 import edu.sjsu.cmpe275.Service.UserServiceImpl;
+import edu.sjsu.cmpe275.Util.NotificationHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +35,9 @@ public class UserController {
 
     @Autowired
     AddressRepository addressRepository;
+
+    @Autowired
+    EmailConfig emailConfig;
 
 
     @GetMapping("/users")
@@ -112,6 +118,8 @@ public class UserController {
             user.setAddress(address);
             User savedUser = userRepository.save(user);
 
+            new NotificationHelper().sendEmail(emailConfig, "shilpi9soni@gmail.com", email, "please click on this link to get verified: " + Url.baseUrl + "/user/auth/verification", "Get Verified");
+
             if(user!=null)
                 return new ResponseEntity<Object>(user, HttpStatus.OK);
         }
@@ -132,7 +140,7 @@ public class UserController {
 
             Optional<User> userData =	userRepository.findByEmail(email);
              if(!userData.isPresent())
-                 return new ResponseEntity<Object>(new Response("404", "emailid " + email + " not found"), HttpStatus.NOT_FOUND);
+                 return new ResponseEntity<Object>(new Response("404", "email id " + email + " not found"), HttpStatus.NOT_FOUND);
 
             User user = userData.get();
             Boolean isEnabled= user.getEnabled();
@@ -168,6 +176,11 @@ public class UserController {
             System.out.println(exception.getStackTrace());
         }
         return null;
+    }
+
+    @GetMapping("/auth/verification")
+    public String verification(){
+        return "You are now verified";
     }
 
 
