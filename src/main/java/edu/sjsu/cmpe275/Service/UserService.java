@@ -5,6 +5,7 @@ import edu.sjsu.cmpe275.Model.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * passenger service to create, delete and get passengers
@@ -15,7 +16,7 @@ public interface  UserService {
 
     public List<Appointment> getAllUserAppointments(Long id);
 
-    public User getUser(Long id);
+    public Optional<User> getUser(Long id);
 
 
 }

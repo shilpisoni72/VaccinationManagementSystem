@@ -37,12 +37,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUser(Long id) {
+    public Optional<User> getUser(Long id) {
         try{
-            Optional<User> user = userRepository.findById(116L);
-            if (user.isPresent()) {
-                return user.get();
-            }
+            return userRepository.findById(id);
         }
         catch (Exception exception){
             System.out.println(exception.getStackTrace());

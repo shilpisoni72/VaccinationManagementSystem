@@ -59,4 +59,9 @@ public class DiseaseServiceImpl implements DiseaseService {
         }
         return null;
     }
+
+    @Override
+    public Optional<Disease> getDiseaseById(Long diseaseId) {
+        return diseaseRepository.findById(diseaseId);
+    }
 }
