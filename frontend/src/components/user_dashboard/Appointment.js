@@ -55,15 +55,23 @@ class Appointment extends Component {
         const payload = {
             userId: userId,
         }
+        
+        const futurePayload = {
+            userId: parseInt(userId),
+            currentDate: this.props.chosenDate.toString() 
+        }
 
         try {
             const vaccineResponse = await axios.get(`${API_URL}/vaccination/all`);
             console.log(vaccineResponse);
-            //const response = await axios.post(`${API_URL}/appointment/user`, payload);
+
+            const futureresponse = await axios.post(`${API_URL}/appointment/future`, futurePayload);
+            console.log(futureresponse.data)
+
 
             this.setState({
                 availableVaccines: vaccineResponse.data,
-                //scheduledAppointments: response.data.userAppointments,
+                scheduledAppointments: futureresponse.data,
             });
         } catch (error) {
             console.log(error);

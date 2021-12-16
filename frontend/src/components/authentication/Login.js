@@ -15,6 +15,7 @@ class Login extends Component {
       password: "",
       redirect: false,
       verified: true,
+      incorrect: false,
     };
     this.handleEmailChange = this.handleEmailChange.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
@@ -41,6 +42,8 @@ class Login extends Component {
       password,
     };
 
+    console.log(payload);
+
     try {
       let response = null;
       if (email.includes("@sjsu")) {
@@ -49,21 +52,28 @@ class Login extends Component {
         response = await axios.post(`${API_URL}/user/login`, payload);
       }
 
-      if (response.userId != null) {
+      console.log(response.data);
+
+      if (response.data.userId != null) {
         const cookies = new Cookies();
-        cookies.set("userId", response.userId);
+        cookies.set("userId", response.data.userId);
         this.setState({
           redirect: true,
           verified: true,
+          incorrect: false,
         });
-      } else {
-        // USER isn't verified???
-        this.setState({
-          verified: false,
-        });
-      }
+      } 
     } catch (error) {
       console.log(error);
+      if(error.response.status === 401) {
+        this.setState({
+          verified: false
+        })
+      } else if (error.response.status === 403) {
+        this.setState({
+          incorrect: true
+        })
+      }
     }
   };
 
@@ -74,9 +84,16 @@ class Login extends Component {
     const loginDiv = (
       <div className="d-flex flex-column justify-content-center align-items-center login">
         <h1>Log in</h1>
-        {this.state.verified === false ? (
-          <h4>You must verify your account first</h4>
-        ) : null}
+        {
+          this.state.verified === false ? 
+          <h6>You must verify your account first</h6> : 
+          null
+        }
+        {
+          this.state.incorrect === true ? 
+          <h6>Password is incorrect</h6> : 
+          null
+        }
         <TextField
           id="loginemail"
           label="Email"
