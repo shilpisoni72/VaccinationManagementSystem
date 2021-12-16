@@ -101,7 +101,7 @@ public class AppointmentServiceImpl implements AppointmentService {
             appointment.setVaccinations(vaccinations);
             Appointment savedAppointment = appointmentRepository.save(appointment);
 
-            for(int i =0;i<vaccinationIds.size();i++){
+            for (int i = 0; i < vaccinationIds.size(); i++) {
                 Optional<Vaccination> vaccinationData = vaccinationRepository.findById(vaccinationIds.get(i));
                 if (vaccinationData.isPresent()) {
                     VaccinationRecord vaccinationRecord = new VaccinationRecord();
@@ -174,18 +174,13 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public Appointment changeAppointment(Long appointmentId, String appointmentDate, String appointmentBookedDate, List<Long> vaccinationIds, int shotNumber) {
+    public Appointment changeAppointment(Long appointmentId, String appointmentDate, String appointmentBookedDate) {
         try {
             Optional<Appointment> appointmentData = appointmentRepository.findById(appointmentId);
             if (appointmentData.isPresent()) {
-                List<VaccinationRecord> vaccinationRecords = new ArrayList<>();
-                vaccinationRecordRepository.findAllByAppointmentId(appointmentId).forEach(vaccinationRecords::add);
-                for (VaccinationRecord vaccinationRecord :
-                        vaccinationRecords) {
-                    vaccinationRecordRepository.deleteById(vaccinationRecord.getId());
-                }
-                appointmentRepository.deleteById(appointmentId);
-                return appointmentData.get();
+                appointmentData.get().setBookedOn(new Timestamp(new Date(appointmentBookedDate).getTime()));
+                appointmentData.get().setDate(new java.sql.Date(new Date(appointmentDate).getTime()));
+                return appointmentRepository.save(appointmentData.get());
             }
         } catch (Exception exception) {
             System.out.println(exception.getStackTrace());
@@ -226,14 +221,14 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public boolean checkInAppointment(Long appointmentId){
+    public boolean checkInAppointment(Long appointmentId) {
         try {
             List<VaccinationRecord> vaccinationRecordData = vaccinationRecordRepository.findAllByAppointmentId(appointmentId);
-            if(vaccinationRecordData.size() == 0){
+            if (vaccinationRecordData.size() == 0) {
                 return false;
             }
-            for(VaccinationRecord v : vaccinationRecordData){
-                if(v.getTaken() == true){
+            for (VaccinationRecord v : vaccinationRecordData) {
+                if (v.getTaken() == true) {
                     return false;
                 }
                 v.setTaken(true);

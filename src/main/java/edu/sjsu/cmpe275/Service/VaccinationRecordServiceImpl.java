@@ -43,11 +43,11 @@ public class VaccinationRecordServiceImpl implements VaccinationRecordService {
                     vaccinationDue.setVaccinatioName(vaccinationRecords.getValue().get(0).getVaccination().getName());
                     vaccinationDue.setClinicName(vaccinationRecords.getValue().get(0).getClinic().getClinicName());
                     int latestShotIndex = 0;
-                    int latestShotNumber = 0;
-                    Date latestShotDate = null;
-                    VaccinationRecord latestShot = null;
+                    int latestShotNumber = vaccinationRecords.getValue().get(0).getShotNumber();
+                    Date latestShotDate = vaccinationRecords.getValue().get(0).getShotDate();;
+                    VaccinationRecord latestShot = vaccinationRecords.getValue().get(0);;
                     for (int i = 0; i < vaccinationRecords.getValue().size(); i++) {
-                        if (currentDate.after(vaccinationRecords.getValue().get(i).getShotDate())) {
+                        if (currentDate.after(vaccinationRecords.getValue().get(i).getAppointment().getAppointmentDateTime())) {
                             latestShotIndex = i;
                             latestShotNumber = vaccinationRecords.getValue().get(i).getShotNumber();
                             latestShotDate = vaccinationRecords.getValue().get(i).getShotDate();
@@ -60,19 +60,24 @@ public class VaccinationRecordServiceImpl implements VaccinationRecordService {
                                 vaccinationDue.setStatus("DUE");
                                 vaccinationDue.setDueDate(getNextShotDate(vaccinationRecords.getValue().get(latestShotIndex).getAppointment().getDate(), shotInterval));
                                 vaccinationDue.setNumberOfShotDue(vaccinationRecords.getValue().get(latestShotIndex).getShotNumber() + 1);
-                                vaccinationDue.setVaccinationRecord(vaccinationRecords.getValue().get(latestShotIndex + 1));
-                                if (latestShotIndex + 1 <= vaccinationRecords.getValue().size()) {// could write this and the inset if statement as one but too long
+                                if (latestShotIndex + 1 < vaccinationRecords.getValue().size()) {// could write this and the inset if statement as one but too long
+                                    vaccinationDue.setVaccinationRecord(vaccinationRecords.getValue().get(latestShotIndex + 1));
                                     if (vaccinationRecords.getValue().get(latestShotIndex + 1).getAppointment().getBookedOn().before(currentDate))
                                         vaccinationDue.setAppointment(vaccinationRecords.getValue().get(latestShotIndex + 1).getAppointment());
                                 }
                                 vaccinationsDue.add(vaccinationDue);
                             }
                         } else {
+                            //put check for checking date
                             vaccinationDue.setStatus("OVERDUE");
                             vaccinationDue.setNumberOfShotDue(vaccinationRecords.getValue().get(latestShotIndex).getShotNumber());
                             vaccinationDue.setVaccinationRecord(vaccinationRecords.getValue().get(latestShotIndex));
                             vaccinationDue.setAppointment(vaccinationRecords.getValue().get(latestShotIndex).getAppointment());
-                            if (latestShotIndex == 0)
+                            if(latestShotDate.after(currentDate)){
+                                vaccinationDue.setStatus("Due");
+
+                            }
+                            if (latestShotIndex==0)
                                 vaccinationDue.setDueDate(vaccinationRecords.getValue().get(latestShotIndex).getAppointment().getDate());
                             else
                                 vaccinationDue.setDueDate(getNextShotDate(vaccinationRecords.getValue().get(latestShotIndex - 1).getAppointment().getDate(), shotInterval));
@@ -84,8 +89,8 @@ public class VaccinationRecordServiceImpl implements VaccinationRecordService {
                                 vaccinationDue.setStatus("DUE");
                                 vaccinationDue.setDueDate(getNextShotDate(vaccinationRecords.getValue().get(latestShotIndex).getAppointment().getDate(), duration));
                                 vaccinationDue.setNumberOfShotDue(vaccinationRecords.getValue().get(latestShotIndex).getShotNumber() + 1);
-                                vaccinationDue.setVaccinationRecord(vaccinationRecords.getValue().get(latestShotIndex + 1));
-                                if (latestShotIndex + 1 <= vaccinationRecords.getValue().size()) {// could write this and the inset if statement as one but too long
+                                if (latestShotIndex + 1 < vaccinationRecords.getValue().size()) {// could write this and the inset if statement as one but too long
+                                    vaccinationDue.setVaccinationRecord(vaccinationRecords.getValue().get(latestShotIndex + 1));
                                     if (vaccinationRecords.getValue().get(latestShotIndex + 1).getAppointment().getBookedOn().before(currentDate))
                                         vaccinationDue.setAppointment(vaccinationRecords.getValue().get(latestShotIndex + 1).getAppointment());
                                 }
@@ -96,6 +101,9 @@ public class VaccinationRecordServiceImpl implements VaccinationRecordService {
                             vaccinationDue.setNumberOfShotDue(vaccinationRecords.getValue().get(latestShotIndex).getShotNumber());
                             vaccinationDue.setVaccinationRecord(vaccinationRecords.getValue().get(latestShotIndex));
                             vaccinationDue.setAppointment(vaccinationRecords.getValue().get(latestShotIndex).getAppointment());
+                            if(latestShotDate.after(currentDate)){
+                                vaccinationDue.setStatus("Due");
+                            }
                             if (latestShotIndex == 0)
                                 vaccinationDue.setDueDate(vaccinationRecords.getValue().get(latestShotIndex).getAppointment().getDate());
                             else

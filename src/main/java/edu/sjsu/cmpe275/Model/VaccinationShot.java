@@ -11,17 +11,17 @@ import java.sql.Date;
 public class VaccinationShot {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     private Long id;
 
-    @Column(name = "date", nullable = false)
+    @Column(name = "date")
     private Date date;
 
-    @Column(name = "shot_number", nullable = false)
+    @Column(name = "shot_number")
     private Integer shotNumber;
 
-    @OneToOne(cascade = CascadeType.ALL, optional = false, orphanRemoval = true)
-    @JoinColumn(name = "appointment_id", nullable = false)
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "appointment_id")
     private Appointment appointment;
 
     @Column(name = "shot_taken")

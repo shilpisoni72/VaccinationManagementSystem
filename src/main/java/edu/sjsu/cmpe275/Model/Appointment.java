@@ -21,29 +21,31 @@ public class Appointment {
     private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id" )
     @JsonIgnoreProperties({"vaccinationHistory","appointments"})
     private User user;
 
-    @Column(name = "date", nullable = false)
+    @Column(name = "date" )
     private Date date;
 
-    @Column(name = "time", nullable = false)
+    @Column(name = "time" )
     private Time time;
 
-    @Column(name = "check_in", nullable = false)
+    @Column(name = "check_in" )
     private Boolean checkIn = false;
 
-    @ManyToOne(cascade = CascadeType.ALL, optional = false)
-    @JoinColumn(name = "clinic_id", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "clinic_id")
     @JsonIgnoreProperties({"appointments"})
     private Clinic clinic;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "appointment_id")
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "appointment_vaccinations",
+            joinColumns = @JoinColumn(name = "appointment_id"),
+            inverseJoinColumns = @JoinColumn(name = "vaccinations_id"))
     private List<Vaccination> vaccinations;
 
-    @Column(name = "booked_on", nullable = false)
+    @Column(name = "booked_on")
     private Timestamp bookedOn;
 
     @Column(name = "appointment_date_time")

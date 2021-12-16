@@ -12,10 +12,10 @@ import java.sql.Timestamp;
 public class VaccinationRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     private Long id;
 
-    @Column(name = "shot_number", nullable = false)
+    @Column(name = "shot_number")
     private Integer shotNumber;
 
     @Column(name = "shot_date")
@@ -25,7 +25,7 @@ public class VaccinationRecord {
     @JoinColumn(name = "vaccination_id")
     private Vaccination vaccination;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "clinic_id")
     @JsonIgnoreProperties({"appointments"})
     private Clinic clinic;
@@ -35,7 +35,7 @@ public class VaccinationRecord {
         @JsonIgnoreProperties({"appointments","vaccinationHistory","address"})
     private User user;
 
-    @Column(name = "taken", unique = true)
+    @Column(name = "taken")
     private Boolean taken;
 
     @ManyToOne(cascade = CascadeType.ALL)

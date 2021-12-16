@@ -42,15 +42,15 @@ public class User {
     @Column(name = "role")
     private String role;
 
-    @OneToOne(cascade = CascadeType.ALL, optional = false, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_ID")
     private Address address;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 //    @JsonIgnoreProperties({"user","clinic","vaccinations"})
     private List<UserVaccination> vaccinationHistory;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnoreProperties({"user","clinic","vaccinations"})
     private List<Appointment> appointments;
 
