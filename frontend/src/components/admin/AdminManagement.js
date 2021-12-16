@@ -103,22 +103,33 @@ class AdminManagement extends Component {
         });
     }
 
-    createClinic = async () => {    
-        const payload = {
-            name: this.state.clinicName,
-            address: this.state.clinicAddress,
-            city: this.state.clinicCity,
-            state: this.state.clinicState,
-            zipCode : this.state.clinicZipCode,
-            opening: this.state.opening,
-            closing: this.state.closing,
-            physicians: this.state.physicians,
-        }
-        console.log("clinic payload  = ", payload);
-        try {
-            const response = await axios.post(`${API_URL}/clinic/createClinic`, payload);
-        } catch (error) {
-            console.log(error);
+    createClinic = async () => {
+        if(parseInt(this.state.closing) - parseInt(this.state.opening) < 8) {
+            alert("business hours must be at least 8 hours")
+        } else {
+            const payload = {
+                name: this.state.clinicName,
+                address: this.state.clinicAddress,
+                city: this.state.clinicCity,
+                state: this.state.clinicState,
+                zipCode : this.state.clinicZipCode,
+                opening: parseInt(this.state.opening),
+                closing: parseInt(this.state.closing),
+                businessHours: parseInt(this.state.closing) - parseInt(this.state.opening),
+                physicians: parseInt(this.state.physicians),
+            }
+    
+            console.log("clinic payload  = ", payload);
+            try {
+                const response = await axios.post(`${API_URL}/clinic/createClinic`, payload);
+            } catch (error) {
+                console.log(error);
+                if(error.response.status === 400){
+                    alert("Clinic name already exists")   
+                } else {
+                    alert("internal error when creating clinic")
+                }
+            }
         }
     }
 
@@ -155,6 +166,11 @@ class AdminManagement extends Component {
             }
         } catch (error) {
             console.log(error);
+            if(error.response.status === 400){
+                alert("Disease name already exists")   
+            } else {
+                alert("internal error when creating disease")
+            }
         }
     }
 
@@ -195,21 +211,26 @@ class AdminManagement extends Component {
         });
     }
 
-    createVaccine = async () => {    
-        const payload = {
+    createVaccine = async () => {   
+        const requestBody = {
             name: this.state.vaccine,
             diseaseIds: this.state.diseasesSelected,
             manufacturer: this.state.manufacturer,
-            numberOfShots: this.state.numberShots,
-            shotInterval: this.state.shotInterval,
-            duration: this.state.duration
+            numberOfShots: parseInt(this.state.numberShots),
+            shotInterval: parseInt(this.state.shotInterval),
+            duration: parseInt(this.state.duration)
         }
-        console.log(payload);
+        console.log(requestBody);
         try {
-            const response = await axios.post(`${API_URL}/vaccination/create`, payload);
+            const response = await axios.post(`${API_URL}/vaccination/create`, requestBody);
             console.log(response)
         } catch (error) {
             console.log(error);
+            if(error.response.status === 400){
+                alert("Vaccine name already exists")   
+            } else {
+                alert("internal error when creating vaccine")
+            }
         }
     }
 
@@ -227,7 +248,7 @@ class AdminManagement extends Component {
                         <TextField id="physicians" label="Number of Physicians" variant="outlined" required onChange={this.handlePhysiciansChange}/>
                     </div>
                     <div className='d-flex'>
-                        <TextField id="clinicaddress" label="Address" variant="outlined" required onChange={this.handleAddressChange}/>
+                        <TextField id="clinicaddress" label="Address" variant="outlined" onChange={this.handleAddressChange}/>
                         <TextField id="clinicAddressZipCode" label="Zip Code" variant="outlined" required onChange={this.handleAddressZipCodeChange}/>
                         <TextField id="clinicAddressCity" label="City" variant="outlined" required onChange={this.handleAddressCityChange}/>
                         <TextField id="clinicAddressState" label="State" variant="outlined" required onChange={this.handleAddressStateChange}/>
