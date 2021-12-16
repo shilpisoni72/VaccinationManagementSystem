@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.plaf.synth.SynthEditorPaneUI;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -100,4 +101,13 @@ public class ClinicController {
         return new ResponseEntity<>(clinics, HttpStatus.OK);
     }
 
+    @GetMapping("/getAllClinics")
+    public ResponseEntity<List<Clinic>> getAllClinics(@RequestBody Map<String, Object> requestBody) {
+        Long clinicId = Long.parseLong(String.valueOf(requestBody.get("clinicId"))) ;
+        System.out.println("get available clinic controller called clinic Id = " + clinicId);
+        List<Clinic> clinics = new ArrayList<>();
+        clinics = clinicRepository.findAll();
+        System.out.println("all clinics = " + clinics);
+        return new ResponseEntity<>(clinics, HttpStatus.OK);
+    }
 }

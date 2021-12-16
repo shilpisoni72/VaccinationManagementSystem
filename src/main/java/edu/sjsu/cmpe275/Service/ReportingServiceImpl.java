@@ -31,9 +31,11 @@ public class ReportingServiceImpl {
 //        Date cDate = new Date(currDate);
         System.out.println("in patient report serviveImpls = id = " + id + " sDate = " + sDate + " eDate = " + eDate + " c date  = " + cDate);
         List<Appointment> allAppointments = appointmentRepository.findAllByUserIdAndDateBetween(id, sDate, eDate);
+        System.out.println("all appointments patietn report = " + allAppointments);
         List<Appointment> totalAppointments =new ArrayList<>();
         List<Appointment> noShowAppointments = new ArrayList<>();
         PatientRecord patientRecord = new PatientRecord();
+
         if(allAppointments.size() == 0){
             patientRecord.noShowAppointments = new ArrayList<>();
             patientRecord.totalAppointments = new ArrayList<>();
