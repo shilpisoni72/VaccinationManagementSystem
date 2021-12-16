@@ -42,14 +42,16 @@ public class VaccinationRecordServiceImpl implements VaccinationRecordService {
                     vaccinationDue.setClinicName(vaccinationRecords.getValue().get(0).getClinic().getClinicName());
                     int latestShotIndex = 0;
                     int latestShotNumber = vaccinationRecords.getValue().get(0).getShotNumber();
-                    Date latestShotDate = vaccinationRecords.getValue().get(0).getShotDate();;
-                    VaccinationRecord latestShot = vaccinationRecords.getValue().get(0);;
+                    Date latestShotDate = vaccinationRecords.getValue().get(0).getShotDate();
+                    ;
+                    VaccinationRecord latestShot = vaccinationRecords.getValue().get(0);
+                    ;
                     for (int i = 0; i < vaccinationRecords.getValue().size(); i++) {
                         if (currentDate.after(vaccinationRecords.getValue().get(i).getAppointment().getAppointmentDateTime())) {
                             latestShotIndex = i;
                             latestShotNumber = vaccinationRecords.getValue().get(i).getShotNumber();
-                            if(i>0){
-                                latestShotDate = getNextShotDate(vaccinationRecords.getValue().get(i-1).getAppointment().getDate(),shotInterval);
+                            if (i > 0) {
+                                latestShotDate = getNextShotDate(vaccinationRecords.getValue().get(i - 1).getAppointment().getDate(), shotInterval);
                             }
                             latestShot = vaccinationRecords.getValue().get(i);
                         }
@@ -73,11 +75,11 @@ public class VaccinationRecordServiceImpl implements VaccinationRecordService {
                             vaccinationDue.setNumberOfShotDue(vaccinationRecords.getValue().get(latestShotIndex).getShotNumber());
                             vaccinationDue.setVaccinationRecord(vaccinationRecords.getValue().get(latestShotIndex));
                             vaccinationDue.setAppointment(vaccinationRecords.getValue().get(latestShotIndex).getAppointment());
-                            if(latestShotDate.after(currentDate)){
+                            if (latestShotDate.after(currentDate)) {
                                 vaccinationDue.setStatus("Due");
 
                             }
-                            if (latestShotIndex==0)
+                            if (latestShotIndex == 0)
                                 vaccinationDue.setDueDate(vaccinationRecords.getValue().get(latestShotIndex).getAppointment().getDate());
                             else
                                 vaccinationDue.setDueDate(getNextShotDate(vaccinationRecords.getValue().get(latestShotIndex - 1).getAppointment().getDate(), shotInterval));
@@ -85,7 +87,15 @@ public class VaccinationRecordServiceImpl implements VaccinationRecordService {
                         }
                     } else {
                         if (latestShot.getTaken()) {
-                            if (getNextShotDate(vaccinationRecords.getValue().get(latestShotIndex).getAppointment().getDate(), duration).before(endDate) && duration!=0){
+                            if (currentDate.before(latestShotDate)) {
+                                vaccinationDue.setStatus("DUE");
+                                vaccinationDue.setVaccinationRecord(vaccinationRecords.getValue().get(latestShotIndex));
+                                vaccinationDue.setAppointment(vaccinationRecords.getValue().get(latestShotIndex).getAppointment());
+                                if (latestShotIndex == 0)
+                                    vaccinationDue.setDueDate(vaccinationRecords.getValue().get(latestShotIndex).getAppointment().getDate());
+                                else
+                                    vaccinationDue.setDueDate(getNextShotDate(vaccinationRecords.getValue().get(latestShotIndex - 1).getAppointment().getDate(), shotInterval));
+                            } else if (getNextShotDate(vaccinationRecords.getValue().get(latestShotIndex).getAppointment().getDate(), duration).before(endDate) && duration != 0) {
                                 vaccinationDue.setStatus("DUE");
                                 vaccinationDue.setDueDate(getNextShotDate(vaccinationRecords.getValue().get(latestShotIndex).getAppointment().getDate(), duration));
                                 vaccinationDue.setNumberOfShotDue(vaccinationRecords.getValue().get(latestShotIndex).getShotNumber() + 1);
@@ -96,12 +106,12 @@ public class VaccinationRecordServiceImpl implements VaccinationRecordService {
                                 }
                                 vaccinationsDue.add(vaccinationDue);
                             }
-                        } else if(duration!=0) {
+                        } else if (duration != 0) {
                             vaccinationDue.setStatus("OVERDUE");
                             vaccinationDue.setNumberOfShotDue(vaccinationRecords.getValue().get(latestShotIndex).getShotNumber());
                             vaccinationDue.setVaccinationRecord(vaccinationRecords.getValue().get(latestShotIndex));
                             vaccinationDue.setAppointment(vaccinationRecords.getValue().get(latestShotIndex).getAppointment());
-                            if(latestShotDate.after(currentDate)){
+                            if (latestShotDate.after(currentDate)) {
                                 vaccinationDue.setStatus("Due");
                             }
                             if (latestShotIndex == 0)
@@ -135,12 +145,11 @@ public class VaccinationRecordServiceImpl implements VaccinationRecordService {
 
     @Override
     public List<VaccinationRecord> getVaccinationRecordsByVaccine(Long vaccinationId, Long userId) {
-        try{
+        try {
             List<VaccinationRecord> vaccinationHistory = new ArrayList<>();
             vaccinationRecordRepository.findAllByVaccinationIdAndUserId(vaccinationId, userId).forEach(vaccinationHistory::add);
             return vaccinationHistory;
-        }
-        catch (Exception exception){
+        } catch (Exception exception) {
             System.out.println(exception.getStackTrace());
         }
         return null;
@@ -148,13 +157,12 @@ public class VaccinationRecordServiceImpl implements VaccinationRecordService {
 
     @Override
     public List<VaccinationRecord> getVaccinationRecordsByAppointment(Long appointmentId, Long userId) {
-        try{
+        try {
             List<VaccinationRecord> vaccinationHistory = new ArrayList<>();
             vaccinationRecordRepository.findAllByAppointmentIdAndUserId(appointmentId, userId).forEach(vaccinationHistory::add);
             if (!vaccinationHistory.isEmpty())
                 return vaccinationHistory;
-        }
-        catch (Exception exception){
+        } catch (Exception exception) {
             System.out.println(exception.getStackTrace());
         }
         return null;
