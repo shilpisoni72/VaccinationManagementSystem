@@ -15,6 +15,7 @@ public class OAuthController {
 	public String restricted()
 	{
 		return " to see this you need to be logged in";
+		
 	}
 
 }

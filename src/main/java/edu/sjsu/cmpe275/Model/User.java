@@ -33,7 +33,7 @@ public class User implements UserDetails {
 	
 
 	public User(String firstName, String lastName, AppUserRole appUserRole, Date dateOfBirth, String gender,
-			Boolean verified, String role, String password, String email, String address, String city, String state, int zipcode) {
+			Boolean verified, String role, String password, String email, String address, String city, String state, int zipcode, Provider provider) {
 		super();
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -48,6 +48,7 @@ public class User implements UserDetails {
 		this.city = city;
 		this.state = state;
 		this.zipcode = zipcode;
+		this.provider = provider;
 	}
 
 
@@ -185,6 +186,17 @@ public class User implements UserDetails {
 	private String password;
 
 	private String email;
+	
+	 @Enumerated(EnumType.STRING)
+	  private Provider provider;
+	 
+	    public Provider getProvider() {
+	        return provider;
+	    }
+	 
+	    public void setProvider(Provider provider) {
+	        this.provider = provider;
+	    }
 
 	public String getEmail() {
 		return email;

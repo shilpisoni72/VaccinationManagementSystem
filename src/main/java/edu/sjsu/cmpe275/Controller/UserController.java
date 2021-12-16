@@ -3,6 +3,7 @@ package edu.sjsu.cmpe275.Controller;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import edu.sjsu.cmpe275.Helper.Error.Response;
+import edu.sjsu.cmpe275.Model.AppUserRole;
 import edu.sjsu.cmpe275.Model.Clinic;
 import edu.sjsu.cmpe275.Model.User;
 import edu.sjsu.cmpe275.Repository.UserRepository;
@@ -51,6 +52,7 @@ public class UserController {
     {
     	User user=	userRepository.findByEmail(email).orElseThrow(()->new IllegalStateException("User not found !"));
     	Boolean isEnabled= user.getEnabled();
+    	AppUserRole role = user.getAppUserRole();
     	
     	BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     	String password = user.getPassword();

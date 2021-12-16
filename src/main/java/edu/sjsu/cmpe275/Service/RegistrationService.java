@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import edu.sjsu.cmpe275.Controller.RegistrationRequest;
 import edu.sjsu.cmpe275.Model.AppUserRole;
 import edu.sjsu.cmpe275.Model.ConfirmationToken;
+import edu.sjsu.cmpe275.Model.Provider;
 import edu.sjsu.cmpe275.Model.User;
 import lombok.AllArgsConstructor;
 
@@ -29,9 +30,7 @@ public class RegistrationService {
 	
 	public String register(RegistrationRequest request) {
 
-	
-		
-		String token = userService.singUpUser(new User(request.getFirstName(), request.getLastName(), AppUserRole.USER,request.getDateOfBirth(),request.getGender(),request.getVerified(),request.getRole(),request.getPassword(), request.getEmail(), request.getAddress(), request.getCity(), request.getState(), request.getZipcode()));
+		String token = userService.singUpUser(new User(request.getFirstName(), request.getLastName(), AppUserRole.USER,request.getDateOfBirth(),request.getGender(),request.getVerified(),request.getRole(),request.getPassword(), request.getEmail(), request.getAddress(), request.getCity(), request.getState(), request.getZipcode(), Provider.LOCAL ));
 		//emailSender.send(request.getEmail(), token);
 		
 		String link = "http://localhost:8080/api/v1/registration/confirm?token=" + token;
