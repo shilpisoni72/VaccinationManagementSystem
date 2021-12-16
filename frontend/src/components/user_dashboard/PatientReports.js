@@ -67,6 +67,7 @@ class PatientReports extends Component {
             <div className='d-flex flex-column justify-content-around patient-reports'>
                 <h1>Patient Reports</h1>
                 <div className="d-flex flex-column">
+                    <h6>Chosen Date: {this.props.chosenDate.toLocaleString()}</h6>
                     <label>
                         Start Date:
                         <DatePicker

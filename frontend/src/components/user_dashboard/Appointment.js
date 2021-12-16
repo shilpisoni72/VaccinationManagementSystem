@@ -58,7 +58,7 @@ class Appointment extends Component {
             userId: userId,
         }
         const clinicPayload = {
-            appointmentTime: this.state.appointmentDate,
+            appointmentTime: this.state.appointmentDate.toString(),
         }
         try {
             const vaccineResponse = await axios.get(`${API_URL}/vaccination/all`);
@@ -71,7 +71,6 @@ class Appointment extends Component {
                 availableClinics: [...this.state.availableClinics, oneClinicResponse.data],
             })
 
-            /*
             const clinicResponse = await axios.get(`${API_URL}/clinic/getAvailableClinics`, clinicPayload);
             console.log(clinicResponse);
             this.setState({
@@ -80,7 +79,6 @@ class Appointment extends Component {
                 availableClinics: clinicResponse.data.clinics,
                 rescheduleAvailableClinics: clinicResponse.data.clinics,
             });
-            */
         } catch (error) {
             console.log(error);
         }

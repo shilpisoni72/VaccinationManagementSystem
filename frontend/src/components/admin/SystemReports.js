@@ -71,6 +71,7 @@ class SystemReports extends Component {
             <div className='d-flex flex-column justify-content-around system-reports'>
                 <h1>System Reports</h1>
                 <div className="d-flex flex-column">
+                    <h6>Chosen Date: {this.props.chosenDate.toLocaleString()}</h6>
                     <FormControl fullWidth>
                         <InputLabel id="sys-clinic-label">Clinic</InputLabel>
                         <Select
