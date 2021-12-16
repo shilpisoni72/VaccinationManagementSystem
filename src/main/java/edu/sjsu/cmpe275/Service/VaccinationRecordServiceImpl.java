@@ -97,16 +97,6 @@ public class VaccinationRecordServiceImpl implements VaccinationRecordService {
                                 else
                                     vaccinationDue.setDueDate(getNextShotDate(vaccinationRecords.getValue().get(latestShotIndex - 1).getAppointment().getDate(), shotInterval));
                                 vaccinationsDue.add(vaccinationDue);
-                            } else if (getNextShotDate(vaccinationRecords.getValue().get(latestShotIndex).getAppointment().getDate(), duration).before(endDate) && duration != 0) {
-                                vaccinationDue.setStatus("DUE");
-                                vaccinationDue.setDueDate(getNextShotDate(vaccinationRecords.getValue().get(latestShotIndex).getAppointment().getDate(), duration));
-                                vaccinationDue.setNumberOfShotDue(vaccinationRecords.getValue().get(latestShotIndex).getShotNumber() + 1);
-                                if (latestShotIndex + 1 < vaccinationRecords.getValue().size()) {// could write this and the inset if statement as one but too long
-                                    vaccinationDue.setVaccinationRecord(vaccinationRecords.getValue().get(latestShotIndex + 1));
-                                    if (vaccinationRecords.getValue().get(latestShotIndex + 1).getAppointment().getBookedOn().before(currentDate))
-                                        vaccinationDue.setAppointment(vaccinationRecords.getValue().get(latestShotIndex + 1).getAppointment());
-                                }
-                                vaccinationsDue.add(vaccinationDue);
                             } else {
                                 if (getNextShotDate(vaccinationRecords.getValue().get(latestShotIndex).getAppointment().getDate(), shotInterval).before(endDate)) {
                                     vaccinationDue.setStatus("DUE");
