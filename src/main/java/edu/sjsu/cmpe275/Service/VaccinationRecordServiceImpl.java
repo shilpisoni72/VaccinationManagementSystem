@@ -6,6 +6,7 @@ import edu.sjsu.cmpe275.Repository.VaccinationRecordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -152,11 +153,15 @@ public class VaccinationRecordServiceImpl implements VaccinationRecordService {
     }
 
     @Override
-    public Map<Long, List<VaccinationRecord>> getVaccinationRecords(Long userId) {
+    public List<VaccinationRecord> getVaccinationRecords(Long userId) {
         try {
             List<VaccinationRecord> userVaccinationRecords = vaccinationRecordRepository.findAllByUserId(userId);
-            Map<Long, List<VaccinationRecord>> groupedVaccinationRecords = getGroupedVaccinationRecords((userVaccinationRecords));
-            return groupedVaccinationRecords;
+            Comparator<VaccinationRecord> compareByAppointmentDate = (VaccinationRecord a1, VaccinationRecord a2) ->
+                    a1.getAppointment().getAppointmentDateTime().compareTo(a2.getAppointment().getAppointmentDateTime());
+
+            if (!userVaccinationRecords.isEmpty())
+                Collections.sort(userVaccinationRecords, compareByAppointmentDate);
+            return userVaccinationRecords;
         } catch (Exception exception) {
             System.out.println(exception.getStackTrace());
         }

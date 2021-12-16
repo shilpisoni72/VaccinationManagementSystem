@@ -42,7 +42,7 @@ public class VaccineRecordController {
     public ResponseEntity<Object> getVaccinationRecords(@RequestBody Map<String, Object> requestBody) {
         try {
             Long userId = ((Number) requestBody.get("userId")).longValue();
-            Map<Long, List<VaccinationRecord>> userVaccinationHistory = vaccinationRecordService.getVaccinationRecords(userId);
+            List<VaccinationRecord> userVaccinationHistory = vaccinationRecordService.getVaccinationRecords(userId);
             if (userVaccinationHistory.isEmpty())
                 return new ResponseEntity<Object>(userVaccinationHistory, HttpStatus.NOT_FOUND);
             else if (userVaccinationHistory == null)

@@ -8,7 +8,7 @@ import java.util.Map;
 
 public interface VaccinationRecordService {
     public List<VaccinationDue> getVaccinationsDue(Long userId, String date);
-    public Map<Long, List<VaccinationRecord>> getVaccinationRecords(Long userId);
+    public List<VaccinationRecord> getVaccinationRecords(Long userId);
     public List<VaccinationRecord> getVaccinationRecordsByVaccine(Long vaccinationId, Long userId);
     public List<VaccinationRecord> getVaccinationRecordsByAppointment(Long appointmentId, Long userId);
 
