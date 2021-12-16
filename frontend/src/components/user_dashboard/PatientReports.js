@@ -40,7 +40,12 @@ class PatientReports extends Component {
     handleGetStats = async () => {
         const cookies = new Cookies();
         let userId = cookies.get('userId');
-
+        const config = {
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS"
+            }
+        };
         try {
 
             const response = await Axios.post(`${API_URL}/report/patientreports`,  {
@@ -51,7 +56,7 @@ class PatientReports extends Component {
                         currDate: this.props.chosenDate.toString()
 
                     // },
-            });
+            }, config);
             console.log("response of patient reports = " , response);
             this.setState({
                 totalAppointments: response.totalAppointments,

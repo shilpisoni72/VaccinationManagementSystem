@@ -1,6 +1,7 @@
 package edu.sjsu.cmpe275.security.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -13,6 +14,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import edu.sjsu.cmpe275.Service.UserService;
 import edu.sjsu.cmpe275.Service.UserServiceImpl;
 import lombok.AllArgsConstructor;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @AllArgsConstructor
@@ -30,10 +34,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		 * http.antMatcher("/**").authorizeRequests() .antMatchers("/").permitAll()
 		 * .anyRequest().authenticated() .and() .oauth2Login();
 		 */
-		http.csrf().disable().authorizeRequests().antMatchers("/api/v*/registration/**").permitAll()
+//		http.csrf().disable().authorizeRequests().antMatchers("/api/v*/registration/**").permitAll()
+//
+//				.anyRequest().authenticated().and().formLogin().and().oauth2Login();
 
-				.anyRequest().authenticated().and().formLogin().and().oauth2Login();
-
+		http.csrf().disable()
+				.authorizeRequests()
+				.anyRequest().permitAll()
+				.and().httpBasic();
 	}
 
 	@Override
@@ -48,6 +56,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		provider.setUserDetailsService(userService);
 		return provider;
 
+	}
+
+	@Bean
+	public FilterRegistrationBean corsFilter() {
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		CorsConfiguration config = new CorsConfiguration();
+		config.addAllowedOrigin("*");
+		config.addAllowedHeader("*");
+		config.addAllowedMethod("*");
+		source.registerCorsConfiguration("/**", config);
+		FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
+		bean.setOrder(0);
+		return bean;
 	}
 
 }
