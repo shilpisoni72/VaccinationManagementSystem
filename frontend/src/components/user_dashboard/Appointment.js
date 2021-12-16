@@ -86,9 +86,9 @@ class Appointment extends Component {
         try {
             const response = await axios.post(`${API_URL}/clinic/getAvailableClinics`, payload);
             console.log("response = " ,  response.data);
-            if(response.data.length == 0) alert("no clinic available on that date time");
+            // if(response.data.length == 0) alert("no clinic available on that date time");
             this.setState({
-                availableClinics: response.clinics,
+                availableClinics: response.data,
             });
         } catch (error) {
             console.log(error);
@@ -286,7 +286,7 @@ class Appointment extends Component {
                             {
                                 this.state.availableClinics?.map((clinic, index) => {
                                     return (
-                                        <MenuItem key={index} value={clinic}>{clinic.name}</MenuItem>
+                                        <MenuItem key={index} value={clinic}>{clinic.clinicName}</MenuItem>
                                     )
                                 })
                             }

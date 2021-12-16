@@ -61,7 +61,7 @@ public class ClinicController {
             Clinic _clinic =  clinicData.get();
             return new ResponseEntity<>(_clinic, HttpStatus.OK);
         }else{
-            return new ResponseEntity<Object>("something went wrong", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<Object>( new Response("500","\"something went wrong\""), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
