@@ -54,15 +54,17 @@ public class UserController {
 
     
     @GetMapping("/login")
-    public User login(String email, String pswd)
+    public User login(@RequestBody Map<String, Object> requestBody)
     {
+    	String email = (String) requestBody.get("email");
+    	String requestPassword = (String) requestBody.get("password");
     	User user =	userRepository.findByEmail(email).orElseThrow(()->new IllegalStateException("User not found !"));
     	Boolean isEnabled= user.getEnabled();
     	AppUserRole role = user.getAppUserRole();
     	
     	BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     	String password = user.getPassword();
-    	String encodedPassword = passwordEncoder.encode(pswd);
+    	String encodedPassword = passwordEncoder.encode(requestPassword);
     	boolean isPasswordMatch = passwordEncoder.matches(password, encodedPassword);
     	if(isEnabled && isPasswordMatch)
     		return user; // user is valid
