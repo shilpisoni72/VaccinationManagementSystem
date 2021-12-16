@@ -60,7 +60,6 @@ public class User implements UserDetails{
 
     @Enumerated(EnumType.STRING)
 	private AppUserRole appUserRole;
-
   
     @Column(name = "middle_name")
     private String middleName;
