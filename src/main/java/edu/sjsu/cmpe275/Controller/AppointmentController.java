@@ -111,4 +111,20 @@ public class AppointmentController {
         }
     }
 
+    @PostMapping("/checkIn")
+    @Transactional
+    public ResponseEntity<Boolean> checkInAppointment(@RequestBody Long appointmentId) {
+        try {
+            boolean isCheckedIn = appointmentService.checkInAppointment(appointmentId);
+            if (isCheckedIn == true)
+                return new ResponseEntity<Boolean>(isCheckedIn, HttpStatus.OK);
+            else
+                return new ResponseEntity<Boolean>(isCheckedIn, HttpStatus.BAD_REQUEST);
+
+        } catch (Exception exception) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return new ResponseEntity<Boolean>(false, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

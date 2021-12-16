@@ -13,11 +13,13 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/disease")
 public class DiseaseController {
+
 
     @Autowired
     DiseaseRepository diseaseRepository;
@@ -25,8 +27,10 @@ public class DiseaseController {
     DiseaseService diseaseService;
 
     @PostMapping("/createDisease")
-    public ResponseEntity<Object> createDisease(@RequestBody String diseaseName, String diseaseDescription) {
-        System.out.println("create disease controller called");
+    public ResponseEntity<Object> createDisease(@RequestBody Map<String, Object> requestBody) {
+        String diseaseName = (String)requestBody.get("diseaseName");
+        String diseaseDescription = (String)requestBody.get("diseaseDescription");
+        System.out.println("create disease controller called req = " + diseaseName + " " + diseaseDescription);
         Optional<Disease> diseaseData = diseaseService.getDiseaseByName(diseaseName);
         if(diseaseData.isPresent()){
             return new ResponseEntity<Object>(new Response("400","Disease name "+ diseaseName+" already exists"), HttpStatus.BAD_REQUEST);

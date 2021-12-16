@@ -15,6 +15,6 @@ public interface AppointmentService {
     public Integer getShotNumber(Long vaccinationId, Long userId, String appointmentDate);
     public Appointment cancelAppointment(Long appointmentId);
     public Appointment getAppointment(Long appointmentId);
-
+    public boolean checkInAppointment(Long appointmentId);
 
 }
