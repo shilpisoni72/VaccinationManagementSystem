@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
-@CrossOrigin(origins = "http://localhost:8080")
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -35,12 +34,7 @@ public class UserController {
     public ResponseEntity<List<User>> getAllUsers() {
         try {
             List<User> users = new ArrayList<User>();
-
-
-
             userRepository.findAll().forEach(users::add);
-
-
             if (users.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
@@ -54,22 +48,38 @@ public class UserController {
 
     
     @GetMapping("/login")
-    public User login(@RequestBody Map<String, Object> requestBody)
+    public ResponseEntity<Object> login(@RequestBody Map<String, Object> requestBody)
     {
-    	String email = (String) requestBody.get("email");
-    	String requestPassword = (String) requestBody.get("password");
-    	User user =	userRepository.findByEmail(email).orElseThrow(()->new IllegalStateException("User not found !"));
-    	Boolean isEnabled= user.getEnabled();
-    	AppUserRole role = user.getAppUserRole();
-    	
-    	BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-    	String password = user.getPassword();
-    	String encodedPassword = passwordEncoder.encode(requestPassword);
-    	boolean isPasswordMatch = passwordEncoder.matches(password, encodedPassword);
-    	if(isEnabled && isPasswordMatch)
-    		return user; // user is valid
-    	else
-    		return null; //user is invalid
+        try{
+            String email = (String) requestBody.get("email");
+            String requestPassword = (String) requestBody.get("password");
+
+            Optional<User> userData =	userRepository.findByEmail(email);
+             if(!userData.isPresent())
+                 return new ResponseEntity<Object>(new Response("404", "emailid " + email + " not found"), HttpStatus.NOT_FOUND);
+
+            User user = userData.get();
+
+            Boolean isEnabled= user.getEnabled();
+            AppUserRole role = user.getAppUserRole();
+            String password = user.getPassword();
+
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            String encodedPassword = passwordEncoder.encode(requestPassword);
+            boolean isPasswordMatch = passwordEncoder.matches(password, encodedPassword);
+
+            if(!isEnabled)
+                return new ResponseEntity<Object>(new Response("401", "User has yet to confirm email"), HttpStatus.UNAUTHORIZED);
+            else if(!isPasswordMatch)
+                return new ResponseEntity<Object>(new Response("403", "password does not match"), HttpStatus.FORBIDDEN);
+            else
+                return new ResponseEntity<Object>(user, HttpStatus.OK);
+        }
+        catch (Exception exception){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return new ResponseEntity<Object>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     	
     }	
 
