@@ -43,15 +43,16 @@ class PatientReports extends Component {
 
         try {
 
-            const response = await Axios.get(`${API_URL}/report/patientreports`,  {
-                    params: {
-                        userId: "saketh",
+            const response = await Axios.post(`${API_URL}/report/patientreports`,  {
+                    // params: {
+                        userId: "101",
                         startDate: this.state.startDate,
                         endDate: this.state.endDate,
                         currDate: this.props.chosenDate.toString()
 
-                    },
+                    // },
             });
+            console.log("response of patient reports = " , response);
             this.setState({
                 totalAppointments: response.totalAppointments,
                 noShowAppointments: response.noShowAppointments,

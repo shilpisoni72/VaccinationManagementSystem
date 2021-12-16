@@ -17,7 +17,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
+//@NoArgsConstructor
 @Entity
 public class ConfirmationToken {
 	

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/report")
@@ -22,8 +23,12 @@ public class ReportingController {
     @Autowired
     ReportingServiceImpl reportingService;
 
-    @GetMapping("/patientreports")
-    public ResponseEntity<PatientRecord> getPatientReport(@RequestParam String userId, @RequestParam String startDate, @RequestParam String endDate, @RequestParam String currDate) {
+    @PostMapping("/patientreports")
+    public ResponseEntity<PatientRecord> getPatientReport(@RequestBody Map<String, Object> requestBody) {
+        String startDate = (String) requestBody.get("startDate");
+        String endDate = (String) requestBody.get("endDate");
+        String currDate = (String) requestBody.get("currDate");
+        Long userId = (Long) requestBody.get("userId");
         System.out.println("request object: start date = " + startDate + " end date = " + endDate + " currDate = "+ currDate);
         try {
             List<Appointment> appointments = new ArrayList<>();

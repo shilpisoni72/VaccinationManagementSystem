@@ -9,6 +9,6 @@ import java.util.List;
 
 @Service
 public interface ReportingService {
-    public PatientRecord getPatientReport(String userId, String startDate, String endDate);
+    public PatientRecord getPatientReport(Long userId, String startDate, String endDate);
     public SystemRecord getSystemReport(String clinicId, String startDate, String endDate);
 }

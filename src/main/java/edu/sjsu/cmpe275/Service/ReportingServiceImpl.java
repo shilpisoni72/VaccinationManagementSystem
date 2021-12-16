@@ -15,10 +15,10 @@ import java.util.List;
 public class ReportingServiceImpl {
     @Autowired
     AppointmentRepository appointmentRepository;
-    public PatientRecord getPatientReport(String userId, String startDate, String endDate, String currDate){
+    public PatientRecord getPatientReport(Long userId, String startDate, String endDate, String currDate){
 
         System.out.println("inside get patient report ");
-        Long id = Long.parseLong(userId);
+        Long id = userId;
         Date sDate = new Date(startDate);
         Date eDate = new Date(endDate);
         Date cDate = new Date(currDate);
