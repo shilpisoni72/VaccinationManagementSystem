@@ -88,6 +88,8 @@ public class UserController {
             if(!password.isEmpty() && password!=null){
                 user.setPassword(password);
             }
+            user.setEnabled(false);
+            user.setVerified(false);
 
             Address address = new Address();
             if(!addressLine1.isEmpty() && addressLine1!=null){
