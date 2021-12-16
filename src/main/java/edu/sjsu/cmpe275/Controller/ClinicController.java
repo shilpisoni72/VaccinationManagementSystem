@@ -1,39 +1,67 @@
 package edu.sjsu.cmpe275.Controller;
 
 import edu.sjsu.cmpe275.Helper.Error.Response;
+import edu.sjsu.cmpe275.Model.Address;
 import edu.sjsu.cmpe275.Model.Clinic;
 import edu.sjsu.cmpe275.Model.Disease;
+import edu.sjsu.cmpe275.Model.User;
 import edu.sjsu.cmpe275.Repository.ClinicRepository;
+import edu.sjsu.cmpe275.Repository.UserRepository;
 import edu.sjsu.cmpe275.Service.ClinicService;
+import edu.sjsu.cmpe275.Service.ClinicServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @RestController
 @RequestMapping("/clinic")
 public class ClinicController {
     @Autowired
-    ClinicService clinicService;
+    ClinicServiceImpl clinicService;
     @Autowired
     ClinicRepository clinicRepository;
 
+    @Autowired
+    UserRepository userRepository;
+
     @PostMapping("/createClinic")
-    public ResponseEntity<Object> createClinic(@RequestParam("clinicName") String clinicName, @RequestParam("diseaseDescription") String diseaseDescription) {
-        System.out.println("create clinic controller called");
+    public ResponseEntity<Object> createClinic(@RequestBody Map<String, Object> requestBody) {
+
+
+        String clinicName = (String) requestBody.get("name");
+        String clinicAddress = (String) requestBody.get("address");
+        int numPhys = Integer.parseInt((String)requestBody.get("physicians")) ;
+        int opening = Integer.parseInt((String) requestBody.get("opening")) ;
+        int closing = Integer.parseInt((String) requestBody.get("closing")) ;
+        String city = (String) requestBody.get("city");
+        String state =  (String) requestBody.get("state");
+        int zipCode = Integer.parseInt((String) requestBody.get("zipCode"));
+        System.out.println("create clinic controller called = " + clinicName +clinicAddress+city+state+zipCode+numPhys);
+
         Optional<Clinic> clinicData = clinicService.getClinicByName(clinicName);
         if(clinicData.isPresent()){
             return new ResponseEntity<Object>(new Response("400","Clinic name "+ clinicName+" already exists"), HttpStatus.BAD_REQUEST);
         }
 
-        clinicData =  clinicService.createClinic();
+        Address address = new Address();
+        address.setCity(city);
+        address.setLine1(clinicAddress);
+        address.setState(state);
+        address.setZipCode(zipCode);
+
+
+        clinicData =  clinicService.createClinic(clinicName, address, numPhys, opening , closing);
+
         if(clinicData.isPresent()){
             Clinic _clinic =  clinicData.get();
             return new ResponseEntity<>(_clinic, HttpStatus.OK);
         }else{
-            return new ResponseEntity<Object>("something went wrong", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<Object>( new Response("500","\"something went wrong\""), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -61,4 +89,15 @@ public class ClinicController {
         }
         return new ResponseEntity<>(clinicData, HttpStatus.OK);
     }
+
+    @PostMapping("/getAvailableClinics")
+    public ResponseEntity<List<Clinic>> getAvailableClinics(@RequestBody Map<String, Object> requestBody) throws ParseException {
+
+        String appointmentTime = (String)requestBody.get("appointmentTime");
+        System.out.println("get available clinic controller called appointment time = " +appointmentTime );
+        List<Clinic> clinics = new ArrayList<>();
+        clinics = clinicService.getAvailableClinics(appointmentTime);
+        return new ResponseEntity<>(clinics, HttpStatus.OK);
+    }
+
 }

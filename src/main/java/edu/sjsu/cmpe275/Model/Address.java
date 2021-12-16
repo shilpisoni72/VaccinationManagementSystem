@@ -1,12 +1,14 @@
 package edu.sjsu.cmpe275.Model;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 @Entity
 @Table(name = "address")
-
+@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

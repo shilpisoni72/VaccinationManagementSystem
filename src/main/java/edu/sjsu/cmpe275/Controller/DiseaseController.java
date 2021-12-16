@@ -1,20 +1,25 @@
 package edu.sjsu.cmpe275.Controller;
 
 import edu.sjsu.cmpe275.Helper.Error.Response;
+import edu.sjsu.cmpe275.Model.Appointment;
 import edu.sjsu.cmpe275.Model.Disease;
 import edu.sjsu.cmpe275.Repository.DiseaseRepository;
 import edu.sjsu.cmpe275.Service.DiseaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/disease")
 public class DiseaseController {
+
 
     @Autowired
     DiseaseRepository diseaseRepository;
@@ -22,8 +27,10 @@ public class DiseaseController {
     DiseaseService diseaseService;
 
     @PostMapping("/createDisease")
-    public ResponseEntity<Object> createDisease(@RequestParam("diseaseName") String diseaseName, @RequestParam("diseaseDescription") String diseaseDescription) {
-        System.out.println("create disease controller called");
+    public ResponseEntity<Object> createDisease(@RequestBody Map<String, Object> requestBody) {
+        String diseaseName = (String)requestBody.get("diseaseName");
+        String diseaseDescription = (String)requestBody.get("diseaseDescription");
+        System.out.println("create disease controller called req = " + diseaseName + " " + diseaseDescription);
         Optional<Disease> diseaseData = diseaseService.getDiseaseByName(diseaseName);
         if(diseaseData.isPresent()){
             return new ResponseEntity<Object>(new Response("400","Disease name "+ diseaseName+" already exists"), HttpStatus.BAD_REQUEST);
@@ -50,6 +57,17 @@ public class DiseaseController {
             return new ResponseEntity<>("disease id: "+ diseaseId + " deleted successfully", HttpStatus.OK);
         }else{
             return new ResponseEntity<Object>("something went wrong", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/")
+    @Transactional
+    public ResponseEntity<Object> getAllDiseases() {
+        try {
+            return new ResponseEntity<>(diseaseService.getAllDiseases(), HttpStatus.OK);
+        } catch (Exception exception) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return new ResponseEntity<Object>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

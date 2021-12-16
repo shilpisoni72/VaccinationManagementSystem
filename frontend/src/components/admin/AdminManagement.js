@@ -15,6 +15,9 @@ class AdminManagement extends Component {
         this.state = {
             clinicName: '',
             clinicAddress: '',
+            clinicCity: '',
+            clinicState: '',
+            clinicZipCode: '',
             opening: 8,
             closing: 17,
             physicians: 0,
@@ -39,6 +42,21 @@ class AdminManagement extends Component {
         };
     }
 
+    async componentDidMount() {
+        try {
+            const response = await axios.get(`${API_URL}/disease/`);
+            if(response.data !== null) {
+                this.setState({
+                    currentDiseases: response.data
+                });
+            } else {
+                alert("no diseases exist");
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     // CLINIC FORM
     handleClinicChange = (e) => {
         this.setState({
@@ -49,6 +67,21 @@ class AdminManagement extends Component {
     handleAddressChange = (e) => {
         this.setState({
             clinicAddress: e.target.value
+        });
+    }
+    handleAddressCityChange = (e) => {
+        this.setState({
+            clinicCity: e.target.value
+        });
+    }
+    handleAddressStateChange = (e) => {
+        this.setState({
+            clinicState: e.target.value
+        });
+    }
+    handleAddressZipCodeChange = (e) => {
+        this.setState({
+            clinicZipCode: e.target.value
         });
     }
 
@@ -70,18 +103,33 @@ class AdminManagement extends Component {
         });
     }
 
-    createClinic = async () => {    
-        const payload = {
-            name: this.state.clinicName,
-            address: this.state.clinicAddress,
-            opening: this.state.opening,
-            closing: this.state.closing,
-            physicians: this.state.physicians,
-        }
-        try {
-            const response = await axios.post(`${API_URL}/clinic`, payload);
-        } catch (error) {
-            console.log(error);
+    createClinic = async () => {
+        if(parseInt(this.state.closing) - parseInt(this.state.opening) < 8) {
+            alert("business hours must be at least 8 hours")
+        } else {
+            const payload = {
+                name: this.state.clinicName,
+                address: this.state.clinicAddress,
+                city: this.state.clinicCity,
+                state: this.state.clinicState,
+                zipCode : this.state.clinicZipCode,
+                opening: parseInt(this.state.opening),
+                closing: parseInt(this.state.closing),
+                businessHours: parseInt(this.state.closing) - parseInt(this.state.opening),
+                physicians: parseInt(this.state.physicians),
+            }
+    
+            console.log("clinic payload  = ", payload);
+            try {
+                const response = await axios.post(`${API_URL}/clinic/createClinic`, payload);
+            } catch (error) {
+                console.log(error);
+                if(error.response.status === 400){
+                    alert("Clinic name already exists")   
+                } else {
+                    alert("internal error when creating clinic")
+                }
+            }
         }
     }
 
@@ -98,18 +146,31 @@ class AdminManagement extends Component {
         });
     }
 
-    createDisease = async () => {    
+    createDisease = async () => {   
+        console.log(typeof this.state.disease); 
         const payload = {
-            name: this.state.disease,
-            description: this.state.description
+            diseaseName: this.state.disease,
+            diseaseDescription: this.state.description
         }
+        console.log(payload)
+
         try {
-            const response = await axios.post(`${API_URL}/disease`, payload);
-            this.setState({
-                currentDiseases: response.diseases,
-            });
+            const response = await axios.post(`${API_URL}/disease/createDisease`, payload);
+            if(response.data === null){
+                alert("disease not created")
+            } else {
+                console.log("create disease responce = " , response.data)
+                this.setState({
+                    currentDiseases: [...this.state.currentDiseases, response.data],
+                });
+            }
         } catch (error) {
             console.log(error);
+            if(error.response.status === 400){
+                alert("Disease name already exists")   
+            } else {
+                alert("internal error when creating disease")
+            }
         }
     }
 
@@ -150,19 +211,26 @@ class AdminManagement extends Component {
         });
     }
 
-    createVaccine = async () => {    
-        const payload = {
+    createVaccine = async () => {   
+        const requestBody = {
             name: this.state.vaccine,
+            diseaseIds: this.state.diseasesSelected,
             manufacturer: this.state.manufacturer,
-            disease: this.state.diseasesSelected,
-            numShots: this.state.numberShots,
-            shotInterval: this.state.shotInterval,
-            duration: this.state.duration
+            numberOfShots: parseInt(this.state.numberShots),
+            shotInterval: parseInt(this.state.shotInterval),
+            duration: parseInt(this.state.duration)
         }
+        console.log(requestBody);
         try {
-            const response = await axios.post(`${API_URL}/vaccine`, payload);
+            const response = await axios.post(`${API_URL}/vaccination/create`, requestBody);
+            console.log(response)
         } catch (error) {
             console.log(error);
+            if(error.response.status === 400){
+                alert("Vaccine name already exists")   
+            } else {
+                alert("internal error when creating vaccine")
+            }
         }
     }
 
@@ -177,15 +245,20 @@ class AdminManagement extends Component {
                     <h3>Create Clinic</h3>
                     <div className='d-flex'>
                         <TextField id="clinicname" label="Clinic Name" variant="outlined" required onChange={this.handleClinicChange}/>
-                        <TextField id="clinicaddress" label="Address" variant="outlined" required onChange={this.handleAddressChange}/>
                         <TextField id="physicians" label="Number of Physicians" variant="outlined" required onChange={this.handlePhysiciansChange}/>
+                    </div>
+                    <div className='d-flex'>
+                        <TextField id="clinicaddress" label="Address" variant="outlined" onChange={this.handleAddressChange}/>
+                        <TextField id="clinicAddressZipCode" label="Zip Code" variant="outlined" required onChange={this.handleAddressZipCodeChange}/>
+                        <TextField id="clinicAddressCity" label="City" variant="outlined" required onChange={this.handleAddressCityChange}/>
+                        <TextField id="clinicAddressState" label="State" variant="outlined" required onChange={this.handleAddressStateChange}/>
                     </div>
                     <div className='d-flex'>
                         <TextField id="opening" label="Opening Time" variant="outlined" required onChange={this.handleOpeningChange}/>
                         <TextField id="closing" label="Closing Time" variant="outlined" required onChange={this.handleClosingChange}/>
                     </div>
                     <div>
-                        <Button variant="contained">
+                        <Button variant="contained" onClick={this.createClinic}>
                             Create Clinic
                         </Button>
                     </div>
@@ -199,7 +272,7 @@ class AdminManagement extends Component {
                         <TextField id="diseasedescription" label="Description" multiline rows={3} variant="outlined" onChange={this.handleDescriptionChange}/>
                     </div>
                     <div>
-                        <Button variant="contained">
+                        <Button variant="contained" onClick={this.createDisease}>
                             Create Disease
                         </Button>
                     </div>
@@ -225,7 +298,7 @@ class AdminManagement extends Component {
                                 {
                                     this.state.currentDiseases.map((disease, index) => {
                                         return (
-                                            <MenuItem key={index} value={disease.name}>{disease.name}</MenuItem>
+                                            <MenuItem key={index} value={disease.id}>{disease.name}</MenuItem>
                                         )
                                     })
                                 }
@@ -239,7 +312,7 @@ class AdminManagement extends Component {
                         </div>
                     </div>
                     <div>
-                        <Button variant="contained">
+                        <Button variant="contained" onClick={this.createVaccine}>
                             Create Vaccine
                         </Button>
                     </div>

@@ -3,8 +3,8 @@ import DatePicker from "react-datepicker";
 import Button from '@mui/material/Button';
 import addDays from 'date-fns/addDays';
 import Cookies from 'universal-cookie';
-import axios from 'axios';
 import './PatientReports.css';
+import Axios from "axios";
 
 const { API_URL } = require('../utils/Constants').default;
 class PatientReports extends Component {
@@ -40,9 +40,17 @@ class PatientReports extends Component {
     handleGetStats = async () => {
         const cookies = new Cookies();
         let userId = cookies.get('userId');
-    
+
         try {
-            const response = await axios.get(`${API_URL}/patientreports&userId=${userId}&start=${this.state.startDate}&end=${this.state.endDate}`);
+
+            const response = await Axios.get(`${API_URL}/report/patientreports`,  {
+                    params: {
+                        userId: "saketh",
+                        startDate: this.state.startDate,
+                        endDate: this.state.endDate,
+
+                    },
+            });
             this.setState({
                 totalAppointments: response.totalAppointments,
                 noShowAppointments: response.noShowAppointments,
@@ -59,20 +67,21 @@ class PatientReports extends Component {
             <div className='d-flex flex-column justify-content-around patient-reports'>
                 <h1>Patient Reports</h1>
                 <div className="d-flex flex-column">
+                    <h6>Chosen Date: {this.props.chosenDate.toLocaleString()}</h6>
                     <label>
                         Start Date:
-                        <DatePicker 
-                            selected={this.state.startDate} 
-                            onChange={this.handleStartChange} 
+                        <DatePicker
+                            selected={this.state.startDate}
+                            onChange={this.handleStartChange}
                             minDate={addDays(this.props.chosenDate, -365)}
                             maxDate={this.props.chosenDate}
                         />
                     </label>
                     <label>
                         End Date:
-                        <DatePicker 
-                            selected={this.state.endDate} 
-                            onChange={this.handleEndChange} 
+                        <DatePicker
+                            selected={this.state.endDate}
+                            onChange={this.handleEndChange}
                             minDate={addDays(this.props.chosenDate, -365)}
                             maxDate={this.props.chosenDate}
                         />
@@ -120,4 +129,4 @@ class PatientReports extends Component {
     }
 }
 
-export default PatientReports; 
+export default PatientReports;

@@ -1,5 +1,7 @@
 package edu.sjsu.cmpe275.Model;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
@@ -7,30 +9,32 @@ import java.util.List;
 @XmlRootElement
 @Entity
 @Table(name = "vaccination")
-
+@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 public class Vaccination {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     private Long id;
 
-    @Column(name = "name", nullable = false, unique = true)
+    @Column(name = "name")
     private String name;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "vaccination_id", unique = true)
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "vaccination_diseases",
+            joinColumns = @JoinColumn(name = "vaccination_id"),
+            inverseJoinColumns = @JoinColumn(name = "diseases_id"))
     private List<Disease> diseases;
 
-    @Column(name = "manufacturer", nullable = false)
+    @Column(name = "manufacturer")
     private String manufacturer;
 
-    @Column(name = "number_of_shots", nullable = false)
+    @Column(name = "number_of_shots")
     private Integer numberOfShots;
 
-    @Column(name = "shot_interval", nullable = false)
+    @Column(name = "shot_interval")
     private Integer shotInterval;
 
-    @Column(name = "duration", nullable = false)
+    @Column(name = "duration")
     private Integer duration;
 
     public Integer getDuration() {

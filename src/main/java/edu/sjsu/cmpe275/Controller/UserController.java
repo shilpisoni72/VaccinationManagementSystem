@@ -27,24 +27,30 @@ public class UserController {
     UserRepository userRepository;
 
     @Autowired
-    UserServiceImpl passengerService;
+    UserServiceImpl userService;
+
+
 
     @GetMapping("/users")
-    public ResponseEntity<List<User>> getAllPassengers() {
+    public ResponseEntity<List<User>> getAllUsers() {
         try {
-            List<User> passengers = new ArrayList<User>();
+            List<User> users = new ArrayList<User>();
 
-            userRepository.findAll().forEach(passengers::add);
 
-            if (passengers.isEmpty()) {
+
+            userRepository.findAll().forEach(users::add);
+
+
+            if (users.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
-            return new ResponseEntity<>(passengers, HttpStatus.OK);
+            return new ResponseEntity<>(users, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
     
+
 
     
     @GetMapping("/login")
@@ -64,5 +70,19 @@ public class UserController {
     		return null; //user is invalid
     	
     }	
+
+    @PostMapping("/user")
+    public User getUser(@RequestBody Map<String, Object> requestBody) {
+        try{
+
+            Long userId = ((Number) requestBody.get("userId")).longValue();
+            return userService.getUser(userId);
+        }
+        catch (Exception exception){
+            System.out.println(exception.getStackTrace());
+        }
+        return null;
+    }
+
 
 }

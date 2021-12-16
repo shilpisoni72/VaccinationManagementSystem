@@ -1,5 +1,8 @@
 package edu.sjsu.cmpe275.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
@@ -7,33 +10,34 @@ import java.util.List;
 @XmlRootElement
 @Entity
 @Table(name = "clinic")
-
+@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 public class Clinic {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     private Long id;
 
-    @Column(name = "clinic_name", nullable = false, unique = true)
+    @Column(name = "clinic_name", unique = true)
     private String clinicName;
 
-    @OneToOne(cascade = CascadeType.ALL, optional = false, orphanRemoval = true)
-    @JoinColumn(name = "address_id", nullable = false)
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "address_id")
     private Address address;
 
-    @Column(name = "open", nullable = false)
+    @Column(name = "open")
     private Integer open;
 
-    @Column(name = "close", nullable = false)
+    @Column(name = "close")
     private Integer close;
 
-    @Column(name = "business_hours", nullable = false)
+    @Column(name = "business_hours")
     private Integer businessHours;
 
-    @Column(name = "num_physicians", nullable = false)
+    @Column(name = "num_physicians")
     private Integer numPhysicians;
 
     @OneToMany(mappedBy = "clinic", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties({"user","clinic","vaccinations"})
     private List<Appointment> appointments;
 
     public List<Appointment> getAppointments() {

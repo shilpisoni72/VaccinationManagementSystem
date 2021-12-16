@@ -83,6 +83,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return null;
     }
 
+
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		// TODO Auto-generated method stub
@@ -113,4 +114,18 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 
 
+
+    @Override
+    public User getUser(Long id) {
+        try{
+            Optional<User> user = userRepository.findById(116L);
+            if (user.isPresent()) {
+                return user.get();
+            }
+        }
+        catch (Exception exception){
+            System.out.println(exception.getStackTrace());
+        }
+        return null;
+    }
 }

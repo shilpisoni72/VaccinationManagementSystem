@@ -5,6 +5,8 @@ import edu.sjsu.cmpe275.Repository.DiseaseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -16,9 +18,14 @@ public class DiseaseServiceImpl implements DiseaseService {
     public Optional<Disease> createDisease(String diseaseName, String description){
         System.out.println("inside disease service impl, create disease = " + diseaseName );
         try{
-            Optional<Disease> disease =  Optional.of(diseaseRepository.save(new Disease(diseaseName, description))) ;
-            System.out.println("disease name and id = "+  disease.get().getName() + " " + disease.get().getId());
-            return disease;
+
+            Disease disease = new Disease();
+            disease.setName(diseaseName);
+            disease.setDescription(description);
+
+            Optional<Disease> savedDisease =  Optional.of(diseaseRepository.save(disease)) ;
+            System.out.println("disease name and id = "+  savedDisease.get().getName() + " " + savedDisease.get().getId());
+            return savedDisease;
         }catch (Exception e){
             System.out.println("exception thrown create disease error  = " +e);
             return null;
@@ -39,5 +46,17 @@ public class DiseaseServiceImpl implements DiseaseService {
             System.out.println("exception in deleting disease" + e);
             return false;
         }
+    }
+
+    @Override
+    public List<Disease> getAllDiseases() {
+        try{
+            List<Disease> diseases = new ArrayList<>();
+            diseaseRepository.findAll().forEach(diseases::add);
+            return diseases;
+        }catch (Exception e){
+            System.out.println("exception in getAllDiseases" + e);
+        }
+        return null;
     }
 }

@@ -24,13 +24,13 @@ class Appointment extends Component {
             ],
             vaccinesSelected: [],
             availableVaccines: [
-                {name: "Pfizer"},
-                {name: "Moderna"},
-                {name: "Tetnis"},
-                {name: "Swine flu"},
-                {name: "Johnson&Johnson"},
-                {name: "Small pox"},
-                {name: "Meningitis"}
+                {id:"123", name: "Pfizer"},
+                {id:"124", name: "Moderna"},
+                {id:"125", name: "Tetnis"},
+                {id:"126", name: "Swine flu"},
+                {id:"127", name: "Johnson&Johnson"},
+                {id:"128", name: "Small pox"},
+                {id:"129", name: "Meningitis"}
             ],
 
             scheduledAppointments: [
@@ -39,6 +39,7 @@ class Appointment extends Component {
             ],
             appointmentSelected: {},
             rescheduleDate: this.props.chosenDate,
+            minRescheduleDate: this.props.chosenDate,
             rescheduleClinicSelected:"",
             rescheduleAvailableClinics: [
                 {name: "Sunnyvale CVS"},
@@ -48,22 +49,90 @@ class Appointment extends Component {
         }
     }
 
-    componentDidMount() {
-        // GET call to get vaccines available to user
+    async componentDidMount() {
+        const cookies = new Cookies();
+        cookies.set('userId', 106);
+
+        let userId = cookies.get('userId');
+        const payload = {
+            userId: userId,
+        }
+        const clinicPayload = {
+            appointmentTime: this.state.appointmentDate.toString(),
+        }
+        try {
+            const vaccineResponse = await axios.get(`${API_URL}/vaccination/all`);
+            console.log(vaccineResponse);
+            //const response = await axios.post(`${API_URL}/appointment/user`, payload);
+            const oneClinicResponse = await axios.get(`${API_URL}/clinic/getClinic/${1}`);
+            console.log(oneClinicResponse.data)
+            this.setState({
+                availableVaccines: vaccineResponse.data,
+                availableClinics: [...this.state.availableClinics, oneClinicResponse.data],
+            })
+
+            const clinicResponse = await axios.get(`${API_URL}/clinic/getAvailableClinics`, clinicPayload);
+            console.log(clinicResponse);
+            this.setState({
+                availableVaccines: vaccineResponse.data,
+                //scheduledAppointments: response.data.userAppointments,
+                availableClinics: clinicResponse.data.clinics,
+                rescheduleAvailableClinics: clinicResponse.data.clinics,
+            });
+        } catch (error) {
+            console.log(error);
+        }
     }
 
-    handleDateChange = (date) => {
+    handleDateChange = async (date) => {
         this.setState({
             appointmentDate: date
         });
 
-        // GET call to get available clinic for this date and specific vaccine?
+        const payload = {
+            appointmentTime: this.state.appointmentDate.toString(),
+        }
+        console.log("appointment time  - " , payload);
+        try {
+            const response = await axios.post(`${API_URL}/clinic/getAvailableClinics`, payload);
+            console.log("response = " ,  response.data);
+            // if(response.data.length == 0) alert("no clinic available on that date time");
+            this.setState({
+                availableClinics: response.data,
+            });
+        } catch (error) {
+            console.log(error);
+        }
     }
 
-    handleVaccineChange = (e) => {
-        this.setState({
-            vaccinesSelected: e.target.value
-        });
+    handleVaccineChange = async (e) => {
+        if(e.target.value.length >= this.state.vaccinesSelected.length) {
+            const cookies = new Cookies();
+            let userId = cookies.get('userId');
+            const payload = {
+                vaccinationId: e.target.value[0].id,
+                userId: parseInt(userId),
+                date: this.state.appointmentDate.toString(),
+            }
+
+            try {
+                const response = await axios.post(`${API_URL}/appointment/shot_number`, payload);
+                console.log(response.data);
+                if(response.data !== -1) {
+                    let addedVac = e.target.value.filter(v => !this.state.vaccinesSelected.includes(v));
+                    addedVac[0]["shotNumber"] = response.data;
+                    this.setState({
+                        vaccinesSelected: [...this.state.vaccinesSelected, addedVac[0]]
+                    });
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        } else {
+            this.setState({
+                vaccinesSelected: e.target.value,
+            });
+        }
     }
 
     handleClinicChange = (e) => {
@@ -76,17 +145,29 @@ class Appointment extends Component {
         const cookies = new Cookies();
         let userId = cookies.get('userId');
 
+        let shotNumbers = [];
+        let vaccineIds = [];
+        this.state.vaccinesSelected.forEach((v) => {
+            shotNumbers.push(v.shotNumber);
+            vaccineIds.push(v.id);
+        })
+
         const payload = {
-            user: userId,
-            date: this.state.appointmentDate,
-            vaccines: this.state.vaccinesSelected,
-            clinic: this.state.clinicSelected,
+            userId: parseInt(userId),
+            appointmentDate: this.state.appointmentDate.toString(),
+            appointmentBookedDate: this.props.chosenDate.toString(),
+            vaccinationIds: vaccineIds,
+            clinicId: this.state.clinicSelected.id,
+            shotNumber: shotNumbers, 
         }
 
+        console.log(payload);
+
         try {
-            const response = await axios.post(`${API_URL}/bookappointment`, payload);
+            const response = await axios.post(`${API_URL}/appointment/book`, payload);
+            console.log(response.data);
             this.setState({
-                scheduledAppointments: response.appointments
+                scheduledAppointments: [...this.state.scheduledAppointments, response.bookedAppointment]
             });
         } catch (error) {
             console.log(error);
@@ -96,16 +177,25 @@ class Appointment extends Component {
 
     handleAppointmentChange = (e) => {
         this.setState({
-            appointmentSelected: e.target.value
+            appointmentSelected: e.target.value,
+            minRescheduleDate: e.target.value.date,
         });
     }
 
-    handleRescheduleDateChange = (date) => {
-        this.setState({
-            rescheduleDate: date
-        });
+    handleRescheduleDateChange = async(date) => {
+        const payload = {
+            appointmentTime: date.toString(),
+        }
 
-        // GET call to get available clinic for this date and specific vaccine?
+        try {
+            const response = await axios.post(`${API_URL}/clinic/getAvailableClinics`, payload);
+            this.setState({
+                availableClinics: response.clinics,
+                rescheduleDate: date
+            });
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     handleRescheduleClinicChange = (e) => {
@@ -136,23 +226,20 @@ class Appointment extends Component {
     }
 
     cancelAppointment = async (e) => {
-        const cookies = new Cookies();
-        let userId = cookies.get('userId');
-
         const payload = {
-            user: userId,
-            appointment: e.target.value.appointmentId,
+            appointmentId: e.target.value.appointmentId,
         }
 
         try {
-            const response = await axios.post(`${API_URL}/cancelappointment`, payload);
+            const response = await axios.post(`${API_URL}/appointment/cancel`, payload);
             this.setState({
-                scheduledAppointments: response.appointments
+                scheduledAppointments: this.state.scheduledAppointments.filter((appt) => {
+                    return appt.id !== response.cancelledAppointment.id
+                })
             });
         } catch (error) {
             console.log(error);
         }
-
     }
 
 
@@ -187,13 +274,14 @@ class Appointment extends Component {
                                     return (
                                         <MenuItem 
                                             key={index}
-                                            value={vaccine.name}>{vaccine.name}
+                                            value={vaccine}>{vaccine.name}
                                         </MenuItem>
                                     )
                                 })
                             }
                             </Select>
                         </FormControl>
+
                         <FormControl fullWidth>
                             <InputLabel id="clinic-label">Clinic</InputLabel>
                             <Select
@@ -204,9 +292,9 @@ class Appointment extends Component {
                                 onChange={this.handleClinicChange}
                             >
                             {
-                                this.state.availableClinics.map((clinic, index) => {
+                                this.state.availableClinics?.map((clinic, index) => {
                                     return (
-                                        <MenuItem key={index} value={clinic.name}>{clinic.name}</MenuItem>
+                                        <MenuItem key={index} value={clinic}>{clinic.clinicName}</MenuItem>
                                     )
                                 })
                             }
@@ -217,6 +305,8 @@ class Appointment extends Component {
                         </Button>
                     </div>
                 </div>
+
+                {/*reschedule to time later than set appt */}
                 <div className="d-flex flex-fill flex-column appt-section">
                     <h1>Reschedule an Appointment</h1>
                     <div className="d-flex flex-column appt-form justify-content-evenly">
@@ -246,7 +336,7 @@ class Appointment extends Component {
                         <DatePicker 
                             selected={this.state.rescheduleDate} 
                             onChange={this.handleRescheduleDateChange} 
-                            minDate={this.props.chosenDate}
+                            minDate={this.state.minRescheduleDate}
                             showTimeSelect
                             timeFormat="HH:mm"
                             timeIntervals={15}
@@ -265,7 +355,7 @@ class Appointment extends Component {
                             {
                                 this.state.rescheduleAvailableClinics.map((clinic, index) => {
                                     return (
-                                        <MenuItem key={index} value={clinic.name}>{clinic.name}</MenuItem>
+                                        <MenuItem key={index} value={clinic}>{clinic.name}</MenuItem>
                                     )
                                 })
                             }

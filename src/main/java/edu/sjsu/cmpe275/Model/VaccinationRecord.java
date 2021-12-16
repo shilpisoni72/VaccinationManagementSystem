@@ -1,39 +1,46 @@
 package edu.sjsu.cmpe275.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Table(name = "vaccination_record")
 @Entity
+@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 public class VaccinationRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     private Long id;
 
-    @Column(name = "shot_number", nullable = false)
+    @Column(name = "shot_number")
     private Integer shotNumber;
 
-    @Column(name = "shot_date", nullable = false)
+    @Column(name = "shot_date")
     private Timestamp shotDate;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "vaccination_id")
     private Vaccination vaccination;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "clinic_id")
+    @JsonIgnoreProperties({"appointments"})
     private Clinic clinic;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
+        @JsonIgnoreProperties({"appointments","vaccinationHistory","address"})
     private User user;
 
-    @Column(name = "taken", unique = true)
+    @Column(name = "taken")
     private Boolean taken;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "appointment_id")
+    @JsonIgnoreProperties({"user","clinic","vaccinations"})
     private Appointment appointment;
 
     public Appointment getAppointment() {
