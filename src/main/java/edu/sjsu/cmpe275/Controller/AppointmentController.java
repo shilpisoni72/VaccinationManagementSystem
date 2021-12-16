@@ -135,8 +135,8 @@ public class AppointmentController {
         try {
 
             Long appointmentId = ((Number) requestBody.get("appointmentId")).longValue();
-
-            boolean isCheckedIn = appointmentService.checkInAppointment(appointmentId);
+            boolean isCheckedIn = false;
+            isCheckedIn = appointmentService.checkInAppointment(appointmentId);
             if (isCheckedIn == true)
                 return new ResponseEntity<Boolean>(isCheckedIn, HttpStatus.OK);
             else
