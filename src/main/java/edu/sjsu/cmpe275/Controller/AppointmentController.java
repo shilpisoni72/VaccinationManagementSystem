@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/appointment")
@@ -80,9 +81,12 @@ public class AppointmentController {
 
 
             Appointment bookedAppointment = appointmentService.bookAppointment(userId, appointmentDate, appointmentBookedDate, clinicId, vaccinationIds, shotNumber);
-            if (bookedAppointment != null)
+            if (bookedAppointment != null) {
+                String email = bookedAppointment.getUser().getEmail();
+                if (email != null && !email.isEmpty())
+                    new NotificationHelper().sendEmail(emailConfig, "shilpi9soni@gmail.com", email, "Appointment Cancelled", "Hi, your appointment with id: " + bookedAppointment.getId() + "is cancelled");
                 return new ResponseEntity<Object>(bookedAppointment, HttpStatus.OK);
-            else
+            } else
                 return new ResponseEntity<Object>(bookedAppointment, HttpStatus.INTERNAL_SERVER_ERROR);
 
         } catch (Exception exception) {
@@ -118,9 +122,15 @@ public class AppointmentController {
     public ResponseEntity<Object> cancelAppointment(@RequestBody Map<String, Object> requestBody) {
         try {
             Long appointmentId = ((Number) requestBody.get("appointmentId")).longValue();
+
             Appointment cancelledAppointment = appointmentService.cancelAppointment(appointmentId);
+            Optional<Appointment> appointment = appointmentRepository.findById(appointmentId);
             if (cancelledAppointment != null) {
-                new NotificationHelper().sendEmail(emailConfig, "shilpi9soni@gmail.com", "zaobhiibrfyeqfqmnx@nthrw.com", "Hi", "lololol");
+                if (appointment.isPresent()) {
+                    String email = appointment.get().getUser().getEmail();
+                    if (email != null && !email.isEmpty())
+                        new NotificationHelper().sendEmail(emailConfig, "shilpi9soni@gmail.com", email, "Appointment Cancelled", "Hi, your appointment with id: " + appointment.get().getId() + "is cancelled");
+                }
                 return new ResponseEntity<Object>(cancelledAppointment, HttpStatus.OK);
             } else
                 return new ResponseEntity<Object>("Some error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -148,6 +158,30 @@ public class AppointmentController {
         }
     }
 
+    @PostMapping("/change")
+    @Transactional
+    public ResponseEntity<Object> changeAppointment(@RequestBody Map<String, Object> requestBody) {
+        try {
+            Long appointmentId = ((Number) requestBody.get("appointmentId")).longValue();
+            String newAppointmentDate = (String) requestBody.get("newAppointmentDate");
+            String currentDate = (String) requestBody.get("currentDate");
+
+            Appointment appointment = appointmentService.changeAppointment(appointmentId, newAppointmentDate, currentDate);
+            Optional<Appointment> newAppointment = appointmentRepository.findById(appointmentId);
+            if (newAppointment != null) {
+                String email = newAppointment.get().getUser().getEmail();
+                if (email != null && !email.isEmpty())
+                    new NotificationHelper().sendEmail(emailConfig, "shilpi9soni@gmail.com", email, "Appointment Cancelled", "Hi, your appointment with id: " + newAppointment.get().getId() + "has successfully changed");
+                return new ResponseEntity<Object>(appointment, HttpStatus.OK);
+            } else
+                return new ResponseEntity<Object>("Appointment not found", HttpStatus.NOT_FOUND);
+
+        } catch (Exception exception) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return new ResponseEntity<Object>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @PostMapping("/checkIn")
     @Transactional
     public ResponseEntity<Boolean> checkInAppointment(@RequestBody Map<String, Object> requestBody) {
@@ -156,9 +190,15 @@ public class AppointmentController {
             Long appointmentId = ((Number) requestBody.get("appointmentId")).longValue();
             boolean isCheckedIn = false;
             isCheckedIn = appointmentService.checkInAppointment(appointmentId);
-            if (isCheckedIn == true)
+            Optional<Appointment> appointment = appointmentRepository.findById(appointmentId);
+            if (isCheckedIn == true) {
+                if (appointment.isPresent()) {
+                    String email = appointment.get().getUser().getEmail();
+                    if (email != null && !email.isEmpty())
+                        new NotificationHelper().sendEmail(emailConfig, "shilpi9soni@gmail.com", email, "Appointment Cancelled", "Hi, your appointment with id: " + appointment.get().getId() + "is Checked-in");
+                }
                 return new ResponseEntity<Boolean>(isCheckedIn, HttpStatus.OK);
-            else
+            } else
                 return new ResponseEntity<Boolean>(isCheckedIn, HttpStatus.BAD_REQUEST);
 
         } catch (Exception exception) {
@@ -173,7 +213,7 @@ public class AppointmentController {
         try {
 
             Long userId = ((Number) requestBody.get("userId")).longValue();
-            String currentDate = (String) requestBody.get("date");
+            String currentDate = (String) requestBody.get("currentDate");
 
             return new ResponseEntity<Object>(appointmentService.getSortedPastAppointmentsForUSer(userId, currentDate), HttpStatus.OK);
 
@@ -189,7 +229,7 @@ public class AppointmentController {
         try {
 
             Long userId = ((Number) requestBody.get("userId")).longValue();
-            String currentDate = (String) requestBody.get("date");
+            String currentDate = (String) requestBody.get("currentDate");
 
             return new ResponseEntity<Object>(appointmentService.getSortedFutureAppointmentsForUSer(userId, currentDate), HttpStatus.OK);
 
