@@ -99,7 +99,10 @@ public class VaccinationRecordServiceImpl implements VaccinationRecordService {
                                 vaccinationsDue.add(vaccinationDue);
                             } else {
                                 if (getNextShotDate(vaccinationRecords.getValue().get(latestShotIndex).getAppointment().getDate(), shotInterval).before(endDate)) {
-                                    vaccinationDue.setStatus("DUE");
+                                    if(currentDate.after(getNextShotDate(latestShotDate,shotInterval)))
+                                        vaccinationDue.setStatus("OVERDUE");
+                                    else
+                                        vaccinationDue.setStatus("DUE");
                                     vaccinationDue.setDueDate(getNextShotDate(vaccinationRecords.getValue().get(latestShotIndex).getAppointment().getDate(), shotInterval));
                                     vaccinationDue.setNumberOfShotDue(vaccinationRecords.getValue().get(latestShotIndex).getShotNumber() + 1);
                                     if (latestShotIndex + 1 < vaccinationRecords.getValue().size()) {// could write this and the inset if statement as one but too long
