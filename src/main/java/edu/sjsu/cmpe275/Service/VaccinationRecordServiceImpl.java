@@ -2,12 +2,10 @@ package edu.sjsu.cmpe275.Service;
 
 import edu.sjsu.cmpe275.Helper.Model.VaccinationDue;
 import edu.sjsu.cmpe275.Model.*;
-import edu.sjsu.cmpe275.Repository.UserVaccinationRepository;
 import edu.sjsu.cmpe275.Repository.VaccinationRecordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;

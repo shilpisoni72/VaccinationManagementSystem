@@ -1,9 +1,7 @@
 package edu.sjsu.cmpe275.Controller;
 
 import edu.sjsu.cmpe275.Model.Appointment;
-import edu.sjsu.cmpe275.Model.VaccinationRecord;
 import edu.sjsu.cmpe275.Repository.AppointmentRepository;
-import edu.sjsu.cmpe275.Repository.UserVaccinationRepository;
 import edu.sjsu.cmpe275.Service.AppointmentServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,9 +17,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/appointment")
 public class AppointmentController {
-
-    @Autowired
-    UserVaccinationRepository userVaccinationRepository;
 
     @Autowired
     AppointmentRepository appointmentRepository;

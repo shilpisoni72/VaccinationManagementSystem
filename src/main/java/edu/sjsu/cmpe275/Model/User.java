@@ -47,10 +47,6 @@ public class User {
     private Address address;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-//    @JsonIgnoreProperties({"user","clinic","vaccinations"})
-    private List<UserVaccination> vaccinationHistory;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnoreProperties({"user","clinic","vaccinations"})
     private List<Appointment> appointments;
 
@@ -62,13 +58,6 @@ public class User {
         this.appointments = appointments;
     }
 
-    public List<UserVaccination> getVaccinationHistory() {
-        return vaccinationHistory;
-    }
-
-    public void setVaccinationHistory(List<UserVaccination> vaccinationHistory) {
-        this.vaccinationHistory = vaccinationHistory;
-    }
 
     public Address getAddress() {
         return address;
