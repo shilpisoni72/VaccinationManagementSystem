@@ -54,7 +54,7 @@ public class ReportingServiceImpl {
         }
         double noShowRate = noShow/allAppointments.size();
         System.out.println("all appointments  = " + allAppointments);
-        patientRecord.totalAppointments = totalAppointments;
+        patientRecord.totalAppointments = allAppointments;
         patientRecord.noShowAppointments = noShowAppointments;
         patientRecord.noShowRate = noShowRate;
         return patientRecord;
@@ -95,7 +95,7 @@ public class ReportingServiceImpl {
         }
         double noShowRate = noShow/allAppointments.size();
         System.out.println("all appointments  = " + allAppointments);
-        systemRecord.totalAppointments = totalAppointments;
+        systemRecord.totalAppointments = allAppointments;
         systemRecord.noShowAppointments = noShowAppointments;
         systemRecord.noShowRate = noShowRate;
         return systemRecord;

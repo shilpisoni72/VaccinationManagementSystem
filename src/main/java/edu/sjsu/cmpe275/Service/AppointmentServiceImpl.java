@@ -230,6 +230,8 @@ public class AppointmentServiceImpl implements AppointmentService {
     public boolean checkInAppointment(Long appointmentId) {
         try {
             List<VaccinationRecord> vaccinationRecordData = vaccinationRecordRepository.findAllByAppointmentId(appointmentId);
+            Appointment apt = appointmentRepository.getById(appointmentId);
+            apt.setCheckIn(true);
             if (vaccinationRecordData.size() == 0) {
                 return false;
             }
@@ -240,6 +242,7 @@ public class AppointmentServiceImpl implements AppointmentService {
                 v.setTaken(true);
                 vaccinationRecordRepository.save(v);
             }
+            appointmentRepository.save(apt);
             return true;
         } catch (Exception exception) {
             System.out.println(exception.getStackTrace());

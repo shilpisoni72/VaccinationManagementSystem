@@ -102,9 +102,10 @@ public class ClinicController {
     }
 
     @GetMapping("/getAllClinics")
-    public ResponseEntity<List<Clinic>> getAllClinics(@RequestBody Map<String, Object> requestBody) {
-        Long clinicId = Long.parseLong(String.valueOf(requestBody.get("clinicId"))) ;
-        System.out.println("get available clinic controller called clinic Id = " + clinicId);
+    public ResponseEntity<List<Clinic>> getAllClinics() {
+
+        //Long clinicId = Long.parseLong(String.valueOf(requestBody.get("clinicId"))) ;
+        //System.out.println("get available clinic controller called clinic Id = " + clinicId);
         List<Clinic> clinics = new ArrayList<>();
         clinics = clinicRepository.findAll();
         System.out.println("all clinics = " + clinics);
