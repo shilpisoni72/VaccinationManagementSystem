@@ -120,6 +120,19 @@ public class VaccinationRecordServiceImpl implements VaccinationRecordService {
                                     vaccinationsDue.add(vaccinationDue);
                                 }
                             }
+                        } else if (!latestShot.getTaken() && duration != 0) {
+                            vaccinationDue.setStatus("OVERDUE");
+                            vaccinationDue.setNumberOfShotDue(vaccinationRecords.getValue().get(latestShotIndex).getShotNumber());
+                            vaccinationDue.setVaccinationRecord(vaccinationRecords.getValue().get(latestShotIndex));
+                            vaccinationDue.setAppointment(vaccinationRecords.getValue().get(latestShotIndex).getAppointment());
+                            if (latestShotDate.after(currentDate)) {
+                                vaccinationDue.setStatus("Due");
+                            }
+                            if (latestShotIndex == 0)
+                                vaccinationDue.setDueDate(vaccinationRecords.getValue().get(latestShotIndex).getAppointment().getDate());
+                            else
+                                vaccinationDue.setDueDate(getNextShotDate(vaccinationRecords.getValue().get(latestShotIndex - 1).getAppointment().getDate(), shotInterval));
+                            vaccinationsDue.add(vaccinationDue);
                         } else if (duration != 0) {
                             vaccinationDue.setStatus("OVERDUE");
                             vaccinationDue.setNumberOfShotDue(vaccinationRecords.getValue().get(latestShotIndex).getShotNumber());
@@ -134,6 +147,7 @@ public class VaccinationRecordServiceImpl implements VaccinationRecordService {
                                 vaccinationDue.setDueDate(getNextShotDate(vaccinationRecords.getValue().get(latestShotIndex - 1).getAppointment().getDate(), shotInterval));
                             vaccinationsDue.add(vaccinationDue);
                         }
+
                     }
                 }
             }
