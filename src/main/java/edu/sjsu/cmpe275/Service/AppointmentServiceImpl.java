@@ -31,12 +31,6 @@ public class AppointmentServiceImpl implements AppointmentService {
     VaccinationRepository vaccinationRepository;
 
     @Autowired
-    UserVaccinationRepository userVaccinationRepository;
-
-    @Autowired
-    VaccinationShotRepository vaccinationShotRepository;
-
-    @Autowired
     VaccinationRecordRepository vaccinationRecordRepository;
 
     @Autowired
