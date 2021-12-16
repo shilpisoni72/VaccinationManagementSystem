@@ -50,7 +50,7 @@ class PatientReports extends Component {
 
             const response = await Axios.post(`${API_URL}/report/patientreports`,  {
                     // params: {
-                        userId: "101",
+                        userId: "100",
                         startDate: this.state.startDate.toString(),
                         endDate: this.state.endDate.toString(),
                         currDate: this.props.chosenDate.toString()
