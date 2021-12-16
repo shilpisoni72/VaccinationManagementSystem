@@ -48,6 +48,7 @@ class PatientReports extends Component {
                         userId: "saketh",
                         startDate: this.state.startDate,
                         endDate: this.state.endDate,
+                        currDate: this.props.chosenDate.toString()
 
                     },
             });

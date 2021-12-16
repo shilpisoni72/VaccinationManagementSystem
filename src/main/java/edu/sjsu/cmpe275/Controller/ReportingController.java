@@ -24,7 +24,7 @@ public class ReportingController {
 
     @GetMapping("/patientreports")
     public ResponseEntity<PatientRecord> getPatientReport(@RequestParam String userId, @RequestParam String startDate, @RequestParam String endDate, @RequestParam String currDate) {
-        System.out.println("request object: start date = " + startDate + " end date = " + endDate);
+        System.out.println("request object: start date = " + startDate + " end date = " + endDate + " currDate = "+ currDate);
         try {
             List<Appointment> appointments = new ArrayList<>();
             PatientRecord patientRecord =  reportingService.getPatientReport(userId, startDate, endDate, currDate);
