@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -23,7 +24,10 @@ public class ClinicController {
     ClinicRepository clinicRepository;
 
     @PostMapping("/createClinic")
-    public ResponseEntity<Object> createClinic(@RequestParam("clinicName") String clinicName, @RequestParam("diseaseDescription") String diseaseDescription) {
+    public ResponseEntity<Object> createClinic(@RequestBody Map<String, Object> requestBody) {
+
+        String clinicName = (String) requestBody.get("clinicName");
+        String diseaseDescription = (String) requestBody.get("diseaseDescription");
         System.out.println("create clinic controller called");
         Optional<Clinic> clinicData = clinicService.getClinicByName(clinicName);
         if(clinicData.isPresent()){
