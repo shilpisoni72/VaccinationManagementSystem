@@ -47,12 +47,22 @@ public class AppointmentController {
         try {
 
             Long userId = ((Number) requestBody.get("userId")).longValue();
+            System.out.println("userId" + userId);
+
             Long clinicId = ((Number) requestBody.get("clinicId")).longValue();
+            System.out.println(clinicId);
+
 
             String appointmentDate = (String) requestBody.get("appointmentDate");
+            System.out.println(appointmentDate);
+
             String appointmentBookedDate = (String) requestBody.get("appointmentBookedDate");
+            System.out.println(appointmentBookedDate);
+
             List<Integer> oldVaccinationIds = (List<Integer>) requestBody.get("vaccinationIds");
             List<Integer> shotNumber = ( List<Integer>) requestBody.get("shotNumber");
+            System.out.println(shotNumber);
+
 
             List<Long> vaccinationIds = new ArrayList<Long>();
 
@@ -61,6 +71,9 @@ public class AppointmentController {
                 Long newId = new Long(id);
                 vaccinationIds.add(newId);
             }
+            System.out.println(vaccinationIds);
+
+            
             Appointment bookedAppointment = appointmentService.bookAppointment(userId, appointmentDate, appointmentBookedDate, clinicId, vaccinationIds, shotNumber);
             if (bookedAppointment != null)
                 return new ResponseEntity<Object>(bookedAppointment, HttpStatus.OK);

@@ -34,8 +34,6 @@ class Appointment extends Component {
             ],
 
             scheduledAppointments: [
-                {vaccine: "Pfizer", clinic:"Sunnyvale CVS", date:"12/20/21"},
-                {vaccine: "Flu", clinic:"Sunnyvale CVS", date:"12/20/21"},
             ],
             appointmentSelected: {},
             rescheduleDate: this.props.chosenDate,
@@ -51,33 +49,21 @@ class Appointment extends Component {
 
     async componentDidMount() {
         const cookies = new Cookies();
-        cookies.set('userId', 106);
+        cookies.set('userId', 100);
 
         let userId = cookies.get('userId');
         const payload = {
             userId: userId,
         }
-        const clinicPayload = {
-            appointmentTime: this.state.appointmentDate.toString(),
-        }
+
         try {
             const vaccineResponse = await axios.get(`${API_URL}/vaccination/all`);
             console.log(vaccineResponse);
             //const response = await axios.post(`${API_URL}/appointment/user`, payload);
-            const oneClinicResponse = await axios.get(`${API_URL}/clinic/getClinic/${1}`);
-            console.log(oneClinicResponse.data)
-            this.setState({
-                availableVaccines: vaccineResponse.data,
-                availableClinics: [...this.state.availableClinics, oneClinicResponse.data],
-            })
 
-            const clinicResponse = await axios.get(`${API_URL}/clinic/getAvailableClinics`, clinicPayload);
-            console.log(clinicResponse);
             this.setState({
                 availableVaccines: vaccineResponse.data,
                 //scheduledAppointments: response.data.userAppointments,
-                availableClinics: clinicResponse.data.clinics,
-                rescheduleAvailableClinics: clinicResponse.data.clinics,
             });
         } catch (error) {
             console.log(error);
@@ -110,10 +96,11 @@ class Appointment extends Component {
             const cookies = new Cookies();
             let userId = cookies.get('userId');
             const payload = {
-                vaccinationId: e.target.value[0].id,
+                vaccinationId: e.target.value.at(-1).id,
                 userId: parseInt(userId),
                 date: this.state.appointmentDate.toString(),
             }
+            console.log(payload);
 
             try {
                 const response = await axios.post(`${API_URL}/appointment/shot_number`, payload);
@@ -121,6 +108,7 @@ class Appointment extends Component {
                 if(response.data !== -1) {
                     let addedVac = e.target.value.filter(v => !this.state.vaccinesSelected.includes(v));
                     addedVac[0]["shotNumber"] = response.data;
+                    console.log(addedVac[0]);
                     this.setState({
                         vaccinesSelected: [...this.state.vaccinesSelected, addedVac[0]]
                     });
@@ -167,7 +155,7 @@ class Appointment extends Component {
             const response = await axios.post(`${API_URL}/appointment/book`, payload);
             console.log(response.data);
             this.setState({
-                scheduledAppointments: [...this.state.scheduledAppointments, response.bookedAppointment]
+                scheduledAppointments: [...this.state.scheduledAppointments, response.data]
             });
         } catch (error) {
             console.log(error);
@@ -244,6 +232,7 @@ class Appointment extends Component {
 
 
     render() {
+        console.log(this.state.scheduledAppointments);
         return (
             <div className='d-flex flex-column'>
                 <div className="d-flex flex-fill flex-column appt-section">
@@ -281,6 +270,15 @@ class Appointment extends Component {
                             }
                             </Select>
                         </FormControl>
+                        {
+                            this.state.vaccinesSelected.map((vaccine, index) => {
+                                return (
+                                    <h6 key={index}>
+                                        {vaccine.name} shot number: {vaccine.shotNumber}
+                                    </h6>
+                                )
+                            })
+                        }
 
                         <FormControl fullWidth>
                             <InputLabel id="clinic-label">Clinic</InputLabel>
@@ -326,7 +324,14 @@ class Appointment extends Component {
                                             key={index}
                                             value={appointment}
                                         >
-                                            {`${appointment.vaccine} at ${appointment.clinic} on ${appointment.date}`}
+                                            {
+                                                appointment?.vaccinations.map((v, ind) => {
+                                                    return (
+                                                        <div key={ind}>{v.name}</div>
+                                                    )
+                                                })
+                                            }
+                                            {` at ${appointment?.clinic.clinicName} on ${new Date(appointment?.appointmentDateTime).toLocaleString()}`}
                                         </MenuItem>
                                     )
                                 })
@@ -373,9 +378,15 @@ class Appointment extends Component {
                             this.state.scheduledAppointments.map((appointment) => {
                                 return (
                                     <div className='d-flex due-vaccine align-items-center'>
-                                        <h5>{appointment.vaccine}</h5>
-                                        <p>Clinic: {appointment.clinic}</p>
-                                        <p>Date: {appointment.date}</p>
+                                        {
+                                            appointment?.vaccinations.map((v, ind) => {
+                                                return(
+                                                    <div key={ind}>{v.name}</div>
+                                                )
+                                            })
+                                        }
+                                        <p>Clinic: {appointment?.clinic.clinicName}</p>
+                                        <p>Date: {new Date(appointment?.appointmentDateTime).toLocaleString()}</p>
                                         <Button variant="contained" color='error'>
                                             Cancel
                                         </Button>

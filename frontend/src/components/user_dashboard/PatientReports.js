@@ -81,7 +81,7 @@ class PatientReports extends Component {
                             selected={this.state.startDate}
                             onChange={this.handleStartChange}
                             minDate={addDays(this.props.chosenDate, -365)}
-                            maxDate={this.props.chosenDate}
+                            maxDate={addDays(this.props.chosenDate, 365)}
                         />
                     </label>
                     <label>
@@ -90,7 +90,7 @@ class PatientReports extends Component {
                             selected={this.state.endDate}
                             onChange={this.handleEndChange}
                             minDate={addDays(this.props.chosenDate, -365)}
-                            maxDate={this.props.chosenDate}
+                            maxDate={addDays(this.props.chosenDate, 365)}
                         />
                     </label>
                     <div>
