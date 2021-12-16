@@ -121,11 +121,12 @@ public class VaccinationRecordServiceImpl implements VaccinationRecordService {
     }
 
     @Override
-    public List<VaccinationRecord> getVaccinationRecords(Long userId) {
+    public Map<Long, List<VaccinationRecord>> getVaccinationRecords(Long userId) {
         try {
             List<VaccinationRecord> userVaccinationHistory = new ArrayList<VaccinationRecord>();
             vaccinationRecordRepository.findAllByUserId(userId).forEach(userVaccinationHistory::add);
-            return userVaccinationHistory;
+            Map<Long, List<VaccinationRecord>> groupedVaccinationRecords = getGroupedVaccinationRecords((userVaccinationHistory));
+            return groupedVaccinationRecords;
         } catch (Exception exception) {
             System.out.println(exception.getStackTrace());
         }

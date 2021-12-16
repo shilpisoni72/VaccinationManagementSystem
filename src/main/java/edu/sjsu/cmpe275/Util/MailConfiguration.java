@@ -21,8 +21,8 @@ public class MailConfiguration {
 
         String host = "smtp.gmail.com";
         int port = 587;
-        String username = "";
-        String password = "";
+        String username = "shilpi9soni@gmail.com";
+        String password = "SanJose!2021";
 //        mailSender.setHost(env.getProperty("spring.mail.host"));
 //        mailSender.setPort(Integer.valueOf(env.getProperty("spring.mail.port")));
 //        mailSender.setUsername(env.getProperty("spring.mail.username"));

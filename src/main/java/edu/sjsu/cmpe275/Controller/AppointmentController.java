@@ -1,8 +1,10 @@
 package edu.sjsu.cmpe275.Controller;
 
+import edu.sjsu.cmpe275.Config.EmailConfig;
 import edu.sjsu.cmpe275.Model.Appointment;
 import edu.sjsu.cmpe275.Repository.AppointmentRepository;
 import edu.sjsu.cmpe275.Service.AppointmentServiceImpl;
+import edu.sjsu.cmpe275.Util.NotificationHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,9 @@ public class AppointmentController {
 
     @Autowired
     AppointmentServiceImpl appointmentService;
+
+    @Autowired
+    EmailConfig emailConfig;
 
     @PostMapping("/user")
     @Transactional
@@ -60,7 +65,7 @@ public class AppointmentController {
             System.out.println(appointmentBookedDate);
 
             List<Integer> oldVaccinationIds = (List<Integer>) requestBody.get("vaccinationIds");
-            List<Integer> shotNumber = ( List<Integer>) requestBody.get("shotNumber");
+            List<Integer> shotNumber = (List<Integer>) requestBody.get("shotNumber");
             System.out.println(shotNumber);
 
 
@@ -73,7 +78,7 @@ public class AppointmentController {
             }
             System.out.println(vaccinationIds);
 
-            
+
             Appointment bookedAppointment = appointmentService.bookAppointment(userId, appointmentDate, appointmentBookedDate, clinicId, vaccinationIds, shotNumber);
             if (bookedAppointment != null)
                 return new ResponseEntity<Object>(bookedAppointment, HttpStatus.OK);
@@ -97,7 +102,7 @@ public class AppointmentController {
 
 
             Integer shotNumber = appointmentService.getShotNumber(vaccinationId, userId, date);
-            if (shotNumber !=-1)
+            if (shotNumber != -1)
                 return new ResponseEntity<Object>(shotNumber, HttpStatus.OK);
             else
                 return new ResponseEntity<Object>(shotNumber, HttpStatus.FORBIDDEN);
@@ -114,9 +119,10 @@ public class AppointmentController {
         try {
             Long appointmentId = ((Number) requestBody.get("appointmentId")).longValue();
             Appointment cancelledAppointment = appointmentService.cancelAppointment(appointmentId);
-            if (cancelledAppointment !=null)
+            if (cancelledAppointment != null) {
+                new NotificationHelper().sendEmail(emailConfig, "shilpi9soni@gmail.com", "zaobhiibrfyeqfqmnx@nthrw.com", "Hi", "lololol");
                 return new ResponseEntity<Object>(cancelledAppointment, HttpStatus.OK);
-            else
+            } else
                 return new ResponseEntity<Object>("Some error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
 
         } catch (Exception exception) {
@@ -131,7 +137,7 @@ public class AppointmentController {
         try {
             Long appointmentId = ((Number) requestBody.get("appointmentId")).longValue();
             Appointment appointment = appointmentService.cancelAppointment(appointmentId);
-            if (appointment !=null)
+            if (appointment != null)
                 return new ResponseEntity<Object>(appointment, HttpStatus.OK);
             else
                 return new ResponseEntity<Object>("Appointment not found", HttpStatus.NOT_FOUND);
@@ -169,7 +175,7 @@ public class AppointmentController {
             Long userId = ((Number) requestBody.get("userId")).longValue();
             String currentDate = (String) requestBody.get("date");
 
-            return new ResponseEntity<Object>(appointmentService.getSortedPastAppointmentsForUSer(userId,currentDate), HttpStatus.OK);
+            return new ResponseEntity<Object>(appointmentService.getSortedPastAppointmentsForUSer(userId, currentDate), HttpStatus.OK);
 
         } catch (Exception exception) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -185,14 +191,13 @@ public class AppointmentController {
             Long userId = ((Number) requestBody.get("userId")).longValue();
             String currentDate = (String) requestBody.get("date");
 
-            return new ResponseEntity<Object>(appointmentService.getSortedFutureAppointmentsForUSer(userId,currentDate), HttpStatus.OK);
+            return new ResponseEntity<Object>(appointmentService.getSortedFutureAppointmentsForUSer(userId, currentDate), HttpStatus.OK);
 
         } catch (Exception exception) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return new ResponseEntity<Object>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
 
 
 }

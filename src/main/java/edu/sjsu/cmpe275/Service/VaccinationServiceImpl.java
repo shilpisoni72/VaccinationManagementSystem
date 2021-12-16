@@ -64,4 +64,29 @@ public class VaccinationServiceImpl implements VaccinationService {
     public Optional<Vaccination> getVaccinationById(Long vaccinationId) {
         return vaccinationRepository.findById(vaccinationId);
     }
+
+    @Override
+    public Optional<Vaccination> updateVaccinationById(Long vaccinationId) {
+//        try {
+//            Vaccination vaccination = new Vaccination();
+//            vaccination.setName(name);
+//            vaccination.setManufacturer(manufacturer);
+//            vaccination.setDuration(duration);
+//            vaccination.setNumberOfShots(numberOfShots);
+//            vaccination.setShotInterval(shotInterval);
+//            List<Disease> diseases = new ArrayList<>();
+//            for (Long diseaseId :
+//                    diseaseIds) {
+//                Optional<Disease> diseaseData = diseaseRepository.findById(diseaseId);
+//                if (diseaseData.isPresent()) {
+//                    diseases.add(diseaseData.get());
+//                }
+//            }
+//            vaccination.setDiseases(diseases);
+//            return vaccinationRepository.save(vaccination);
+//        } catch (Exception exception) {
+//            System.out.println(exception.getStackTrace());
+//        }
+        return null;
+    }
 }

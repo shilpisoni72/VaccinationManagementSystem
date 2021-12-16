@@ -19,8 +19,8 @@ public class VaccinationManagementSystem {
     public static void main(String[] args) {
         SpringApplication.run(VaccinationManagementSystem.class, args);
         //sending email
-        //        NotificationHelper notificationHelper = new NotificationHelper();
-        //        notificationHelper.sendEmail("Hi from springboot");
+//                NotificationHelper notificationHelper = new NotificationHelper();
+//                notificationHelper.sendEmail("Hi from springboot");
     }
 //    @Bean
 //    public WebMvcConfigurer corsConfigurer() {

@@ -1,7 +1,9 @@
 package edu.sjsu.cmpe275.Service;
 
+import edu.sjsu.cmpe275.Config.EmailConfig;
 import edu.sjsu.cmpe275.Model.*;
 import edu.sjsu.cmpe275.Repository.*;
+import edu.sjsu.cmpe275.Util.NotificationHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +34,9 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Autowired
     VaccinationRecordServiceImpl vaccinationRecordService;
+
+    @Autowired
+    EmailConfig emailConfig;
 
     @Override
     public List<Appointment> getAllAppointmentsForUser(Long userId) {
@@ -124,17 +129,24 @@ public class AppointmentServiceImpl implements AppointmentService {
                 int vaccinationInterval = vaccinationRecords.get(0).getVaccination().getShotInterval();
                 int duration = vaccinationRecords.get(0).getVaccination().getDuration();
                 VaccinationRecord latestVaccinationRecord = null;
+                Date latestShotDate = vaccinationRecords.get(0).getShotDate();;
+
                 int latestShotNumber = 0;
+                int index = 0;
                 for (VaccinationRecord vaccinationRecord :
                         vaccinationRecords) {
                     if (vaccinationRecord.getShotNumber() > latestShotNumber) {
                         latestShotNumber = vaccinationRecord.getShotNumber();
                         latestVaccinationRecord = vaccinationRecord;
+                        if(index>0){
+                            latestShotDate = vaccinationRecordService.getNextShotDate(vaccinationRecords.get(index-1).getAppointment().getDate(),vaccinationInterval);
+                        }
                     }
+                    index++;
                 }
                 if (vaccinationRecords.size() % vaccinationNumberOfShots != 0) {
                     if (latestVaccinationRecord.getTaken()) {
-                        if (appointmentDate.before(vaccinationRecordService.getNextShotDate(appointmentDate, vaccinationInterval))) {
+                        if (appointmentDate.before(vaccinationRecordService.getNextShotDate(latestShotDate, vaccinationInterval))) {
                             return -1;
                         } else {
                             return latestVaccinationRecord.getShotNumber() + 1;
@@ -145,7 +157,7 @@ public class AppointmentServiceImpl implements AppointmentService {
                 } else {
                     //duration
                     if (latestVaccinationRecord.getTaken() && duration != 0) {
-                        if (appointmentDate.before(vaccinationRecordService.getNextShotDate(appointmentDate, duration))) {
+                        if (appointmentDate.before(vaccinationRecordService.getNextShotDate(latestShotDate, duration))) {
                             return -1;
                         } else {
                             return latestVaccinationRecord.getShotNumber() + 1;
@@ -183,6 +195,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         try {
             Optional<Appointment> appointmentData = appointmentRepository.findById(appointmentId);
             if (appointmentData.isPresent()) {
+
                 List<VaccinationRecord> vaccinationRecords = new ArrayList<>();
                 vaccinationRecordRepository.findAllByAppointmentId(appointmentId).forEach(vaccinationRecords::add);
                 for (VaccinationRecord vaccinationRecord :
@@ -190,6 +203,9 @@ public class AppointmentServiceImpl implements AppointmentService {
                     vaccinationRecordRepository.deleteById(vaccinationRecord.getId());
                 }
                 appointmentRepository.deleteById(appointmentId);
+                String userEmail = appointmentData.get().getUser().getEmail();
+                if(userEmail!=null && !userEmail.isEmpty())
+                    new NotificationHelper().sendEmail(emailConfig, "shilpi9soni@gmail.com", userEmail, "", "lololol");
                 return appointmentData.get();
             }
         } catch (Exception exception) {

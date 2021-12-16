@@ -10,4 +10,5 @@ public interface VaccinationService {
     public List<Vaccination> getAllVaccinations();
     public Vaccination createVaccination(String name, List<Long> diseaseIds, String manufacturer, Integer numberOfShots, Integer shotInterval, Integer duration);
     public Optional<Vaccination> getVaccinationById(Long vaccinationId);
+    public Optional<Vaccination> updateVaccinationById(Long vaccinationId);
 }

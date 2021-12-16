@@ -1,6 +1,7 @@
 package edu.sjsu.cmpe275.Util;
 
 
+import edu.sjsu.cmpe275.Config.EmailConfig;
 import edu.sjsu.cmpe275.Model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -15,19 +16,18 @@ import java.io.UnsupportedEncodingException;
 
 @Service
 public class NotificationHelper {
-//    @Autowired
+
     JavaMailSender mailSender;
 
-    public void sendEmail(String mess){
+    public void sendEmail(EmailConfig emailConfig, String sender, String receiver, String message, String subject){
 
 //        public void sendEmail() {
             Mail mail = new Mail();
-            mail.setMailFrom("sakethreddy.333@gmail.com");
-            mail.setMailTo("sakethreddy.banda@sjsu.edu");
-            mail.setMailSubject("Spring Boot - Email Example");
-            mail.setMailContent("Learn How to send Email froms spring boot");
-            MailConfiguration mailConfiguration = new MailConfiguration();
-            mailSender = mailConfiguration.getMailSender();
+            mail.setMailFrom(sender);
+            mail.setMailTo(receiver);
+            mail.setMailSubject(subject);
+            mail.setMailContent("Appointment Status: ");
+            mailSender = emailConfig.getJavaMailSender();
             MimeMessage mimeMessage = mailSender.createMimeMessage();
 
             try {
@@ -38,14 +38,14 @@ public class NotificationHelper {
 //                mimeMessageHelper.setFrom(new InternetAddress(mail.getMailFrom(), "sakethreddy.333@gmail.com"));
 //                mimeMessageHelper.setTo(mail.getMailTo());
 //                mimeMessageHelper.setText(mail.getMailContent());
-                SimpleMailMessage message = new SimpleMailMessage();
+                SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
 
-                message.setFrom(mail.getMailFrom());
-                message.setTo(mail.getMailTo());
-                message.setSubject("This is a plain text email");
-                message.setText("Hello guys! This is a plain text email.");
+                simpleMailMessage.setFrom(mail.getMailFrom());
+                simpleMailMessage.setTo(mail.getMailTo());
+                simpleMailMessage.setSubject(subject);
+                simpleMailMessage.setText(message);
 
-                mailSender.send(message);
+                mailSender.send(simpleMailMessage);
 //                mailSender.send(mimeMessageHelper.getMimeMessage());
 
             }
