@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -33,10 +34,24 @@ public class VaccinationController {
 
     @PostMapping("/create")
     @Transactional
-    public ResponseEntity<Object> createVaccination(@RequestBody String name, Map<String, Object> diseases, String manufacturer, Integer numberOfShots, Integer shotInterval, Integer duration) {
+    public ResponseEntity<Object> createVaccination(@RequestBody Map<String, Object> requestBody) {
         try {
             System.out.println("Here");
-            List<Long> diseaseIds = (List<Long>) diseases.get("diseaseIds");
+            String name = (String) requestBody.get("name");
+            String manufacturer = (String) requestBody.get("manufacturer");
+            Integer numberOfShots = (Integer) requestBody.get("numberOfShots");
+            Integer shotInterval = (Integer) requestBody.get("shotInterval");
+            Integer duration = (Integer) requestBody.get("duration");
+            List<Integer> diseaseIdsOld = (List<Integer>) requestBody.get("diseaseIds");
+            List<Long> diseaseIds = new ArrayList<Long>();
+
+            for (Integer id :
+                    diseaseIdsOld) {
+                Long newId = new Long(id);
+                diseaseIds.add(newId);
+            }
+
+
             return new ResponseEntity<Object>(vaccinationService.createVaccination(name, diseaseIds, manufacturer, numberOfShots, shotInterval, duration), HttpStatus.OK);
         } catch (Exception exception) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
