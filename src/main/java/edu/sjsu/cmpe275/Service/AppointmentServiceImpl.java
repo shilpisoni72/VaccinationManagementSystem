@@ -10,10 +10,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class AppointmentServiceImpl implements AppointmentService {
@@ -232,5 +229,43 @@ public class AppointmentServiceImpl implements AppointmentService {
             System.out.println(exception.getStackTrace());
             return false;
         }
+    }
+
+    @Override
+    public List<Appointment> getSortedFutureAppointmentsForUSer(Long userId, String currentDate) {
+        try {
+            List<Appointment> appointments = new ArrayList<>();
+
+            appointmentRepository.findAllByUserIdAndAppointmentDateTimeAfter(userId, new Timestamp(new Date(currentDate).getTime())).forEach(appointments::add);
+            Comparator<Appointment> compareByAppointmentDate = (Appointment a1, Appointment a2) ->
+                    a1.getAppointmentDateTime().compareTo(a2.getAppointmentDateTime());
+
+                if (!appointments.isEmpty())
+                    Collections.sort(appointments, compareByAppointmentDate);
+
+            return appointments;
+        } catch (Exception exception) {
+            System.out.println(exception.getStackTrace());
+        }
+        return null;
+    }
+
+    @Override
+    public List<Appointment> getSortedPastAppointmentsForUSer(Long userId, String currentDate) {
+        try {
+            List<Appointment> appointments = new ArrayList<>();
+
+            appointmentRepository.findAllByUserIdAndAppointmentDateTimeBefore(userId, new Timestamp(new Date(currentDate).getTime())).forEach(appointments::add);
+            Comparator<Appointment> compareByAppointmentDate = (Appointment a1, Appointment a2) ->
+                    a1.getAppointmentDateTime().compareTo(a2.getAppointmentDateTime());
+
+            if (!appointments.isEmpty())
+                Collections.sort(appointments, compareByAppointmentDate);
+
+            return appointments;
+        } catch (Exception exception) {
+            System.out.println(exception.getStackTrace());
+        }
+        return null;
     }
 }

@@ -4,6 +4,7 @@ import edu.sjsu.cmpe275.Model.Appointment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
@@ -12,7 +13,9 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 
     List<Appointment> findAllByUserId(Long UserId);
     List<Appointment> findAllByDateBefore(Date date);
+    List<Appointment> findAllByUserIdAndAppointmentDateTimeBefore(Long userId, Timestamp timestamp);
     List<Appointment> findAllByDateAfter(Date date);
+    List<Appointment> findAllByUserIdAndAppointmentDateTimeAfter(Long userId, Timestamp timestamp);
     List<Appointment> findAllByDateBetween(Date dateStart, Date dateEnd);
 //    List<Appointment> findAllByUserAndDateBetween(Date dateStart, Date dateEnd)
 

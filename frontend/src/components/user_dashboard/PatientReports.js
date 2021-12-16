@@ -15,12 +15,10 @@ class PatientReports extends Component {
             endDate: this.props.chosenDate,
             noShowRate: 0,
             noShowAppointments: [
-                {vaccine: "Pfizer", clinic:"Sunnyvale CVS", date:"12/20/21"},
-                {vaccine: "Flu", clinic:"Sunnyvale CVS", date:"12/20/21"},
+
             ],
             totalAppointments: [
-                {vaccine: "Pfizer", clinic:"Sunnyvale CVS", date:"12/20/21"},
-                {vaccine: "Flu", clinic:"Sunnyvale CVS", date:"12/20/21"},
+
             ]
         }
     }
@@ -50,7 +48,7 @@ class PatientReports extends Component {
 
             const response = await Axios.post(`${API_URL}/report/patientreports`,  {
                     // params: {
-                        userId: "100",
+                        userId: userId,
                         startDate: this.state.startDate.toString(),
                         endDate: this.state.endDate.toString(),
                         currDate: this.props.chosenDate.toString()
@@ -59,9 +57,9 @@ class PatientReports extends Component {
             }, config);
             console.log("response of patient reports = " , response);
             this.setState({
-                totalAppointments: response.totalAppointments,
-                noShowAppointments: response.noShowAppointments,
-                noShowRate : response.noShowAppointments.length / response.totalAppointments.length,
+                totalAppointments: response.data.totalAppointments,
+                noShowAppointments: response.data.noShowAppointments,
+                noShowRate : response.data.noShowRate,
             });
         } catch (error) {
             console.log(error);
@@ -107,11 +105,11 @@ class PatientReports extends Component {
                     <h4>No Show Appointments</h4>
                     {
                         this.state.noShowAppointments.map((apt, index) => {
+                            console.log(apt);
                             return (
                                 <div className="d-flex align-items-center justify-content-evenly no-show-block" key={index}>
-                                    <h4>{apt.vaccine}</h4>
-                                    <div>Clinic: {apt.clinic}</div>
-                                    <div>Date: {apt.date}</div>
+                                    <div>Clinic: {apt.clinic.clinicName}</div>
+                                    <div>Date: {new Date(apt.appointmentDateTime).toLocaleString()}</div>
                                 </div>
                             )
                         })
@@ -123,9 +121,8 @@ class PatientReports extends Component {
                         this.state.totalAppointments.map((apt, index) => {
                             return (
                                 <div className="d-flex align-items-center justify-content-evenly total-block" key={index}>
-                                    <h4>{apt.vaccine}</h4>
-                                    <div>Clinic: {apt.clinic}</div>
-                                    <div>Date: {apt.date}</div>
+                                    <div>Clinic: {apt.clinic.clinicName}</div>
+                                    <div>Date: {new Date(apt.appointmentDateTime).toLocaleString()}</div>
                                 </div>
                             )
                         })

@@ -16,5 +16,7 @@ public interface AppointmentService {
     public Appointment cancelAppointment(Long appointmentId);
     public Appointment getAppointment(Long appointmentId);
     public boolean checkInAppointment(Long appointmentId);
+    public List<Appointment> getSortedFutureAppointmentsForUSer(Long userId, String currentDate);
+    public List<Appointment> getSortedPastAppointmentsForUSer(Long userId, String currentDate);
 
 }
