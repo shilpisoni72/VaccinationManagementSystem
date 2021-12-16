@@ -29,8 +29,9 @@ public class RegistrationService {
 	EmailSender emailSender;
 	
 	public String register(RegistrationRequest request) {
-
-		String token = userService.singUpUser(new User(request.getFirstName(), request.getLastName(), AppUserRole.USER,request.getDateOfBirth(),request.getGender(),request.getVerified(),request.getRole(),request.getPassword(), request.getEmail(), request.getAddress(), request.getCity(), request.getState(), request.getZipcode(), Provider.LOCAL ));
+// String firstName, String lastName, AppUserRole appUserRole, Date dateOfBirth, String gender,
+		//Boolean verified, String role, String password, String email
+		String token = userService.singUpUser(new User(request.getFirstName(), request.getLastName(), AppUserRole.USER,request.getDateOfBirth(),request.getGender(),request.getVerified(),request.getRole(),request.getPassword(), request.getEmail()));
 		//emailSender.send(request.getEmail(), token);
 		
 		String link = "http://localhost:8080/api/v1/registration/confirm?token=" + token;
