@@ -97,10 +97,10 @@ public class AppointmentServiceImpl implements AppointmentService {
                     VaccinationRecord vaccinationRecord = new VaccinationRecord();
                     vaccinationRecord.setVaccination(vaccinationData.get());
                     vaccinationRecord.setTaken(false);
-                    if(shotNumber.get(i)==1){
+                    if(shotNumber.get(i)==1)
                         vaccinationRecord.setShotDate(new Timestamp(new Date(appointmentDate).getTime()));
-                    }
-                    vaccinationRecord.setShotDate(new Timestamp(0));
+                    else
+                        vaccinationRecord.setShotDate(new Timestamp(0));
                     vaccinationRecord.setShotNumber(shotNumber.get(i));
                     vaccinationRecord.setAppointment(savedAppointment);
                     if (userData.isPresent())
