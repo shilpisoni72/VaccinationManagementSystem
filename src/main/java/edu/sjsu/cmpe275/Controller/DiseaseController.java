@@ -70,4 +70,20 @@ public class DiseaseController {
             return new ResponseEntity<Object>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @PostMapping("/disease")
+    @Transactional
+    public ResponseEntity<Object> getDiseaseById(Map<String, Object> requestBody) {
+        try {
+            Long diseaseId = ((Number) requestBody.get("diseaseId")).longValue();
+            Optional<Disease> diseaseData = diseaseService.getDiseaseById(diseaseId);
+            if(!diseaseData.isPresent()){
+                return new ResponseEntity<Object>(new Response("404","Disease id "+ diseaseId+" does not exists"), HttpStatus.NOT_FOUND);
+            }
+            return new ResponseEntity<>(diseaseData.get(), HttpStatus.OK);
+        } catch (Exception exception) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return new ResponseEntity<Object>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

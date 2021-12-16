@@ -59,4 +59,9 @@ public class VaccinationServiceImpl implements VaccinationService {
         }
         return null;
     }
+
+    @Override
+    public Optional<Vaccination> getVaccinationById(Long vaccinationId) {
+        return vaccinationRepository.findById(vaccinationId);
+    }
 }

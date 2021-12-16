@@ -75,10 +75,6 @@ public class AppointmentServiceImpl implements AppointmentService {
             Optional<User> userData = userRepository.findById(userId);
             if (userData.isPresent())
                 appointment.setUser(userData.get());
-            Optional<User> userData1 = userRepository.findById(106L);
-            if (userData1.isPresent())
-                appointment.setUser(userData1.get());
-
             Optional<Clinic> clinicData = clinicRepository.findById(clinicId);
             if (clinicData.isPresent())
                 appointment.setClinic(clinicData.get());
@@ -101,6 +97,9 @@ public class AppointmentServiceImpl implements AppointmentService {
                     VaccinationRecord vaccinationRecord = new VaccinationRecord();
                     vaccinationRecord.setVaccination(vaccinationData.get());
                     vaccinationRecord.setTaken(false);
+                    if(shotNumber.get(i)==1){
+                        vaccinationRecord.setShotDate(new Timestamp(new Date(appointmentDate).getTime()));
+                    }
                     vaccinationRecord.setShotDate(new Timestamp(0));
                     vaccinationRecord.setShotNumber(shotNumber.get(i));
                     vaccinationRecord.setAppointment(savedAppointment);

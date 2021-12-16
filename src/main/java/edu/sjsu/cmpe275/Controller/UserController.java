@@ -72,11 +72,14 @@ public class UserController {
     }	
 
     @PostMapping("/user")
-    public User getUser(@RequestBody Map<String, Object> requestBody) {
+    public ResponseEntity<Object> getUser(@RequestBody Map<String, Object> requestBody) {
         try{
 
             Long userId = ((Number) requestBody.get("userId")).longValue();
-            return userService.getUser(userId);
+            Optional<User> userData = userService.getUser(userId);
+            if(!userData.isPresent())
+                return new ResponseEntity<Object>(new Response("404","Disease id "+ userId+" does not exists"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(userData.get(), HttpStatus.OK);
         }
         catch (Exception exception){
             System.out.println(exception.getStackTrace());

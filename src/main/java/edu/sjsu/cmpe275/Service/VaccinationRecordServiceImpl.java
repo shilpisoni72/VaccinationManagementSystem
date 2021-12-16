@@ -48,7 +48,9 @@ public class VaccinationRecordServiceImpl implements VaccinationRecordService {
                         if (currentDate.after(vaccinationRecords.getValue().get(i).getAppointment().getAppointmentDateTime())) {
                             latestShotIndex = i;
                             latestShotNumber = vaccinationRecords.getValue().get(i).getShotNumber();
-                            latestShotDate = vaccinationRecords.getValue().get(i).getShotDate();
+                            if(i>0){
+                                latestShotDate = getNextShotDate(vaccinationRecords.getValue().get(i-1).getAppointment().getDate(),shotInterval);
+                            }
                             latestShot = vaccinationRecords.getValue().get(i);
                         }
                     }

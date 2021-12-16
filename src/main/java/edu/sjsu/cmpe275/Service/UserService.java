@@ -18,7 +18,7 @@ public interface  UserService {
     public List<Appointment> getAllUserAppointments(Long id);
     public String singUpUser(User user);
     public User loginUser(String email, String encodedpassword); //not called
-    public User getUser(Long id);
+    public Optional<User> getUser(Long id);
 
 
 }
