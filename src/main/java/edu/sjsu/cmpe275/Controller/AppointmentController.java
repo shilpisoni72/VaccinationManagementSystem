@@ -97,8 +97,9 @@ public class AppointmentController {
 
     @PostMapping("/cancel")
     @Transactional
-    public ResponseEntity<Object> cancelAppointment(@RequestBody Long appointmentId) {
+    public ResponseEntity<Object> cancelAppointment(@RequestBody Map<String, Object> requestBody) {
         try {
+            Long appointmentId = ((Number) requestBody.get("appointmentId")).longValue();
             Appointment cancelledAppointment = appointmentService.cancelAppointment(appointmentId);
             if (cancelledAppointment !=null)
                 return new ResponseEntity<Object>(cancelledAppointment, HttpStatus.OK);
@@ -113,8 +114,9 @@ public class AppointmentController {
 
     @PostMapping("/get_one")
     @Transactional
-    public ResponseEntity<Object> getAppointment(@RequestBody Long appointmentId) {
+    public ResponseEntity<Object> getAppointment(@RequestBody Map<String, Object> requestBody) {
         try {
+            Long appointmentId = ((Number) requestBody.get("appointmentId")).longValue();
             Appointment appointment = appointmentService.cancelAppointment(appointmentId);
             if (appointment !=null)
                 return new ResponseEntity<Object>(appointment, HttpStatus.OK);
@@ -129,8 +131,11 @@ public class AppointmentController {
 
     @PostMapping("/checkIn")
     @Transactional
-    public ResponseEntity<Boolean> checkInAppointment(@RequestBody Long appointmentId) {
+    public ResponseEntity<Boolean> checkInAppointment(@RequestBody Map<String, Object> requestBody) {
         try {
+
+            Long appointmentId = ((Number) requestBody.get("appointmentId")).longValue();
+
             boolean isCheckedIn = appointmentService.checkInAppointment(appointmentId);
             if (isCheckedIn == true)
                 return new ResponseEntity<Boolean>(isCheckedIn, HttpStatus.OK);
