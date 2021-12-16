@@ -240,6 +240,7 @@ public class AppointmentServiceImpl implements AppointmentService {
                     return false;
                 }
                 v.setTaken(true);
+                v.setShotDate(apt.getAppointmentDateTime());
                 vaccinationRecordRepository.save(v);
             }
             appointmentRepository.save(apt);
