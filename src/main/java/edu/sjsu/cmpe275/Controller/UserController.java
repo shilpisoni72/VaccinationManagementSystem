@@ -56,7 +56,7 @@ public class UserController {
     @GetMapping("/login")
     public User login(String email, String pswd)
     {
-    	User user=	userRepository.findByEmail(email).orElseThrow(()->new IllegalStateException("User not found !"));
+    	User user =	userRepository.findByEmail(email).orElseThrow(()->new IllegalStateException("User not found !"));
     	Boolean isEnabled= user.getEnabled();
     	AppUserRole role = user.getAppUserRole();
     	
