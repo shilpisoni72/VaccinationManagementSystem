@@ -11,6 +11,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/vaccination")
@@ -32,12 +33,25 @@ public class VaccinationController {
 
     @PostMapping("/create")
     @Transactional
-    public ResponseEntity<Object> createVaccination(String name, List<Long> diseaseIds, String manufacturer, Integer numberOfShots, Integer shotInterval, Integer duration) {
+    public ResponseEntity<Object> createVaccination(@RequestBody String name, Map<String, Object> diseases, String manufacturer, Integer numberOfShots, Integer shotInterval, Integer duration) {
         try {
+            System.out.println("Here");
+            List<Long> diseaseIds = (List<Long>) diseases.get("diseaseIds");
             return new ResponseEntity<Object>(vaccinationService.createVaccination(name, diseaseIds, manufacturer, numberOfShots, shotInterval, duration), HttpStatus.OK);
         } catch (Exception exception) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return new ResponseEntity<Object>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+//    @PostMapping("/create")
+//    @Transactional
+//    public ResponseEntity<Object> createVaccination(@RequestBody String name, List<Long> diseaseIds, String manufacturer, Integer numberOfShots, Integer shotInterval, Integer duration) {
+//        try {
+//            return new ResponseEntity<Object>(vaccinationService.createVaccination(name, diseaseIds, manufacturer, numberOfShots, shotInterval, duration), HttpStatus.OK);
+//        } catch (Exception exception) {
+//            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+//            return new ResponseEntity<Object>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
 }
