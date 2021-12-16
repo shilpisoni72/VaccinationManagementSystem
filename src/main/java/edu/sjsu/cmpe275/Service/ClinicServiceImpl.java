@@ -11,10 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ClinicServiceImpl implements ClinicService {
@@ -94,7 +91,23 @@ public class ClinicServiceImpl implements ClinicService {
         List<Clinic> availableClinics = new ArrayList<>();
         List<Appointment> appointments = new ArrayList<>();
         appointments =  appointmentRepository.findAllAppointmentByDateTime(t);
-
+        Map<Clinic, Integer> map = new HashMap<>();
+        for (Appointment a: appointments){
+            Clinic c  = a.getClinic();
+            if(map.containsKey(c)){
+                map.put(c, map.get(c) + 1);
+            }else{
+                map.put(c, 1);
+            }
+        }
+        for(Map.Entry<Clinic, Integer> entry : map.entrySet()){
+            Clinic value = entry.getKey();
+            int key = entry.getValue();
+            int numPhys = value.getNumPhysicians();
+            if(key < numPhys){
+                availableClinics.add(value);
+            }
+        }
         return availableClinics;
     }
 
