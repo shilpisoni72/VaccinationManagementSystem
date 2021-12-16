@@ -15,6 +15,9 @@ class AdminManagement extends Component {
         this.state = {
             clinicName: '',
             clinicAddress: '',
+            clinicCity: '',
+            clinicState: '',
+            clinicZipCode: '',
             opening: 8,
             closing: 17,
             physicians: 0,
@@ -66,6 +69,21 @@ class AdminManagement extends Component {
             clinicAddress: e.target.value
         });
     }
+    handleAddressCityChange = (e) => {
+        this.setState({
+            clinicCity: e.target.value
+        });
+    }
+    handleAddressStateChange = (e) => {
+        this.setState({
+            clinicState: e.target.value
+        });
+    }
+    handleAddressZipCodeChange = (e) => {
+        this.setState({
+            clinicZipCode: e.target.value
+        });
+    }
 
     handleOpeningChange = (e) => {
         this.setState({
@@ -89,12 +107,16 @@ class AdminManagement extends Component {
         const payload = {
             name: this.state.clinicName,
             address: this.state.clinicAddress,
+            city: this.state.clinicCity,
+            state: this.state.clinicState,
+            zipCode : this.state.clinicZipCode,
             opening: this.state.opening,
             closing: this.state.closing,
             physicians: this.state.physicians,
         }
+        console.log("clinic payload  = ", payload);
         try {
-            const response = await axios.post(`${API_URL}/clinic`, payload);
+            const response = await axios.post(`${API_URL}/clinic/createClinic`, payload);
         } catch (error) {
             console.log(error);
         }
@@ -126,8 +148,9 @@ class AdminManagement extends Component {
             if(response.data === null){
                 alert("disease not created")
             } else {
+                console.log("create disease responce = " , response.data)
                 this.setState({
-                    currentDiseases: [...this.state.currentDiseases, response.data._disease],
+                    currentDiseases: [...this.state.currentDiseases, response.data],
                 });
             }
         } catch (error) {
@@ -201,8 +224,13 @@ class AdminManagement extends Component {
                     <h3>Create Clinic</h3>
                     <div className='d-flex'>
                         <TextField id="clinicname" label="Clinic Name" variant="outlined" required onChange={this.handleClinicChange}/>
-                        <TextField id="clinicaddress" label="Address" variant="outlined" required onChange={this.handleAddressChange}/>
                         <TextField id="physicians" label="Number of Physicians" variant="outlined" required onChange={this.handlePhysiciansChange}/>
+                    </div>
+                    <div className='d-flex'>
+                        <TextField id="clinicaddress" label="Address" variant="outlined" required onChange={this.handleAddressChange}/>
+                        <TextField id="clinicAddressZipCode" label="Zip Code" variant="outlined" required onChange={this.handleAddressZipCodeChange}/>
+                        <TextField id="clinicAddressCity" label="City" variant="outlined" required onChange={this.handleAddressCityChange}/>
+                        <TextField id="clinicAddressState" label="State" variant="outlined" required onChange={this.handleAddressStateChange}/>
                     </div>
                     <div className='d-flex'>
                         <TextField id="opening" label="Opening Time" variant="outlined" required onChange={this.handleOpeningChange}/>
