@@ -25,6 +25,7 @@ class Signup extends Component {
       dateOfBirth: new Date(),
       mrn: '',
       gender: '',
+      redirect: false,
     };
     this.handleEmailChange = this.handleEmailChange.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
