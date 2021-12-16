@@ -3,9 +3,11 @@ package edu.sjsu.cmpe275.Controller;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import edu.sjsu.cmpe275.Helper.Error.Response;
+import edu.sjsu.cmpe275.Model.Address;
 import edu.sjsu.cmpe275.Model.AppUserRole;
 import edu.sjsu.cmpe275.Model.Clinic;
 import edu.sjsu.cmpe275.Model.User;
+import edu.sjsu.cmpe275.Repository.AddressRepository;
 import edu.sjsu.cmpe275.Repository.UserRepository;
 import edu.sjsu.cmpe275.Service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,8 @@ public class UserController {
     @Autowired
     UserServiceImpl userService;
 
+    @Autowired
+    AddressRepository addressRepository;
 
 
     @GetMapping("/users")
@@ -44,10 +48,80 @@ public class UserController {
         }
     }
     
+    @PostMapping("/signup")
+    @Transactional
+    public ResponseEntity<Object> signUp(@RequestBody Map<String, Object> requestBody)
+    {
+        try{
+            String email = (String) requestBody.get("email");
+            String password = (String) requestBody.get("password");
+            String firstName = (String) requestBody.get("firstName");
+            String lastName = (String) requestBody.get("lastName");
+            String middleName = (String) requestBody.get("middleName");
+            String dateOfBirth = (String) requestBody.get("dateOfBirth");
+            String addressLine1 = (String) requestBody.get("addressLine1");
+            String addressLine2 = (String) requestBody.get("addressLine2");
+            String city = (String) requestBody.get("city");
+            String state = (String) requestBody.get("state");
+            Integer zipcode = (Integer) requestBody.get("zipcode");
 
+            Optional<User> userData =	userRepository.findByEmail(email);
+            if(!userData.isPresent())
+                return new ResponseEntity<Object>(new Response("403", "emailid " + email + " already exists"), HttpStatus.FORBIDDEN);
 
+            User user = new User();
+            if(!firstName.isEmpty() && firstName!=null){
+                user.setFirstName(firstName);
+            }
+            if(!lastName.isEmpty() && lastName!=null){
+                user.setLastName(lastName);
+            }
+            if(!middleName.isEmpty() && middleName!=null){
+                user.setMiddleName(middleName);
+            }
+            if(!dateOfBirth.isEmpty() && dateOfBirth!=null){
+                user.setDateOfBirth(new java.sql.Date(new Date(dateOfBirth).getTime()));
+            }
+            if(!email.isEmpty() && email!=null){
+                user.setEmail(email);
+            }
+            if(!password.isEmpty() && password!=null){
+                user.setPassword(password);
+            }
+
+            Address address = new Address();
+            if(!addressLine1.isEmpty() && addressLine1!=null){
+                address.setLine1(addressLine1);
+            }
+            if(!addressLine2.isEmpty() && addressLine2!=null){
+                address.setLine2(addressLine2);
+            }
+            if(!city.isEmpty() && city!=null){
+                address.setCity(city);
+            }
+            if(!state.isEmpty() && state!=null){
+                address.setState(state);
+            }
+            if(zipcode!=null){
+                address.setZipCode(zipcode);
+            }
+
+            Address savedAdress = addressRepository.save(address);
+            user.setAddress(address);
+            User savedUser = userRepository.save(user);
+
+            if(user!=null)
+                return new ResponseEntity<Object>(user, HttpStatus.OK);
+        }
+        catch (Exception exception){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return new ResponseEntity<Object>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return null;
+    }
     
-    @GetMapping("/login")
+    @PostMapping("/login")
+    @Transactional
     public ResponseEntity<Object> login(@RequestBody Map<String, Object> requestBody)
     {
         try{
@@ -59,18 +133,12 @@ public class UserController {
                  return new ResponseEntity<Object>(new Response("404", "emailid " + email + " not found"), HttpStatus.NOT_FOUND);
 
             User user = userData.get();
-
             Boolean isEnabled= user.getEnabled();
-            AppUserRole role = user.getAppUserRole();
             String password = user.getPassword();
-
-            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-            String encodedPassword = passwordEncoder.encode(requestPassword);
-            boolean isPasswordMatch = passwordEncoder.matches(password, encodedPassword);
 
             if(!isEnabled)
                 return new ResponseEntity<Object>(new Response("401", "User has yet to confirm email"), HttpStatus.UNAUTHORIZED);
-            else if(!isPasswordMatch)
+            else if(password.equals(requestPassword))
                 return new ResponseEntity<Object>(new Response("403", "password does not match"), HttpStatus.FORBIDDEN);
             else
                 return new ResponseEntity<Object>(user, HttpStatus.OK);
@@ -84,6 +152,7 @@ public class UserController {
     }	
 
     @PostMapping("/user")
+    @Transactional
     public ResponseEntity<Object> getUser(@RequestBody Map<String, Object> requestBody) {
         try{
 
