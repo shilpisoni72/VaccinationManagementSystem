@@ -19,19 +19,26 @@ class SystemReports extends Component {
             endDate: this.props.chosenDate,
             clinicSelected:{},
             allClinics: [
-                {id:'12391203', name: "Sunnyvale CVS"},
-                {id:'12391204',name: "Evergreen CVS"},
-                {id:'12391205',name: "Palo Alto CVS"},
             ],
             noShowRate: 0,
             noShowAppointments: [
-                {vaccine: "Pfizer", firstName:"Spencer", lastName:"Siu", date:"12/20/21"},
-                {vaccine: "Flu", firstName:"Joe", lastName:"Biden", date:"12/20/21"},
+
             ],
             totalAppointments: [
-                {vaccine: "Pfizer", firstName:"Spencer", lastName:"Siu", date:"12/20/21"},
-                {vaccine: "Flu", firstName:"Joe", lastName:"Biden", date:"12/20/21"},
+
             ]
+        }
+    }
+
+    async componentDidMount() {
+        try {
+            const response = await axios.get(`${API_URL}/clinic/getAllClinics`);
+            console.log(response.data);
+            this.setState({
+                allClinics: response.data,
+            });
+        } catch (error) {
+            console.log(error);
         }
     }
 
@@ -55,11 +62,18 @@ class SystemReports extends Component {
 
     handleGetStats = async () => {    
         try {
-            const response = await axios.get(`${API_URL}/systemreports&clinic=${this.state.clinicSelected.id}&start=${this.state.startDate}&end=${this.state.endDate}`);
+            const payload = {
+                clinicId: this.state.clinicSelected.id,
+                startDate: this.state.startDate.toString(),
+                endDate: this.state.endDate.toString(),
+                currDate: this.props.chosenDate.toString()
+            }
+            const response = await axios.post(`${API_URL}/report/systemreports`, payload);
             this.setState({
-                totalAppointments: response.totalAppointments,
-                noShowAppointments: response.noShowAppointments,
-                noShowRate : response.noShowAppointments.length / response.totalAppointments.length,
+                totalAppointments: response.data.totalAppointments,
+                noShowAppointments: response.data.noShowAppointments,
+                noShowRate : response.data.noShowRate,
+                clinic: response.data.clinic,
             });
         } catch (error) {
             console.log(error);
@@ -84,7 +98,7 @@ class SystemReports extends Component {
                         {
                             this.state.allClinics.map((clinic, index) => {
                                 return (
-                                    <MenuItem key={index} value={clinic.name}>{clinic.name}</MenuItem>
+                                    <MenuItem key={index} value={clinic}>{clinic.clinicName}</MenuItem>
                                 )
                             })
                         }
@@ -96,7 +110,7 @@ class SystemReports extends Component {
                             selected={this.state.startDate} 
                             onChange={this.handleStartChange} 
                             minDate={addDays(this.props.chosenDate, -365)}
-                            maxDate={this.props.chosenDate}
+                            maxDate={addDays(this.props.chosenDate, 365)}
                         />
                     </label>
                     <label>
@@ -105,7 +119,7 @@ class SystemReports extends Component {
                             selected={this.state.endDate} 
                             onChange={this.handleEndChange} 
                             minDate={addDays(this.props.chosenDate, -365)}
-                            maxDate={this.props.chosenDate}
+                            maxDate={addDays(this.props.chosenDate, 365)}
                         />
                     </label>
                     <div>
@@ -124,9 +138,8 @@ class SystemReports extends Component {
                         this.state.noShowAppointments.map((apt, index) => {
                             return (
                                 <div className="d-flex align-items-center justify-content-evenly sys-no-show-block" key={index}>
-                                    <h4>{apt.vaccine}</h4>
-                                    <div>Patient: {apt.firstName} {apt.lastName}</div>
-                                    <div>Date: {apt.date}</div>
+                                    <div>Clinic: {apt.clinic.clinicName}</div>
+                                    <div>Date: {new Date(apt.appointmentDateTime).toLocaleString()}</div>
                                 </div>
                             )
                         })
@@ -138,9 +151,8 @@ class SystemReports extends Component {
                         this.state.totalAppointments.map((apt, index) => {
                             return (
                                 <div className="d-flex align-items-center justify-content-evenly sys-total-block" key={index}>
-                                    <h4>{apt.vaccine}</h4>
-                                    <div>Patient: {apt.firstName} {apt.lastName}</div>
-                                    <div>Date: {apt.date}</div>
+                                    <div>Clinic: {apt.clinic.clinicName}</div>
+                                    <div>Date: {new Date(apt.appointmentDateTime).toLocaleString()}</div>
                                 </div>
                             )
                         })
