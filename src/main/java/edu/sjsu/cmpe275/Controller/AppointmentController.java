@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -47,10 +48,23 @@ public class AppointmentController {
 
     @PostMapping("/book")
     @Transactional
-    public ResponseEntity<Object> bookAppointment(@RequestBody Map<String, Object>  Long userId, String appointmentDate, String appointmentBookedDate, Long clinicId, List<Long> vaccinationIds, List<Integer> shotNumber) {
+    public ResponseEntity<Object> bookAppointment(@RequestBody Map<String, Object> requestBody) {
         try {
 
+            Long userId = (Long) requestBody.get("userId");
+            String appointmentDate = (String) requestBody.get("appointmentDate");
+            String appointmentBookedDate = (String) requestBody.get("appointmentBookedDate");
+            Long clinicId = (Long) requestBody.get("clinicId");
+            List<Integer> oldVaccinationIds = (List<Integer>) requestBody.get("vaccinationIds");
+            List<Integer> shotNumber = ( List<Integer>) requestBody.get("shotNumber");
 
+            List<Long> vaccinationIds = new ArrayList<Long>();
+
+            for (Integer id :
+                    oldVaccinationIds) {
+                Long newId = new Long(id);
+                vaccinationIds.add(newId);
+            }
             Appointment bookedAppointment = appointmentService.bookAppointment(userId, appointmentDate, appointmentBookedDate, clinicId, vaccinationIds, shotNumber);
             if (bookedAppointment != null)
                 return new ResponseEntity<Object>(bookedAppointment, HttpStatus.OK);
@@ -65,8 +79,14 @@ public class AppointmentController {
 
     @PostMapping("/shot_number")
     @Transactional
-    public ResponseEntity<Object> getShotNumber(@RequestBody Long vaccinationId, Long userId, String date) {
+    public ResponseEntity<Object> getShotNumber(@RequestBody Map<String, Object> requestBody) {
         try {
+
+            Long vaccinationId = (Long) requestBody.get("vaccinationId");
+            Long userId = (Long) requestBody.get("userId");
+            String date = (String) requestBody.get("date");
+
+
             Integer shotNumber = appointmentService.getShotNumber(vaccinationId, userId, date);
             if (shotNumber !=-1)
                 return new ResponseEntity<Object>(shotNumber, HttpStatus.OK);
