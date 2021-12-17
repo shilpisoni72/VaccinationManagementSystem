@@ -27,36 +27,49 @@ public class DiseaseController {
     DiseaseService diseaseService;
 
     @PostMapping("/createDisease")
+    @Transactional
     public ResponseEntity<Object> createDisease(@RequestBody Map<String, Object> requestBody) {
-        String diseaseName = (String)requestBody.get("diseaseName");
-        String diseaseDescription = (String)requestBody.get("diseaseDescription");
-        System.out.println("create disease controller called req = " + diseaseName + " " + diseaseDescription);
-        Optional<Disease> diseaseData = diseaseService.getDiseaseByName(diseaseName);
-        if(diseaseData.isPresent()){
-            return new ResponseEntity<Object>(new Response("400","Disease name "+ diseaseName+" already exists"), HttpStatus.BAD_REQUEST);
+        try{
+            String diseaseName = (String)requestBody.get("diseaseName");
+            String diseaseDescription = (String)requestBody.get("diseaseDescription");
+            System.out.println("create disease controller called req = " + diseaseName + " " + diseaseDescription);
+            Optional<Disease> diseaseData = diseaseService.getDiseaseByName(diseaseName);
+            if(diseaseData.isPresent()){
+                return new ResponseEntity<Object>(new Response("400","Disease name "+ diseaseName+" already exists"), HttpStatus.BAD_REQUEST);
+            }
+
+            diseaseData =  diseaseService.createDisease(diseaseName, diseaseDescription);
+            if(diseaseData.isPresent()){
+                Disease _disease =  diseaseData.get();
+                return new ResponseEntity<>(_disease, HttpStatus.OK);
+            }else{
+                return new ResponseEntity<Object>("something went wrong", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }catch (Exception exception){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return new ResponseEntity<Object>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        diseaseData =  diseaseService.createDisease(diseaseName, diseaseDescription);
-        if(diseaseData.isPresent()){
-            Disease _disease =  diseaseData.get();
-            return new ResponseEntity<>(_disease, HttpStatus.OK);
-        }else{
-            return new ResponseEntity<Object>("something went wrong", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
     }
 
     @DeleteMapping("/deleteDisease/{diseaseId}")
+    @Transactional
     public ResponseEntity<Object> deleteDisease(@PathVariable("diseaseId") long diseaseId) {
-        System.out.println("delete disease controller called");
-        Optional<Disease> diseaseData = diseaseRepository.findById(diseaseId);
-        if(diseaseData.isPresent()){
-            return new ResponseEntity<Object>(new Response("400","Disease id "+ diseaseId+" doesn not exists"), HttpStatus.BAD_REQUEST);
-        }
-        boolean isDeleted = diseaseService.deleteDiseaseById(diseaseId);
-        if(isDeleted){
-            return new ResponseEntity<>("disease id: "+ diseaseId + " deleted successfully", HttpStatus.OK);
-        }else{
-            return new ResponseEntity<Object>("something went wrong", HttpStatus.INTERNAL_SERVER_ERROR);
+        try{
+            System.out.println("delete disease controller called");
+            Optional<Disease> diseaseData = diseaseRepository.findById(diseaseId);
+            if(diseaseData.isPresent()){
+                return new ResponseEntity<Object>(new Response("400","Disease id "+ diseaseId+" doesn not exists"), HttpStatus.BAD_REQUEST);
+            }
+            boolean isDeleted = diseaseService.deleteDiseaseById(diseaseId);
+            if(isDeleted){
+                return new ResponseEntity<>("disease id: "+ diseaseId + " deleted successfully", HttpStatus.OK);
+            }else{
+                return new ResponseEntity<Object>("something went wrong", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }catch (Exception exception){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return new ResponseEntity<Object>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
