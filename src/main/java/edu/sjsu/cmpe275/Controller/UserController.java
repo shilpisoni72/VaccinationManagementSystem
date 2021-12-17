@@ -73,7 +73,7 @@ public class UserController {
             Integer zipcode = (Integer) requestBody.get("zipcode");
 
             Optional<User> userData =	userRepository.findByEmail(email);
-            if(!userData.isPresent())
+            if(userData.isPresent())
                 return new ResponseEntity<Object>(new Response("403", "emailid " + email + " already exists"), HttpStatus.FORBIDDEN);
 
             User user = new User();
@@ -90,6 +90,10 @@ public class UserController {
                 user.setDateOfBirth(new java.sql.Date(new Date(dateOfBirth).getTime()));
             }
             if(!email.isEmpty() && email!=null){
+                if(email.contains("@sjsu.edu"))
+                    user.setRole("ADMIN");
+                else
+                    user.setRole("USER");
                 user.setEmail(email);
             }
             if(!password.isEmpty() && password!=null){
