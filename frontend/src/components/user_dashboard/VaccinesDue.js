@@ -23,7 +23,6 @@ class VaccinesDue extends Component {
 
     async componentDidMount() {
         const cookies = new Cookies();
-        cookies.set('userId',100);
         let userId = cookies.get('userId');
         
         const payload = {

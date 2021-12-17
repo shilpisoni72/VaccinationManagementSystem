@@ -128,14 +128,12 @@ public class UserController {
 
             new NotificationHelper().sendEmail(emailConfig, "shilpi9soni@gmail.com", email, "please click on this link to get verified: " + Url.baseUrl + "/user/auth/verification", "Get Verified");
 
-            if(user!=null)
-                return new ResponseEntity<Object>(user, HttpStatus.OK);
+            return new ResponseEntity<Object>("Successfully signed up", HttpStatus.OK);
         }
         catch (Exception exception){
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return new ResponseEntity<Object>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return null;
     }
     
     @PostMapping("/login")
@@ -156,7 +154,7 @@ public class UserController {
 
             if(!isEnabled)
                 return new ResponseEntity<Object>(new Response("401", "User has yet to confirm email"), HttpStatus.UNAUTHORIZED);
-            else if(password.equals(requestPassword))
+            else if(!password.equals(requestPassword))
                 return new ResponseEntity<Object>(new Response("403", "password does not match"), HttpStatus.FORBIDDEN);
             else
                 return new ResponseEntity<Object>(user, HttpStatus.OK);

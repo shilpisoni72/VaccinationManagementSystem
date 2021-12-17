@@ -128,11 +128,8 @@ class Signup extends Component {
   
       try {
         let response = null;
-        if(email.includes("@sjsu")){
-          response = await axios.post(`${API_URL}/adminsignup`, payload);
-        } else {
-          response = await axios.post(`${API_URL}/user/signup`, payload);
-        }
+
+        response = await axios.post(`${API_URL}/user/signup`, payload);
 
         console.log(response.data);
   
