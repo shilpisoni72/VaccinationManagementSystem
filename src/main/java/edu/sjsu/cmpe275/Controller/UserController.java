@@ -102,7 +102,7 @@ public class UserController {
             if(!gender.isEmpty() && gender!=null){
                 user.setGender(gender);
             }
-            user.setEnabled(false);
+            user.setEnabled(true);
             user.setVerified(false);
 
             Address address = new Address();
