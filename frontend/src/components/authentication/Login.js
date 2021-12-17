@@ -46,17 +46,17 @@ class Login extends Component {
 
     try {
       let response = null;
-      if (email.includes("@sjsu")) {
-        response = await axios.post(`${API_URL}/adminlogin`, payload);
-      } else {
-        response = await axios.post(`${API_URL}/user/login`, payload);
-      }
-
+      response = await axios.post(`${API_URL}/user/login`, payload);
       console.log(response.data);
 
       if (response.data.id != null) {
         const cookies = new Cookies();
         cookies.set("userId", response.data.id);
+        if(response.data.role === "USER" || response.data.role === "user") {
+          cookies.set("userRole", "USER")
+        } else {
+          cookies.set("userRole", "ADMIN")
+        }
         this.setState({
           redirect: true,
           verified: true,

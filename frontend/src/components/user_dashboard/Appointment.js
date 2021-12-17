@@ -49,8 +49,6 @@ class Appointment extends Component {
 
     async componentDidMount() {
         const cookies = new Cookies();
-        cookies.set('userId', 100);
-
         let userId = cookies.get('userId');
         const payload = {
             userId: userId,
@@ -120,6 +118,8 @@ class Appointment extends Component {
                     this.setState({
                         vaccinesSelected: [...this.state.vaccinesSelected, addedVac[0]]
                     });
+                } else {
+                    alert("please complete previous shots before taking this shot");
                 }
             } catch (error) {
                 console.log(error);
