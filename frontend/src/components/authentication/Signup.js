@@ -22,8 +22,11 @@ class Signup extends Component {
       lastName: '',
       middleName: '',
       address: '',
+      address2: '',
+      city: '',
+      state: '',
+      zipcode: 0,
       dateOfBirth: new Date(),
-      mrn: '',
       gender: '',
       redirect: false,
     };
@@ -74,41 +77,66 @@ class Signup extends Component {
         })
     }
 
+    handleAddress2Change = (e) => {
+      this.setState({
+          address2: e.target.value,
+      })
+  }
+
+    handleCityChange = (e) => {
+      this.setState({
+          city: e.target.value,
+      })
+    }
+
+    handleStateChange = (e) => {
+      this.setState({
+          state: e.target.value,
+      })
+    }
+
+    handleZipcodeChange = (e) => {
+      this.setState({
+          zipcode: e.target.value,
+      })
+    }
+
     handleGenderChange = (e) => {
         this.setState({
             gender: e.target.value,
         })
     }
 
-    handleMRNChange = (e) => {
-        this.setState({
-            mrn: e.target.value,
-        })
-    }
-
     handleSignupSubmit = async (e) => {
-      const { email, password, firstName, lastName, middleName, address, gender, mrn, dateOfBirth } = this.state;
+      const { email, password, firstName, lastName, middleName, address, address2, city, state, zipcode, gender, dateOfBirth } = this.state;
       const payload = {
         email,
         password,
         firstName,
         lastName,
         middleName,
-        address,
+        addressLine1: address,
+        addressLine2: address2,
+        city,
+        state,
+        zipcode: parseInt(zipcode),
         gender,
-        mrn,
-        dateOfBirth
+        dateOfBirth: dateOfBirth.toString(),
       };
+
+      console.log(payload);
   
       try {
         let response = null;
         if(email.includes("@sjsu")){
           response = await axios.post(`${API_URL}/adminsignup`, payload);
         } else {
-          response = await axios.post(`${API_URL}/signup`, payload);
+          response = await axios.post(`${API_URL}/user/signup`, payload);
         }
+
+        console.log(response.data);
   
-        if(response.userId != null) {
+        if(response.data != null) {
           this.setState({
             redirect: true,
           })
@@ -120,46 +148,51 @@ class Signup extends Component {
 
   render() {
     const {
-      email, password, firstName, lastName, middleName, address, dateOfBirth, mrn, gender,
+      email, password, firstName, lastName, middleName, address, dateOfBirth, gender,
     } = this.state;
 
     const signupDiv = (
         <div className='d-flex justify-content-center signup'>
             <div className="d-flex flex-column justify-content-evenly align-items-center signup-section">
                 <h1>Sign up</h1>
-
-                <TextField id="signupemail" label="Email" variant="outlined" required onChange={this.handleEmailChange}/>
-                <TextField id="signuppassword" label="Password" variant="outlined" type="password" required onChange={this.handlePasswordChange}/>
-                <TextField id="firstname" label="First Name" variant="outlined" required onChange={this.handleFirstNameChange}/>
-                <TextField id="lastname" label="Last Name" variant="outlined" required onChange={this.handleLastNameChange}/>
-                <TextField id="middlename" label="Middle Name" variant="outlined" onChange={this.handleMiddleNameChange}/>
-                <TextField id="address" label="Address" variant="outlined" required onChange={this.handleAddressChange}/>
-                <FormControl fullWidth>
-                    <InputLabel id="gender-label">Gender</InputLabel>
-                    <Select
-                        required
-                        labelId="gender-label"
-                        id="gender"
-                        value={gender}
-                        label="Gender"
-                        onChange={this.handleGenderChange}
-                    >
-                        <MenuItem value={"male"}>male</MenuItem>
-                        <MenuItem value={"female"}>female</MenuItem>
-                        <MenuItem value={"other"}>other</MenuItem>
-                    </Select>
-                </FormControl>
-                <TextField id="mrn" label="Medical Record Number" variant="outlined" required onChange={this.handleMRNChange}/>
-                <label>
-                  Date of Birth
-                  <DatePicker 
-                    selected={dateOfBirth} 
-                    onChange={this.handleDobChange} 
-                  />  
-                </label>
-                <Button variant="contained" onClick={this.handleSignupSubmit}>
-                  Sign up
-                </Button>
+                <form>
+                  <TextField id="signupemail" label="Email" variant="outlined" required onChange={this.handleEmailChange}/>
+                  <TextField id="signuppassword" label="Password" variant="outlined" type="password" required onChange={this.handlePasswordChange}/>
+                  <TextField id="firstname" label="First Name" variant="outlined" required onChange={this.handleFirstNameChange}/>
+                  <TextField id="lastname" label="Last Name" variant="outlined" required onChange={this.handleLastNameChange}/>
+                  <TextField id="middlename" label="Middle Name" variant="outlined" onChange={this.handleMiddleNameChange}/>
+                  <TextField id="address" label="Street Address Line 1" variant="outlined" onChange={this.handleAddressChange}/>
+                  <TextField id="address2" label="Street Address Line 2" variant="outlined" onChange={this.handleAddress2Change}/>
+                  <TextField id="city" label="City" variant="outlined" required onChange={this.handleCityChange}/>
+                  <TextField id="state" label="State" variant="outlined" required onChange={this.handleStateChange}/>
+                  <TextField id="zipcode" label="Zipcode" variant="outlined" required onChange={this.handleZipcodeChange}/>
+                  <FormControl fullWidth>
+                      <InputLabel id="gender-label">Gender</InputLabel>
+                      <Select
+                          required
+                          labelId="gender-label"
+                          id="gender"
+                          value={gender}
+                          label="Gender"
+                          onChange={this.handleGenderChange}
+                      >
+                          <MenuItem value={"male"}>male</MenuItem>
+                          <MenuItem value={"female"}>female</MenuItem>
+                          <MenuItem value={"other"}>other</MenuItem>
+                      </Select>
+                  </FormControl>
+                  <label>
+                    Date of Birth
+                    <DatePicker 
+                      selected={dateOfBirth} 
+                      onChange={this.handleDobChange} 
+                    />  
+                  </label>
+                  <Button variant="contained" onClick={this.handleSignupSubmit}>
+                    Sign up
+                  </Button>
+                </form>
+                
             </div>
         </div>
         

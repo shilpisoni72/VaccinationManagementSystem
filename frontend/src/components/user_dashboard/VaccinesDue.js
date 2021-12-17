@@ -35,7 +35,7 @@ class VaccinesDue extends Component {
             const response = await axios.post(`${API_URL}/uservaccination/due`, payload);
             const pastresponse = await axios.post(`${API_URL}/appointment/past`, payload);
             const futureresponse = await axios.post(`${API_URL}/appointment/future`, payload);
-            console.log(pastresponse.data)
+            console.log(futureresponse.data)
 
             let tempAppointments = [];
             for(let vaccinationsDue of response.data){
