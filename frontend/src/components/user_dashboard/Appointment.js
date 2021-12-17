@@ -165,8 +165,10 @@ class Appointment extends Component {
             this.setState({
                 scheduledAppointments: [...this.state.scheduledAppointments, response.data]
             });
+            alert("appointment booked successfully")
         } catch (error) {
             console.log(error);
+            alert("error in booking appointment")
         }
 
     }
@@ -204,37 +206,53 @@ class Appointment extends Component {
         const cookies = new Cookies();
         let userId = cookies.get('userId');
 
+        console.log(e);
         const payload = {
-            user: userId,
-            date: this.state.rescheduleDate,
-            clinic: this.state.rescheduleClinicSelected,
+            appointmentId: parseInt(this.state.appointmentSelected.id),
+            newAppointmentDate: this.state.rescheduleDate.toString(),
+            currentDate: this.props.chosenDate.toString(),
         }
+        console.log(payload);
 
         try {
-            const response = await axios.post(`${API_URL}/rescheduleappointment`, payload);
+            const response = await axios.post(`${API_URL}/appointment/change`, payload);
+            console.log(response);
+
             this.setState({
-                scheduledAppointments: response.appointments
+                scheduledAppointments: this.state.scheduledAppointments.filter((appt) => {
+                    return appt.id !== response.data.id
+                }, ()=> {
+                    this.setState({
+                        scheduledAppointments: [...this.state.scheduledAppointments, response.data]
+                    })
+                })
             });
+            alert("appointment rescheduled successfully")
         } catch (error) {
             console.log(error);
+            alert("error when rescheduling");
         }
 
     }
 
     cancelAppointment = async (e) => {
         const payload = {
-            appointmentId: e.target.value.appointmentId,
+            appointmentId: parseInt(e.target.value),
         }
+        console.log(payload);
 
         try {
             const response = await axios.post(`${API_URL}/appointment/cancel`, payload);
+            console.log(response.data)
             this.setState({
                 scheduledAppointments: this.state.scheduledAppointments.filter((appt) => {
-                    return appt.id !== response.cancelledAppointment.id
+                    return appt.id !== response.data.id
                 })
             });
+            alert("appointment cancelled");
         } catch (error) {
             console.log(error);
+            alert("error when cancelling");
         }
     }
 
@@ -356,25 +374,7 @@ class Appointment extends Component {
                             timeCaption="time"
                             dateFormat="MMMM d, yyyy h:mm aa"
                         />
-                        <FormControl fullWidth>
-                            <InputLabel id="reschedule-clinic-label">Clinic</InputLabel>
-                            <Select
-                                labelId="reschedule-clinic-label"
-                                id="reschedule-clinic-select"
-                                value={this.state.rescheduleClinicSelected}
-                                label="Reschedule Clinic"
-                                onChange={this.handleRescheduleClinicChange}
-                            >
-                            {
-                                this.state.rescheduleAvailableClinics.map((clinic, index) => {
-                                    return (
-                                        <MenuItem key={index} value={clinic}>{clinic.name}</MenuItem>
-                                    )
-                                })
-                            }
-                            </Select>
-                        </FormControl>
-                        <Button variant="contained">
+                        <Button variant="contained" onClick={this.rescheduleAppointment}>
                             Reschedule Appointment
                         </Button>
                     </div>
@@ -395,7 +395,7 @@ class Appointment extends Component {
                                         }
                                         <p>Clinic: {appointment?.clinic.clinicName}</p>
                                         <p>Date: {new Date(appointment?.appointmentDateTime).toLocaleString()}</p>
-                                        <Button variant="contained" color='error'>
+                                        <Button variant="contained" color='error' value={appointment?.id} onClick={this.cancelAppointment}>
                                             Cancel
                                         </Button>
                                     </div>

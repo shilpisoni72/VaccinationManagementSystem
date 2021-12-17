@@ -97,9 +97,10 @@ class VaccinesDue extends Component {
                 appointmentId: parseInt(e.target.value)
             }
             const response = await axios.post(`${API_URL}/appointment/checkIn`, payload);
-
+            alert("check in successful")
         } catch (error) {
             console.log(error);
+            alert("error in checking in")
         } 
     }
 
