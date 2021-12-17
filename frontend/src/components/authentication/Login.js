@@ -54,9 +54,9 @@ class Login extends Component {
 
       console.log(response.data);
 
-      if (response.data.userId != null) {
+      if (response.data.id != null) {
         const cookies = new Cookies();
-        cookies.set("userId", response.data.userId);
+        cookies.set("userId", response.data.id);
         this.setState({
           redirect: true,
           verified: true,

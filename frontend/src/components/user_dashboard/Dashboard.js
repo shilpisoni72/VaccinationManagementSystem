@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { Link, Route } from 'react-router-dom';
 import "./Dashboard.css";
 import VaccinesDue from "./VaccinesDue";
+import Cookies from "universal-cookie";
+
 
 class Dashboard extends Component {
     constructor(props) {
@@ -9,6 +11,12 @@ class Dashboard extends Component {
         this.state = {
 
         }
+    }
+
+    handleLogout = (e) => {
+        e.preventDefault();
+        const cookies = new Cookies();
+        cookies.remove("userId");
     }
 
     render() {
@@ -64,7 +72,7 @@ class Dashboard extends Component {
                         </Link>
 
                         <Link to="/">
-                            <button type="button" className="d-flex align-items-center nav-button">
+                            <button type="button" className="d-flex align-items-center nav-button" onClick={this.handleLogout}>
                                 <span>
                                     Logout
                                 </span>
