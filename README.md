@@ -13,6 +13,11 @@
  
  ### Project Handout
  https://docs.google.com/document/d/1me_9wgltQUt5Uk7T9vxP8ZbZqwH1CB-Deiw1ITthIUM/edit
+ 
+ In this term project, we build a service called Vaccination Management System (VMS) to provide capabilities like reservation, administration, and tracking. While we try to provide most of the key features that are considered essential for suc systems, we also significantly simplify the requirements such that the amount and complexity of work fit the purposes of our term project and the limited time we can work on it. It is out of the scope of this project to consider vaccination regulations, medical requirements, legal compliance, or actual billing related capabilities.
+
+The service needs to be hosted in the cloud, and you also need to provide a client app, in the form of a web app (preferred),  mobile, or both. There are no programming language or technology requirements for UI implementation. The primary language you use for server implementation, however, must be Java. You do not have to use Spring, but you must exercise the principles, patterns, and methodologies that we have discussed in class, including DI, AOP, MVC, ORM, and transactions. You must use a relational database, e.g., MySQL, Amazon RDS (supports many popular relational databases), MSFT SQL Server, or Google Cloud SQL. 
+
 
 ## Team Members
 - Hanish Punamiya - 015271971, hanish.punamiya@sjsu.edu
